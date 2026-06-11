@@ -108,10 +108,12 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
       )}
 
       {!githubConectado && (
-        <div className="d-flex justify-content-between align-items-center mb-3" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '0.85rem 1.25rem' }}>
-          <span style={{ fontSize: 14 }}>🐙 Conecta tu GitHub para mejorar tu score</span>
-          <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Próximamente</span>
-        </div>
+        <Link to="/github" style={{ textDecoration: 'none' }}>
+          <div className="d-flex justify-content-between align-items-center mb-3" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '0.85rem 1.25rem' }}>
+            <span style={{ fontSize: 14, color: '#1f2230' }}>🐙 Conecta tu GitHub para mejorar tu score</span>
+            <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Conectar →</span>
+          </div>
+        </Link>
       )}
 
       <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Próximos pasos</div>
@@ -122,10 +124,12 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
             <div style={{ fontSize: 12, color: '#6b6b76' }}>Encuentra tu próximo reto</div>
           </div>
         </Link>
-        <div style={{ flex: 1, background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
-          <div style={{ fontWeight: 600 }}>🧑‍💻 Rinde una evaluación</div>
-          <div style={{ fontSize: 12, color: '#6b6b76' }}>Próximamente</div>
-        </div>
+        <Link to="/evaluaciones" style={{ textDecoration: 'none', flex: 1 }}>
+          <div style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
+            <div style={{ fontWeight: 600, color: '#1f2230' }}>🧑‍💻 Rinde una evaluación</div>
+            <div style={{ fontSize: 12, color: '#6b6b76' }}>Sube tu score técnico</div>
+          </div>
+        </Link>
       </div>
     </>
   );

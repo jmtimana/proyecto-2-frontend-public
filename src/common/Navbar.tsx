@@ -26,6 +26,9 @@ export default function Navbar() {
 
         <Nav className="me-auto ms-3">
           <Nav.Link as={Link} to="/ofertas">Ofertas</Nav.Link>
+          {isAuthenticated && !esEmpresa && (
+            <Nav.Link as={Link} to="/evaluaciones">Evaluaciones</Nav.Link>
+          )}
           {isAuthenticated && esEmpresa && (
             <Nav.Link as={Link} to="/empresa/ofertas">Mis ofertas</Nav.Link>
           )}

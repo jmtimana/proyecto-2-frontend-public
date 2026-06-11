@@ -9,6 +9,9 @@ import OfertaDetail from './pages/OfertaDetail';
 import EmpresaOfertas from './pages/EmpresaOfertas';
 import CrearOferta from './pages/CrearOferta';
 import Postulantes from './pages/Postulantes';
+import ConectarGitHub from './pages/ConectarGitHub';
+import Evaluaciones from './pages/Evaluaciones';
+import EvaluacionDetail from './pages/EvaluacionDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleRoute from './components/RoleRoute';
 
@@ -22,29 +25,16 @@ export default function Router() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Ruta protegida (cualquier usuario logueado) */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* Rutas para cualquier usuario logueado */}
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/github" element={<ProtectedRoute><ConectarGitHub /></ProtectedRoute>} />
+      <Route path="/evaluaciones" element={<ProtectedRoute><Evaluaciones /></ProtectedRoute>} />
+      <Route path="/evaluaciones/:id" element={<ProtectedRoute><EvaluacionDetail /></ProtectedRoute>} />
 
       {/* Rutas solo de EMPRESA */}
-      <Route
-        path="/empresa/ofertas"
-        element={<RoleRoute role="ROLE_EMPRESA"><EmpresaOfertas /></RoleRoute>}
-      />
-      <Route
-        path="/empresa/ofertas/nueva"
-        element={<RoleRoute role="ROLE_EMPRESA"><CrearOferta /></RoleRoute>}
-      />
-      <Route
-        path="/empresa/ofertas/:id/postulantes"
-        element={<RoleRoute role="ROLE_EMPRESA"><Postulantes /></RoleRoute>}
-      />
+      <Route path="/empresa/ofertas" element={<RoleRoute role="ROLE_EMPRESA"><EmpresaOfertas /></RoleRoute>} />
+      <Route path="/empresa/ofertas/nueva" element={<RoleRoute role="ROLE_EMPRESA"><CrearOferta /></RoleRoute>} />
+      <Route path="/empresa/ofertas/:id/postulantes" element={<RoleRoute role="ROLE_EMPRESA"><Postulantes /></RoleRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
