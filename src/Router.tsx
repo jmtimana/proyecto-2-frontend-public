@@ -12,6 +12,7 @@ import Postulantes from './pages/Postulantes';
 import ConectarGitHub from './pages/ConectarGitHub';
 import Evaluaciones from './pages/Evaluaciones';
 import EvaluacionDetail from './pages/EvaluacionDetail';
+import RendirEvaluacion from './pages/RendirEvaluacion';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleRoute from './components/RoleRoute';
 
@@ -30,6 +31,7 @@ export default function Router() {
       <Route path="/github" element={<ProtectedRoute><ConectarGitHub /></ProtectedRoute>} />
       <Route path="/evaluaciones" element={<ProtectedRoute><Evaluaciones /></ProtectedRoute>} />
       <Route path="/evaluaciones/:id" element={<ProtectedRoute><EvaluacionDetail /></ProtectedRoute>} />
+      <Route path="/evaluaciones/:id/rendir" element={<ProtectedRoute><RendirEvaluacion /></ProtectedRoute>} />
 
       {/* Rutas solo de EMPRESA */}
       <Route path="/empresa/ofertas" element={<RoleRoute role="ROLE_EMPRESA"><EmpresaOfertas /></RoleRoute>} />

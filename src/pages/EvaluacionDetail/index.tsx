@@ -94,12 +94,11 @@ export default function EvaluacionDetail() {
 
       <hr className="my-4" />
 
-      {/* Botón de rendir (se activa en la Etapa 2) */}
+      {/* Botón de rendir */}
       <div>
-        <Button variant="primary" size="lg" disabled>Rendir evaluación</Button>
-        <p className="text-secondary mt-2" style={{ fontSize: 13 }}>
-          ⚙️ La pantalla para rendir (con editor de código) llega en el siguiente paso.
-        </p>
+        <Button as={Link as any} to={`/evaluaciones/${ev.id}/rendir`} variant="primary" size="lg">
+          Rendir evaluación
+        </Button>
       </div>
     </Container>
   );

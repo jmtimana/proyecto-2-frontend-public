@@ -18,4 +18,8 @@ export const EvaluacionApi = {
     api
       .get<EvaluacionDetailResponse>(`/evaluaciones/${id}`)
       .then((r) => r.data),
+
+  // POST /evaluaciones/{id}/iniciar -> crea un intento EN_PROGRESO
+  iniciar: (id: number) =>
+    api.post(`/evaluaciones/${id}/iniciar`).then((r) => r.data),
 };
