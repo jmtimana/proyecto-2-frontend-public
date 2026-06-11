@@ -1,0 +1,57 @@
+/* ===========================================================
+   Estilos globales + tema de marca de SkillMatch.
+   Aquí está el color morado. Para cambiar TODA la marca,
+   solo edita la variable --brand de abajo.
+   =========================================================== */
+:root {
+  --brand: #534ab7;        /* morado principal */
+  --brand-dark: #3c3489;   /* morado oscuro (texto sobre fondos claros) */
+  --brand-light: #eeedfe;  /* morado muy claro (fondos suaves) */
+
+  /* Le decimos a Bootstrap que su color "primary" sea nuestro morado */
+  --bs-primary: var(--brand);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f7f7fb;
+  color: #1f2230;
+}
+
+/* Hacemos que los botones variant="primary" usen el morado de marca */
+.btn-primary {
+  --bs-btn-bg: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand-dark);
+  --bs-btn-hover-border-color: var(--brand-dark);
+  --bs-btn-active-bg: var(--brand-dark);
+  --bs-btn-active-border-color: var(--brand-dark);
+  --bs-btn-disabled-bg: var(--brand);
+  --bs-btn-disabled-border-color: var(--brand);
+}
+
+/* Enlaces con el color de marca */
+a.brand-link,
+.text-brand {
+  color: var(--brand) !important;
+  text-decoration: none;
+  font-weight: 500;
+}
+a.brand-link:hover {
+  color: var(--brand-dark);
+  text-decoration: underline;
+}
+
+/* Logo cuadradito de la marca */
+.brand-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}

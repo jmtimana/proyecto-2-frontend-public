@@ -1,0 +1,178 @@
+// =========================================================
+// Detalle de una oferta + flujo de "Postularme".
+// Ruta: /ofertas/:id
+//
+// El botón de postular cambia según el estado:
+//  - No logueado     -> "Inicia sesión para postular"
+//  - Estudiante      -> "Postularme" (abre modal con carta)
+//  - Empresa         -> aviso de que las empresas no postulan
+//  - Ya postulado    -> mensaje de éxito
+// =========================================================
+import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Container, Spinner, Alert, Badge, Button, Modal, Form } from 'react-bootstrap';
+import { OfertaApi } from '../../api/OfertaApi';
+import { PostulacionApi } from '../../api/PostulacionApi';
+import { useAuth } from '../../context/AuthContext';
+import type { OfertaLaboralDetailResponse } from '../../api/types/Oferta';
+
+export default function OfertaDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
+  const [oferta, setOferta] = useState<OfertaLaboralDetailResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Estado del modal de postulación
+  const [showModal, setShowModal] = useState(false);
+  const [carta, setCarta] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [postulado, setPostulado] = useState(false);
+  const [modalError, setModalError] = useState('');
+
+  useEffect(() => {
+    let vivo = true;
+    setLoading(true);
+    OfertaApi.getById(Number(id))
+      .then((res) => vivo && setOferta(res))
+      .catch(() => vivo && setError('No se pudo cargar la oferta.'))
+      .finally(() => vivo && setLoading(false));
+    return () => {
+      vivo = false;
+    };
+  }, [id]);
+
+  async function postular() {
+    if (!oferta) return;
+    setEnviando(true);
+    setModalError('');
+    try {
+      await PostulacionApi.create({
+        ofertaLaboralId: oferta.id,
+        cartaPresentacion: carta,
+      });
+      setPostulado(true);
+      setShowModal(false);
+    } catch (err: any) {
+      // 409 = ya te postulaste antes (constraint UNIQUE user+oferta)
+      if (err?.response?.status === 409) {
+        setModalError('Ya te habías postulado a esta oferta.');
+        setPostulado(true);
+      } else {
+        setModalError(err?.response?.data?.message ?? 'No se pudo enviar la postulación.');
+      }
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner style={{ color: 'var(--brand)' }} />
+      </div>
+    );
+  }
+
+  if (error || !oferta) {
+    return (
+      <Container className="py-5" style={{ maxWidth: 720 }}>
+        <Alert variant="danger">{error || 'Oferta no encontrada.'}</Alert>
+        <Link to="/ofertas" className="brand-link">← Volver a ofertas</Link>
+      </Container>
+    );
+  }
+
+  const esEstudiante = isAuthenticated && user?.type === 'ESTUDIANTE';
+  const esEmpresa = isAuthenticated && user?.type === 'EMPRESA';
+
+  return (
+    <Container className="py-5" style={{ maxWidth: 720 }}>
+      <Link to="/ofertas" className="brand-link" style={{ fontSize: 14 }}>← Volver a ofertas</Link>
+
+      <div className="d-flex justify-content-between align-items-start mt-3">
+        <div>
+          <h3 style={{ fontWeight: 600, margin: 0 }}>{oferta.title}</h3>
+          <p className="text-secondary mt-1 mb-0">{oferta.companyName} · {oferta.ubicacion}</p>
+        </div>
+        <Badge bg="info">{oferta.modalidad}</Badge>
+      </div>
+
+      <hr />
+
+      <h6 className="text-secondary">Descripción</h6>
+      <p style={{ whiteSpace: 'pre-line' }}>{oferta.description}</p>
+
+      {oferta.skills.length > 0 && (
+        <>
+          <h6 className="text-secondary mt-4">Habilidades requeridas</h6>
+          <div className="d-flex flex-wrap gap-1">
+            {oferta.skills.map((s) => (
+              <Badge key={s.id} bg="light" text="dark" style={{ fontWeight: 400 }}>{s.name}</Badge>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="d-flex gap-4 mt-4" style={{ fontSize: 14 }}>
+        {(oferta.minSalary != null || oferta.maxSalary != null) && (
+          <div>
+            <div className="text-secondary" style={{ fontSize: 12 }}>Salario</div>
+            <div>S/ {(oferta.minSalary ?? oferta.maxSalary)!.toLocaleString()}
+              {oferta.maxSalary != null && oferta.minSalary != null && ` - ${oferta.maxSalary.toLocaleString()}`}
+            </div>
+          </div>
+        )}
+        {oferta.minRequiredScore != null && (
+          <div>
+            <div className="text-secondary" style={{ fontSize: 12 }}>Score mínimo</div>
+            <div>{oferta.minRequiredScore}</div>
+          </div>
+        )}
+      </div>
+
+      <hr className="my-4" />
+
+      {/* Zona de postulación */}
+      {postulado ? (
+        <Alert variant="success">✅ ¡Postulación enviada! Revisa su estado en tu panel.</Alert>
+      ) : esEstudiante ? (
+        <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Postularme</Button>
+      ) : esEmpresa ? (
+        <Alert variant="secondary">Las cuentas de empresa no pueden postularse a ofertas.</Alert>
+      ) : (
+        <Button variant="primary" size="lg" onClick={() => navigate('/login')}>
+          Inicia sesión para postular
+        </Button>
+      )}
+
+      {/* Modal de postulación */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: 18 }}>Postularme a {oferta.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {modalError && <Alert variant="danger" className="py-2">{modalError}</Alert>}
+          <Form.Group>
+            <Form.Label style={{ fontSize: 14 }}>Carta de presentación (opcional)</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={5}
+              value={carta}
+              onChange={(e) => setCarta(e.target.value)}
+              placeholder="Cuéntale a la empresa por qué eres un buen candidato..."
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
+          <Button variant="primary" onClick={postular} disabled={enviando}>
+            {enviando ? <Spinner size="sm" /> : 'Enviar postulación'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
+  );
+}
