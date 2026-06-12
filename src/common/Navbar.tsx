@@ -29,6 +29,9 @@ export default function Navbar() {
           {isAuthenticated && !esEmpresa && (
             <Nav.Link as={Link} to="/evaluaciones">Evaluaciones</Nav.Link>
           )}
+          {isAuthenticated && !esEmpresa && (
+            <Nav.Link as={Link} to="/mis-postulaciones">Mis postulaciones</Nav.Link>
+          )}
           {isAuthenticated && esEmpresa && (
             <Nav.Link as={Link} to="/empresa/ofertas">Mis ofertas</Nav.Link>
           )}
@@ -37,7 +40,7 @@ export default function Navbar() {
         <Nav className="align-items-center gap-2">
           {isAuthenticated ? (
             <>
-              <span className="text-secondary me-2">Hola, {user?.firstName}</span>
+              <Nav.Link as={Link} to="/perfil" className="text-secondary me-2 p-0">Hola, {user?.firstName}</Nav.Link>
               <Button as={Link as any} to="/dashboard" variant="outline-secondary" size="sm">Mi panel</Button>
               <Button variant="outline-secondary" size="sm" onClick={handleLogout}>Salir</Button>
             </>

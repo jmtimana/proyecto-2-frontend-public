@@ -53,3 +53,19 @@ export interface OfertaLaboralCreateRequest {
   scoreMinimoRequerido?: number;
   habilidadIds?: number[];
 }
+
+// Lo que enviamos al EDITAR -> PUT /ofertas-laborales/{id}
+// Todos los campos son opcionales: el backend hace una actualización
+// parcial (solo cambia lo que mandes). A diferencia de crear, aquí SÍ
+// podemos mandar "estado" para activar / pausar / cerrar la oferta.
+export interface OfertaLaboralUpdateRequest {
+  titulo?: string;
+  descripcion?: string;
+  ubicacion?: string;
+  modalidad?: string;
+  salarioMin?: number;
+  salarioMax?: number;
+  scoreMinimoRequerido?: number;
+  estado?: string; // ACTIVA | CERRADA | PAUSADA
+  habilidadIds?: number[];
+}

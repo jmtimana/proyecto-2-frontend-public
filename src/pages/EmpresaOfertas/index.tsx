@@ -1,13 +1,13 @@
 // =========================================================
 // "Mis ofertas" (empresa). Lista las ofertas de esta empresa,
-// con un botón para publicar una nueva y otro para ver los
-// postulantes de cada una.
+// con botones para: publicar una nueva, ver postulantes,
+// EDITAR y ELIMINAR cada oferta.
 //
 // Nota: como no hay endpoint propio de "mis ofertas", traemos
 // todas y filtramos por empresaUserId en el frontend.
 // =========================================================
 import { useEffect, useState } from 'react';
-import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
+import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { OfertaApi } from '../../api/OfertaApi';
 import { useAuth } from '../../context/AuthContext';
@@ -25,19 +25,43 @@ export default function EmpresaOfertas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    let vivo = true;
+  // Estado del modal de "¿Seguro que quieres eliminar?".
+  const [aEliminar, setAEliminar] = useState<OfertaLaboralResponse | null>(null);
+  const [eliminando, setEliminando] = useState(false);
+  const [errorEliminar, setErrorEliminar] = useState('');
+
+  // Función para (re)cargar la lista. La separamos para poder
+  // llamarla otra vez después de eliminar.
+  function cargar() {
+    setLoading(true);
+    setError('');
     OfertaApi.list({ size: 200 })
       .then((res) => {
-        if (!vivo) return;
         setOfertas(res.content.filter((o) => o.empresaUserId === user?.userId));
       })
-      .catch(() => vivo && setError('No se pudieron cargar tus ofertas.'))
-      .finally(() => vivo && setLoading(false));
-    return () => {
-      vivo = false;
-    };
+      .catch(() => setError('No se pudieron cargar tus ofertas.'))
+      .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    cargar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.userId]);
+
+  async function confirmarEliminar() {
+    if (!aEliminar) return;
+    setEliminando(true);
+    setErrorEliminar('');
+    try {
+      await OfertaApi.remove(aEliminar.id);
+      setAEliminar(null);
+      cargar(); // refrescamos la lista
+    } catch (err: any) {
+      setErrorEliminar(err?.response?.data?.message ?? 'No se pudo eliminar la oferta.');
+    } finally {
+      setEliminando(false);
+    }
+  }
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
@@ -67,27 +91,72 @@ export default function EmpresaOfertas() {
 
       {!loading && !error && ofertas.map((o) => (
         <Card key={o.id} className="mb-3" style={{ border: '0.5px solid #e6e6ef' }}>
-          <Card.Body className="p-4 d-flex justify-content-between align-items-center">
-            <div>
-              <div className="d-flex align-items-center gap-2 mb-1">
-                <h5 className="mb-0" style={{ fontWeight: 600 }}>{o.title}</h5>
-                <Badge bg={estadoColor(o.status)}>{o.status}</Badge>
+          <Card.Body className="p-4">
+            <div className="d-flex justify-content-between align-items-start gap-3">
+              <div>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <h5 className="mb-0" style={{ fontWeight: 600 }}>{o.title}</h5>
+                  <Badge bg={estadoColor(o.status)}>{o.status}</Badge>
+                </div>
+                <p className="text-secondary mb-0" style={{ fontSize: 14 }}>
+                  {o.ubicacion} · {o.modalidad} · {o.applicationsCount} postulante(s)
+                </p>
               </div>
-              <p className="text-secondary mb-0" style={{ fontSize: 14 }}>
-                {o.ubicacion} · {o.modalidad} · {o.applicationsCount} postulante(s)
-              </p>
             </div>
-            <Button
-              as={Link as any}
-              to={`/empresa/ofertas/${o.id}/postulantes`}
-              variant="outline-secondary"
-              size="sm"
-            >
-              Ver postulantes
-            </Button>
+
+            {/* Botones de acción */}
+            <div className="d-flex gap-2 mt-3 flex-wrap">
+              <Button
+                as={Link as any}
+                to={`/empresa/ofertas/${o.id}/postulantes`}
+                variant="outline-secondary"
+                size="sm"
+              >
+                Ver postulantes
+              </Button>
+              <Button
+                as={Link as any}
+                to={`/empresa/ofertas/${o.id}/editar`}
+                variant="outline-secondary"
+                size="sm"
+              >
+                Editar
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => { setAEliminar(o); setErrorEliminar(''); }}
+              >
+                Eliminar
+              </Button>
+            </div>
           </Card.Body>
         </Card>
       ))}
+
+      {/* Modal de confirmación de borrado */}
+      <Modal show={!!aEliminar} onHide={() => !eliminando && setAEliminar(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: 18 }}>Eliminar oferta</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {errorEliminar && <Alert variant="danger">{errorEliminar}</Alert>}
+          <p className="mb-1">
+            ¿Seguro que quieres eliminar <strong>{aEliminar?.title}</strong>?
+          </p>
+          <p className="text-secondary mb-0" style={{ fontSize: 14 }}>
+            Esta acción no se puede deshacer.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={() => setAEliminar(null)} disabled={eliminando}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={confirmarEliminar} disabled={eliminando}>
+            {eliminando ? <Spinner size="sm" /> : 'Sí, eliminar'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

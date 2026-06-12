@@ -48,3 +48,20 @@ export interface ScoreResponse {
   totalScore: number;
   level: string;
 }
+
+// Lo que enviamos al EDITAR mi perfil -> PUT /users/me
+// OJO: campos en ESPAÑOL (así los espera tu backend). Todos opcionales.
+export interface UserUpdateRequest {
+  nombre?: string;
+  apellido?: string;
+  githubUsername?: string;
+}
+
+// Lo que enviamos al EDITAR mi empresa -> PUT /empresas/me
+// También en ESPAÑOL. Solo aplica a usuarios tipo EMPRESA.
+export interface EmpresaUpdateRequest {
+  razonSocial?: string;
+  sector?: string;
+  descripcion?: string;
+  web?: string;
+}

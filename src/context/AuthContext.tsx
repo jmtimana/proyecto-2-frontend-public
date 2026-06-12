@@ -40,6 +40,9 @@ interface AuthContextValue {
   login: (payload: LoginRequest) => Promise<void>;
   register: (payload: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
+  // Actualiza algunos campos del usuario en memoria (ej. tras editar el perfil),
+  // para que la Navbar y demás lo reflejen sin tener que volver a iniciar sesión.
+  updateSessionUser: (partial: Partial<SessionUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -99,6 +102,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  // Mezcla campos nuevos en el usuario actual (y los guarda en localStorage).
+  function updateSessionUser(partial: Partial<SessionUser>) {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...partial };
+      localStorage.setItem('sm_user', JSON.stringify(next));
+      return next;
+    });
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -108,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        updateSessionUser,
       }}
     >
       {children}
