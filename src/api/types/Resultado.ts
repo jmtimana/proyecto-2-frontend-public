@@ -1,15 +1,15 @@
-// Coincide con ResultadoResponse del backend.
+// Resultado = un "intento" de evaluación del usuario.
 export interface ResultadoResponse {
   id: number;
   userId: number;
   evaluacionId: number;
   evaluationTitle: string;
-  obtainedScore: number | null;
-  maxScore: number | null;
-  percentage: number | null;
-  status: string; // EN_PROGRESO | COMPLETADA | ABANDONADA
-  startDate: string | null;
-  endDate: string | null;
+  obtainedScore: number;
+  maxScore: number;
+  percentage?: number | null;
+  status: string; // EN_PROGRESO | COMPLETADA | ...
+  startDate: string;
+  endDate?: string | null;
+  totalTimeSeconds?: number | null;
   attempts: number;
-  totalTimeSeconds: number | null;
 }

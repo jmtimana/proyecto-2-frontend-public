@@ -13,6 +13,7 @@ import ConectarGitHub from './pages/ConectarGitHub';
 import Evaluaciones from './pages/Evaluaciones';
 import EvaluacionDetail from './pages/EvaluacionDetail';
 import RendirEvaluacion from './pages/RendirEvaluacion';
+import MisResultados from './pages/MisResultados';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleRoute from './components/RoleRoute';
 
@@ -32,6 +33,7 @@ export default function Router() {
       <Route path="/evaluaciones" element={<ProtectedRoute><Evaluaciones /></ProtectedRoute>} />
       <Route path="/evaluaciones/:id" element={<ProtectedRoute><EvaluacionDetail /></ProtectedRoute>} />
       <Route path="/evaluaciones/:id/rendir" element={<ProtectedRoute><RendirEvaluacion /></ProtectedRoute>} />
+      <Route path="/mis-resultados" element={<ProtectedRoute><MisResultados /></ProtectedRoute>} />
 
       {/* Rutas solo de EMPRESA */}
       <Route path="/empresa/ofertas" element={<RoleRoute role="ROLE_EMPRESA"><EmpresaOfertas /></RoleRoute>} />

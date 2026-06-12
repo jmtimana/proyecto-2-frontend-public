@@ -1,11 +1,12 @@
 // =========================================================
 // Lista de evaluaciones disponibles (requiere sesión).
-// Mismo patrón de estados (cargando/error/vacío/datos) + paginación.
+// Las que ya completaste salen como "Completado" y bloqueadas.
 // =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
+import { ResultadoApi } from '../../api/ResultadoApi';
 import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
 
@@ -25,6 +26,8 @@ function tiempo(segundos: number | null) {
 
 export default function Evaluaciones() {
   const [data, setData] = useState<Page<EvaluacionResponse> | null>(null);
+  // Set con los ids de evaluaciones que el usuario ya completó.
+  const [completadas, setCompletadas] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,8 +36,18 @@ export default function Evaluaciones() {
     let vivo = true;
     setLoading(true);
     setError('');
-    EvaluacionApi.list(page, PAGE_SIZE)
-      .then((res) => vivo && setData(res))
+    // Pedimos evaluaciones y resultados a la vez.
+    Promise.all([EvaluacionApi.list(page, PAGE_SIZE), ResultadoApi.list(0, 50)])
+      .then(([evs, resultados]) => {
+        if (!vivo) return;
+        setData(evs);
+        const hechas = new Set(
+          resultados.content
+            .filter((r) => r.status === 'COMPLETADA')
+            .map((r) => r.evaluacionId)
+        );
+        setCompletadas(hechas);
+      })
       .catch(() => vivo && setError('No se pudieron cargar las evaluaciones.'))
       .finally(() => vivo && setLoading(false));
     return () => {
@@ -42,9 +55,63 @@ export default function Evaluaciones() {
     };
   }, [page]);
 
+  // Tarjeta interna (con o sin enlace según esté completada).
+  function TarjetaEval({ ev }: { ev: EvaluacionResponse }) {
+    const hecha = completadas.has(ev.id);
+    const contenido = (
+      <Card
+        className="mb-3"
+        style={{
+          border: '0.5px solid #e6e6ef',
+          cursor: hecha ? 'default' : 'pointer',
+          opacity: hecha ? 0.7 : 1,
+          background: hecha ? '#fafafa' : '#fff',
+        }}
+      >
+        <Card.Body className="p-4">
+          <div className="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 className="mb-1" style={{ fontWeight: 600 }}>{ev.title}</h5>
+              <p className="text-secondary mb-2" style={{ fontSize: 14 }}>{ev.description}</p>
+            </div>
+            {hecha ? (
+              <Badge bg="success">✓ Completado</Badge>
+            ) : (
+              <Badge bg={dificultadColor(ev.difficulty)}>{ev.difficulty}</Badge>
+            )}
+          </div>
+          <div className="d-flex gap-3 text-secondary" style={{ fontSize: 13 }}>
+            {tiempo(ev.timeLimitSeconds) && <span>⏱ {tiempo(ev.timeLimitSeconds)}</span>}
+            {ev.maxScore != null && <span>🎯 {ev.maxScore} pts</span>}
+            {ev.skills.length > 0 && <span>🏷 {ev.skills.map((s) => s.name).join(', ')}</span>}
+          </div>
+          {hecha && (
+            <div className="mt-2" style={{ fontSize: 12, color: '#198754' }}>
+              Ya rendiste esta evaluación. Revisa tu nota en{' '}
+              <Link to="/mis-resultados" className="brand-link">Mis resultados</Link>.
+            </div>
+          )}
+        </Card.Body>
+      </Card>
+    );
+
+    // Si ya está completada, NO es un enlace (no se puede volver a entrar).
+    if (hecha) return contenido;
+    return (
+      <Link to={`/evaluaciones/${ev.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        {contenido}
+      </Link>
+    );
+  }
+
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
-      <h3 style={{ fontWeight: 600 }} className="mb-1">Evaluaciones</h3>
+      <div className="d-flex justify-content-between align-items-center mb-1">
+        <h3 style={{ fontWeight: 600, margin: 0 }}>Evaluaciones</h3>
+        <Button as={Link as any} to="/mis-resultados" variant="outline-secondary" size="sm">
+          📊 Mis resultados
+        </Button>
+      </div>
       <p className="text-secondary mb-4">Rinde evaluaciones técnicas para subir tu SkillMatch Score.</p>
 
       {loading && <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>}
@@ -60,26 +127,7 @@ export default function Evaluaciones() {
 
       {!loading && !error && data && !data.empty && (
         <>
-          {data.content.map((ev) => (
-            <Link key={ev.id} to={`/evaluaciones/${ev.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Card className="mb-3" style={{ border: '0.5px solid #e6e6ef', cursor: 'pointer' }}>
-                <Card.Body className="p-4">
-                  <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h5 className="mb-1" style={{ fontWeight: 600 }}>{ev.title}</h5>
-                      <p className="text-secondary mb-2" style={{ fontSize: 14 }}>{ev.description}</p>
-                    </div>
-                    <Badge bg={dificultadColor(ev.difficulty)}>{ev.difficulty}</Badge>
-                  </div>
-                  <div className="d-flex gap-3 text-secondary" style={{ fontSize: 13 }}>
-                    {tiempo(ev.timeLimitSeconds) && <span>⏱ {tiempo(ev.timeLimitSeconds)}</span>}
-                    {ev.maxScore != null && <span>🎯 {ev.maxScore} pts</span>}
-                    {ev.skills.length > 0 && <span>🏷 {ev.skills.map((s) => s.name).join(', ')}</span>}
-                  </div>
-                </Card.Body>
-              </Card>
-            </Link>
-          ))}
+          {data.content.map((ev) => <TarjetaEval key={ev.id} ev={ev} />)}
 
           <div className="d-flex justify-content-between align-items-center mt-4">
             <Button variant="outline-secondary" size="sm" disabled={data.first} onClick={() => setPage((p) => p - 1)}>← Anterior</Button>

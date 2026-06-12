@@ -53,6 +53,7 @@ function PreguntaCard({
   // Para cancelar el polling si el componente se desmonta.
   const vivo = useRef(true);
   useEffect(() => {
+    vivo.current = true; // <- clave: re-activar al montar (arregla el bug de StrictMode)
     return () => {
       vivo.current = false;
     };
@@ -260,10 +261,11 @@ export default function RendirEvaluacion() {
           {preguntas.map((q, i) => (
             <PreguntaCard key={q.id} pregunta={q} numero={i + 1} evaluacionId={evalId} />
           ))}
-          <Alert variant="light" className="text-center" style={{ border: '0.5px solid #e6e6ef' }}>
-            Cuando termines, revisa tu puntaje en{' '}
-            <Link to="/dashboard" className="brand-link">tu panel</Link>.
-          </Alert>
+          <div className="text-center mt-4">
+            <Button as={Link as any} to="/mis-resultados" variant="outline-secondary">
+              📊 Ver mis resultados
+            </Button>
+          </div>
         </div>
       )}
     </Container>
