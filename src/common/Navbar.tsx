@@ -35,6 +35,9 @@ export default function Navbar() {
           {isAuthenticated && esEmpresa && (
             <Nav.Link as={Link} to="/empresa/ofertas">Mis ofertas</Nav.Link>
           )}
+          {isAuthenticated && esEmpresa && (
+            <Nav.Link as={Link} to="/empresa/candidatos">Buscar candidatos</Nav.Link>
+          )}
         </Nav>
 
         <Nav className="align-items-center gap-2">

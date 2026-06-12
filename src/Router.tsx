@@ -10,6 +10,7 @@ import EmpresaOfertas from './pages/EmpresaOfertas';
 import CrearOferta from './pages/CrearOferta';
 import EditarOferta from './pages/EditarOferta';
 import Postulantes from './pages/Postulantes';
+import BuscarCandidatos from './pages/BuscarCandidatos';
 import MisPostulaciones from './pages/MisPostulaciones';
 import MiPerfil from './pages/MiPerfil';
 import ConectarGitHub from './pages/ConectarGitHub';
@@ -45,6 +46,7 @@ export default function Router() {
       <Route path="/empresa/ofertas/nueva" element={<RoleRoute role="ROLE_EMPRESA"><CrearOferta /></RoleRoute>} />
       <Route path="/empresa/ofertas/:id/editar" element={<RoleRoute role="ROLE_EMPRESA"><EditarOferta /></RoleRoute>} />
       <Route path="/empresa/ofertas/:id/postulantes" element={<RoleRoute role="ROLE_EMPRESA"><Postulantes /></RoleRoute>} />
+      <Route path="/empresa/candidatos" element={<RoleRoute role="ROLE_EMPRESA"><BuscarCandidatos /></RoleRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

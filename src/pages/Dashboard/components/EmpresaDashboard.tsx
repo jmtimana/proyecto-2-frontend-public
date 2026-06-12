@@ -88,10 +88,12 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
             <div style={{ fontSize: 12, color: '#6b6b76' }}>Gestiona tus vacantes</div>
           </div>
         </Link>
-        <div style={{ flex: '1 1 200px', background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
-          <div style={{ fontWeight: 600 }}>🔍 Buscar candidatos</div>
-          <div style={{ fontSize: 12, color: '#6b6b76' }}>Próximamente</div>
-        </div>
+        <Link to="/empresa/candidatos" style={{ textDecoration: 'none', flex: '1 1 200px' }}>
+          <div style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
+            <div style={{ fontWeight: 600, color: '#1f2230' }}>🔍 Buscar candidatos</div>
+            <div style={{ fontSize: 12, color: '#6b6b76' }}>Encuentra talento por score</div>
+          </div>
+        </Link>
       </div>
     </>
   );
