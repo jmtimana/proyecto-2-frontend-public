@@ -11,11 +11,16 @@ import { ResultadoApi } from '../../../api/ResultadoApi';
 import { PostulacionApi } from '../../../api/PostulacionApi';
 import { OfertaApi } from '../../../api/OfertaApi';
 import type { UserDetailResponse } from '../../../api/types/User';
+import type { ResultadoResponse } from '../../../api/types/Resultado';
 import MetricCard from './MetricCard';
+import ProgresoChart from './ProgresoChart';
+import NivelBadge from '../../../common/NivelBadge';
+import { nivelDeScore } from '../../../utils/nivel';
 
 export default function StudentDashboard({ firstName }: { firstName?: string }) {
   const [me, setMe] = useState<UserDetailResponse | null>(null);
   const [evaluacionesHechas, setEvaluacionesHechas] = useState(0);
+  const [resultados, setResultados] = useState<ResultadoResponse[]>([]);
   const [postulaciones, setPostulaciones] = useState({ total: 0, pendientes: 0, aceptadas: 0, rechazadas: 0 });
   const [ofertasActivas, setOfertasActivas] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -38,6 +43,7 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
       if (resRes.status === 'fulfilled') {
         const completadas = resRes.value.content.filter((r) => r.status === 'COMPLETADA').length;
         setEvaluacionesHechas(completadas);
+        setResultados(resRes.value.content);
       }
 
       if (postRes.status === 'fulfilled') {
@@ -70,6 +76,7 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
 
   const score = me?.skillMatchScore ?? 0;
   const githubScore = me?.githubScore ?? 0;
+  const nivel = nivelDeScore(score);
   const githubConectado = !!me?.githubUsername;
 
   return (
@@ -79,21 +86,49 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
         <p className="text-secondary" style={{ margin: '2px 0 0' }}>Este es tu progreso en SkillMatch</p>
       </div>
 
-      <div style={{ background: 'var(--brand-light)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 13, color: 'var(--brand-dark)' }}>Tu SkillMatch Score</div>
-          <div style={{ fontSize: 40, fontWeight: 600, color: 'var(--brand-dark)', lineHeight: 1 }}>{score.toFixed(2)}</div>
-          <div style={{ fontSize: 12, color: 'var(--brand)', marginTop: 6 }}>
-            Score técnico {score.toFixed(2)} · GitHub {githubScore.toFixed(2)}
+      <div style={{ background: 'var(--brand-light)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+        <div className="d-flex align-items-center justify-content-between">
+          <div>
+            <div style={{ fontSize: 13, color: 'var(--brand-dark)' }}>Tu SkillMatch Score</div>
+            <div style={{ fontSize: 40, fontWeight: 600, color: 'var(--brand-dark)', lineHeight: 1 }}>{score.toFixed(2)}</div>
+            <div style={{ fontSize: 12, color: 'var(--brand)', marginTop: 6 }}>
+              Score técnico {score.toFixed(2)} · GitHub {githubScore.toFixed(2)}
+            </div>
+          </div>
+          <div className="text-center">
+            <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 4 }}>{nivel.emoji}</div>
+            <NivelBadge score={score} size="md" />
           </div>
         </div>
-        <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'var(--brand)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>🏆</div>
+
+        {/* Progreso hacia el siguiente nivel */}
+        {nivel.siguiente ? (
+          <div style={{ marginTop: 14 }}>
+            <div className="d-flex justify-content-between" style={{ fontSize: 11, color: 'var(--brand-dark)', marginBottom: 4 }}>
+              <span>Progreso a {nivel.siguiente}</span>
+              <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
+            </div>
+            <div style={{ height: 8, background: '#fff', borderRadius: 6, overflow: 'hidden' }}>
+              <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)', transition: 'width .3s' }} />
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
+            ¡Estás en el nivel máximo! 🎉
+          </div>
+        )}
       </div>
 
       <div className="d-flex gap-2 mb-4">
         <MetricCard label="Evaluaciones" value={evaluacionesHechas} />
         <MetricCard label="Postulaciones" value={postulaciones.total} />
         <MetricCard label="Ofertas activas" value={ofertasActivas} />
+      </div>
+
+      {/* Gráfico de progreso por evaluación */}
+      <div className="mb-4" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 14, padding: '1.25rem 1.5rem' }}>
+        <div style={{ fontWeight: 600, marginBottom: 8 }}>📈 Tu progreso</div>
+        <ProgresoChart resultados={resultados} />
       </div>
 
       {postulaciones.total > 0 && (

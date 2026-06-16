@@ -17,3 +17,8 @@ export const TIPO_USUARIO = {
 export const MODALIDAD = ['REMOTO', 'PRESENCIAL', 'HIBRIDO'] as const;
 export const ESTADO_OFERTA = ['ACTIVA', 'CERRADA', 'PAUSADA'] as const;
 export const DIFICULTAD = ['FACIL', 'MEDIO', 'DIFICIL'] as const;
+
+// Tipos de pregunta que maneja el backend.
+export const TIPO_PREGUNTA = ['CODIGO', 'SQL', 'LOGICA'] as const;
+// Lenguajes soportados por el editor / Piston.
+export const LENGUAJES = ['python', 'java', 'javascript', 'sql'] as const;

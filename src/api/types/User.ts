@@ -10,6 +10,13 @@ export interface HabilidadResponse {
   description: string | null;
 }
 
+// POST /habilidades (solo ADMIN) -> campos en ESPAÑOL.
+export interface HabilidadCreateRequest {
+  nombre: string;
+  categoria?: string;
+  descripcion?: string;
+}
+
 export interface EmpresaResponse {
   id: number;
   userId: number;
@@ -33,6 +40,7 @@ export interface UserResponse {
   githubScore: number | null;
   githubUsername: string | null;
   githubConnectedAt: string | null;
+  bio: string | null;
   createdAt: string;
 }
 

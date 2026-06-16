@@ -4,12 +4,14 @@
 import { Navbar as BsNavbar, Container, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
   const esEmpresa = user?.type === 'EMPRESA';
+  const esAdmin = user?.roles.includes('ROLE_ADMIN') ?? false;
 
   async function handleLogout() {
     await logout();
@@ -32,17 +34,27 @@ export default function Navbar() {
           {isAuthenticated && !esEmpresa && (
             <Nav.Link as={Link} to="/mis-postulaciones">Mis postulaciones</Nav.Link>
           )}
+          {isAuthenticated && !esEmpresa && (
+            <Nav.Link as={Link} to="/ofertas-guardadas">Guardadas</Nav.Link>
+          )}
+          {isAuthenticated && !esEmpresa && (
+            <Nav.Link as={Link} to="/leaderboard">Ranking</Nav.Link>
+          )}
           {isAuthenticated && esEmpresa && (
             <Nav.Link as={Link} to="/empresa/ofertas">Mis ofertas</Nav.Link>
           )}
           {isAuthenticated && esEmpresa && (
             <Nav.Link as={Link} to="/empresa/candidatos">Buscar candidatos</Nav.Link>
           )}
+          {isAuthenticated && esAdmin && (
+            <Nav.Link as={Link} to="/admin/evaluaciones" style={{ color: 'var(--brand)', fontWeight: 500 }}>Admin</Nav.Link>
+          )}
         </Nav>
 
         <Nav className="align-items-center gap-2">
           {isAuthenticated ? (
             <>
+              <NotificationBell />
               <Nav.Link as={Link} to="/perfil" className="text-secondary me-2 p-0">Hola, {user?.firstName}</Nav.Link>
               <Button as={Link as any} to="/dashboard" variant="outline-secondary" size="sm">Mi panel</Button>
               <Button variant="outline-secondary" size="sm" onClick={handleLogout}>Salir</Button>

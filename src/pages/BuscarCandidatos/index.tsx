@@ -6,9 +6,11 @@
 // =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Spinner, Alert, Card, Badge } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { UserApi } from '../../api/UserApi';
 import type { Page } from '../../api/types/Page';
 import type { UserResponse } from '../../api/types/User';
+import NivelBadge from '../../common/NivelBadge';
 
 const PAGE_SIZE = 10;
 
@@ -142,17 +144,22 @@ export default function BuscarCandidatos() {
                     <div>
                       <div style={{ fontWeight: 600 }}>{u.firstName} {u.lastName}</div>
                       <div className="text-secondary" style={{ fontSize: 13 }}>{u.email}</div>
-                      {u.githubUsername && (
-                        <a
-                          href={`https://github.com/${u.githubUsername}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="brand-link"
-                          style={{ fontSize: 12 }}
-                        >
-                          🐙 {u.githubUsername}
-                        </a>
-                      )}
+                      <div className="d-flex gap-2 align-items-center mt-1">
+                        <Link to={`/candidatos/${u.id}`} className="brand-link" style={{ fontSize: 12, fontWeight: 500 }}>
+                          Ver perfil →
+                        </Link>
+                        {u.githubUsername && (
+                          <a
+                            href={`https://github.com/${u.githubUsername}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="brand-link"
+                            style={{ fontSize: 12 }}
+                          >
+                            🐙 {u.githubUsername}
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="text-end" style={{ flexShrink: 0 }}>
@@ -160,6 +167,7 @@ export default function BuscarCandidatos() {
                     <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--brand-dark)' }}>
                       {(u.skillMatchScore ?? 0).toFixed(2)}
                     </div>
+                    <div className="mt-1"><NivelBadge score={u.skillMatchScore} /></div>
                   </div>
                 </Card.Body>
               </Card>

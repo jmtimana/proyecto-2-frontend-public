@@ -12,6 +12,8 @@ import { Container, Card, Form, Button, Row, Col, Alert, Spinner, Badge } from '
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import type { UserDetailResponse } from '../../api/types/User';
+import NivelBadge from '../../common/NivelBadge';
+import { nivelDeScore } from '../../utils/nivel';
 
 export default function MiPerfil() {
   const { updateSessionUser } = useAuth();
@@ -165,12 +167,33 @@ export default function MiPerfil() {
                 <div style={{ fontSize: 28, fontWeight: 600, color: 'var(--brand-dark)' }}>
                   {(me.skillMatchScore ?? 0).toFixed(2)}
                 </div>
+                <div className="mt-1"><NivelBadge score={me.skillMatchScore} size="md" /></div>
               </div>
               <div className="text-end">
                 <div className="text-secondary" style={{ fontSize: 13 }}>Score GitHub</div>
                 <div style={{ fontSize: 28, fontWeight: 600 }}>{(me.githubScore ?? 0).toFixed(2)}</div>
               </div>
             </div>
+
+            {/* Progreso al siguiente nivel */}
+            {(() => {
+              const nivel = nivelDeScore(me.skillMatchScore);
+              return nivel.siguiente ? (
+                <div style={{ marginTop: 14 }}>
+                  <div className="d-flex justify-content-between text-secondary" style={{ fontSize: 11, marginBottom: 4 }}>
+                    <span>Progreso a {nivel.siguiente}</span>
+                    <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
+                  </div>
+                  <div style={{ height: 8, background: '#eee', borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)' }} />
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
+                  ¡Estás en el nivel máximo! 🎉
+                </div>
+              );
+            })()}
             {me.skills && me.skills.length > 0 && (
               <div className="mt-3 d-flex flex-wrap gap-2">
                 {me.skills.map((s) => (

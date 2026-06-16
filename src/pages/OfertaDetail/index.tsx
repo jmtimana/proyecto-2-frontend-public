@@ -13,6 +13,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Button, Modal, Form } from 'react-bootstrap';
 import { OfertaApi } from '../../api/OfertaApi';
 import { PostulacionApi } from '../../api/PostulacionApi';
+import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import type { OfertaLaboralDetailResponse } from '../../api/types/Oferta';
 
@@ -31,6 +32,20 @@ export default function OfertaDetail() {
   const [enviando, setEnviando] = useState(false);
   const [postulado, setPostulado] = useState(false);
   const [modalError, setModalError] = useState('');
+
+  // Score del estudiante, para mostrar si cumple el mínimo de esta oferta.
+  const [miScore, setMiScore] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated || user?.type !== 'ESTUDIANTE') return;
+    let vivo = true;
+    UserApi.me()
+      .then((u) => vivo && setMiScore(u.skillMatchScore ?? 0))
+      .catch(() => {});
+    return () => {
+      vivo = false;
+    };
+  }, [isAuthenticated, user?.type]);
 
   useEffect(() => {
     let vivo = true;
@@ -134,6 +149,21 @@ export default function OfertaDetail() {
       </div>
 
       <hr className="my-4" />
+
+      {/* Aviso de match: ¿el estudiante cumple el score mínimo? */}
+      {esEstudiante && oferta.minRequiredScore != null && miScore != null && (
+        miScore >= oferta.minRequiredScore ? (
+          <Alert variant="success" className="py-2">
+            ✓ <strong>Cumples el score mínimo.</strong> Tu score es {miScore.toFixed(2)} y esta oferta pide {oferta.minRequiredScore}.
+          </Alert>
+        ) : (
+          <Alert variant="warning" className="py-2">
+            Te faltan <strong>{(oferta.minRequiredScore - miScore).toFixed(2)}</strong> para alcanzar el score mínimo
+            (tu score: {miScore.toFixed(2)}, requerido: {oferta.minRequiredScore}). Aún puedes postularte, pero rinde más
+            evaluaciones para mejorar tus chances.
+          </Alert>
+        )
+      )}
 
       {/* Zona de postulación */}
       {postulado ? (

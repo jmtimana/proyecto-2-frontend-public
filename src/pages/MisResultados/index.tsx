@@ -65,8 +65,13 @@ export default function MisResultados() {
                 style={{ height: 6 }}
                 variant={pct >= 60 ? 'success' : pct > 0 ? 'warning' : 'secondary'}
               />
-              <div className="text-secondary mt-2" style={{ fontSize: 12 }}>
-                Intentos: {r.attempts} · Iniciada: {new Date(r.startDate).toLocaleDateString()}
+              <div className="d-flex justify-content-between align-items-center mt-2">
+                <span className="text-secondary" style={{ fontSize: 12 }}>
+                  Intentos: {r.attempts} · Iniciada: {new Date(r.startDate).toLocaleDateString()}
+                </span>
+                <Link to={`/mis-resultados/${r.evaluacionId}`} className="brand-link" style={{ fontSize: 13, fontWeight: 500 }}>
+                  Ver detalle →
+                </Link>
               </div>
             </Card.Body>
           </Card>

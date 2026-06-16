@@ -32,4 +32,10 @@ export const UserApi = {
   // (lo usa la empresa para encontrar talento). Devuelve una página de usuarios.
   search: (params: UserSearchParams) =>
     api.get<Page<UserResponse>>('/users/search', { params }).then((r) => r.data),
+
+  // GET /users/{id} -> perfil público de un usuario (lo usa la empresa para ver candidatos)
+  getById: (id: number) => api.get<UserResponse>(`/users/${id}`).then((r) => r.data),
+
+  // GET /users/leaderboard -> top 10 estudiantes por SkillMatch Score
+  leaderboard: () => api.get<UserResponse[]>('/users/leaderboard').then((r) => r.data),
 };

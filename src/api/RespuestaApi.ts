@@ -10,4 +10,8 @@ export const RespuestaApi = {
   // GET /respuestas/{id} -> consulta el estado (PENDIENTE/CORRECTA/INCORRECTA/ERROR)
   getById: (id: number) =>
     api.get<RespuestaResponse>(`/respuestas/${id}`).then((r) => r.data),
+
+  // GET /respuestas/evaluacion/{evaluacionId} -> todas mis respuestas de esa evaluación
+  byEvaluacion: (evaluacionId: number) =>
+    api.get<RespuestaResponse[]>(`/respuestas/evaluacion/${evaluacionId}`).then((r) => r.data),
 };

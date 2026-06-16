@@ -47,3 +47,42 @@ export interface EvaluacionDetailResponse {
   questions: PreguntaResponse[];
   createdAt: string;
 }
+
+// ===== Requests usados por la UI de ADMIN (campos en ESPAÑOL) =====
+
+// POST /evaluaciones
+export interface EvaluacionCreateRequest {
+  titulo: string;
+  descripcion: string;
+  tipo: string;                  // ej. PROGRAMACION
+  dificultad: string;            // FACIL | MEDIO | DIFICIL
+  tiempoLimiteSegundos?: number;
+  puntajeMaximo?: number;
+  activa: boolean;
+  habilidadIds?: number[];
+}
+
+// PUT /evaluaciones/{id} -> actualización parcial (solo lo que cambie)
+export interface EvaluacionUpdateRequest {
+  titulo?: string;
+  descripcion?: string;
+  tipo?: string;
+  dificultad?: string;
+  tiempoLimiteSegundos?: number;
+  puntajeMaximo?: number;
+  activa?: boolean;
+  habilidadIds?: number[];
+}
+
+// POST /evaluaciones/{id}/preguntas
+// OJO: "solucionEsperada" es la salida EXACTA que se compara (trim a trim)
+// contra el stdout del código del estudiante. "casosDePrueba" no se usa.
+export interface PreguntaCreateRequest {
+  enunciado: string;
+  tipoPregunta: string;          // CODIGO | SQL | LOGICA
+  lenguaje?: string;             // python | java | javascript | sql
+  codigoPlantilla?: string;
+  solucionEsperada: string;
+  puntaje: number;
+  orden: number;
+}
