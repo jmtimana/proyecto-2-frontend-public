@@ -13,7 +13,7 @@ export default function Dashboard() {
   const esEmpresa = user?.type === 'EMPRESA';
 
   return (
-    <Container className="py-5" style={{ maxWidth: 720 }}>
+    <Container className="py-5" style={{ maxWidth: 980 }}>
       {esEmpresa ? (
         <EmpresaDashboard firstName={user?.firstName} userId={user?.userId} />
       ) : (

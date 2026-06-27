@@ -1,6 +1,93 @@
-// La página de inicio pública. Por ahora solo muestra el Hero.
+// =========================================================
+// Página de inicio pública. Ahora con varias secciones para
+// que no se sienta vacía: hero + cómo funciona + stats +
+// ofertas destacadas. (El footer es global, va en App.)
+// =========================================================
+import { useEffect, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Hero from './components/Hero';
+import OfertaCard from '../Ofertas/components/OfertaCard';
+import { OfertaApi } from '../../api/OfertaApi';
+import type { OfertaLaboralResponse } from '../../api/types/Oferta';
+
+const PASOS = [
+  { icon: '📝', titulo: 'Rinde evaluaciones reales', desc: 'Resuelve retos de código que se ejecutan de verdad y se califican al instante.' },
+  { icon: '📊', titulo: 'Obtén tu SkillMatch Score', desc: 'Tu desempeño técnico y tu GitHub forman un score que demuestra lo que sabes.' },
+  { icon: '🤝', titulo: 'Postula y haz match', desc: 'Las empresas te encuentran por tu score y tus habilidades, no solo por tu CV.' },
+];
 
 export default function Home() {
-  return <Hero />;
+  const [destacadas, setDestacadas] = useState<OfertaLaboralResponse[]>([]);
+  const [totalOfertas, setTotalOfertas] = useState(0);
+
+  useEffect(() => {
+    // GET /ofertas-laborales es público, funciona aunque no estés logueado.
+    OfertaApi.list({ estado: 'ACTIVA', size: 3 })
+      .then((r) => {
+        setDestacadas(r.content);
+        setTotalOfertas(r.totalElements);
+      })
+      .catch(() => {});
+  }, []);
+
+  return (
+    <>
+      <Hero />
+
+      {/* Cómo funciona */}
+      <Container className="py-5 fade-up">
+        <h2 className="text-center mb-1" style={{ fontWeight: 700 }}>Cómo funciona</h2>
+        <p className="text-center text-secondary mb-5">
+          En tres pasos pasas de "lo digo en mi CV" a "lo demuestro".
+        </p>
+        <Row className="g-4">
+          {PASOS.map((p, i) => (
+            <Col md={4} key={i}>
+              <div className="lift-card text-center h-100" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 16, padding: '2rem 1.5rem' }}>
+                <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--brand-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, margin: '0 auto 14px' }}>
+                  {p.icon}
+                </div>
+                <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 6 }}>{i + 1}. {p.titulo}</div>
+                <div className="text-secondary" style={{ fontSize: 14 }}>{p.desc}</div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Container>
+
+      {/* Banda de estadísticas */}
+      <div style={{ background: 'var(--brand)', color: '#fff' }}>
+        <Container className="py-4">
+          <Row className="text-center g-3">
+            <Col xs={4}>
+              <div style={{ fontSize: 32, fontWeight: 700 }}>{totalOfertas}</div>
+              <div style={{ opacity: 0.85, fontSize: 14 }}>Ofertas activas</div>
+            </Col>
+            <Col xs={4}>
+              <div style={{ fontSize: 32, fontWeight: 700 }}>4</div>
+              <div style={{ opacity: 0.85, fontSize: 14 }}>Lenguajes</div>
+            </Col>
+            <Col xs={4}>
+              <div style={{ fontSize: 32, fontWeight: 700 }}>100%</div>
+              <div style={{ opacity: 0.85, fontSize: 14 }}>Gratis para estudiantes</div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      {/* Ofertas destacadas */}
+      {destacadas.length > 0 && (
+        <Container className="py-5 fade-up">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 style={{ fontWeight: 700, margin: 0 }}>Ofertas destacadas</h2>
+            <Link to="/ofertas" className="brand-link">Ver todas →</Link>
+          </div>
+          {destacadas.map((o) => (
+            <OfertaCard key={o.id} oferta={o} />
+          ))}
+        </Container>
+      )}
+    </>
+  );
 }

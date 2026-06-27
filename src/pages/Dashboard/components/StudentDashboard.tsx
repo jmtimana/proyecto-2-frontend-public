@@ -1,10 +1,10 @@
 // =========================================================
-// Dashboard del ESTUDIANTE.
-// Carga al montar: su perfil (score), sus resultados y sus
-// postulaciones. Calcula las métricas a partir de esos datos.
+// Dashboard del ESTUDIANTE (rediseñado: 2 columnas, ofertas
+// recomendadas, postulaciones recientes, acciones rápidas y
+// skeletons mientras carga).
 // =========================================================
 import { useEffect, useState } from 'react';
-import { Spinner } from 'react-bootstrap';
+import { Row, Col, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { UserApi } from '../../../api/UserApi';
 import { ResultadoApi } from '../../../api/ResultadoApi';
@@ -12,65 +12,65 @@ import { PostulacionApi } from '../../../api/PostulacionApi';
 import { OfertaApi } from '../../../api/OfertaApi';
 import type { UserDetailResponse } from '../../../api/types/User';
 import type { ResultadoResponse } from '../../../api/types/Resultado';
+import type { PostulacionResponse } from '../../../api/types/Postulacion';
+import type { OfertaLaboralResponse } from '../../../api/types/Oferta';
 import MetricCard from './MetricCard';
 import ProgresoChart from './ProgresoChart';
+import OfertaCard from '../../Ofertas/components/OfertaCard';
 import NivelBadge from '../../../common/NivelBadge';
+import Skeleton from '../../../common/Skeleton';
 import { nivelDeScore } from '../../../utils/nivel';
+
+const cardStyle = { background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 14 } as const;
+
+function postBadge(status: string) {
+  if (status === 'ACEPTADA') return <Badge bg="success">Aceptada</Badge>;
+  if (status === 'RECHAZADA') return <Badge bg="danger">Rechazada</Badge>;
+  return <Badge bg="warning" text="dark">Pendiente</Badge>;
+}
 
 export default function StudentDashboard({ firstName }: { firstName?: string }) {
   const [me, setMe] = useState<UserDetailResponse | null>(null);
-  const [evaluacionesHechas, setEvaluacionesHechas] = useState(0);
   const [resultados, setResultados] = useState<ResultadoResponse[]>([]);
-  const [postulaciones, setPostulaciones] = useState({ total: 0, pendientes: 0, aceptadas: 0, rechazadas: 0 });
-  const [ofertasActivas, setOfertasActivas] = useState(0);
+  const [posts, setPosts] = useState<PostulacionResponse[]>([]);
+  const [ofertas, setOfertas] = useState<OfertaLaboralResponse[]>([]);
+  const [totalOfertas, setTotalOfertas] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let vivo = true;
-
-    // Pedimos todo en paralelo. Si una falla, no rompe las demás.
     Promise.allSettled([
       UserApi.me(),
       ResultadoApi.mine(),
-      PostulacionApi.mine(),
-      OfertaApi.list({ estado: 'ACTIVA', size: 1 }),
+      PostulacionApi.mine(0, 50),
+      OfertaApi.list({ estado: 'ACTIVA', size: 20 }),
     ]).then((results) => {
       if (!vivo) return;
       const [meRes, resRes, postRes, ofRes] = results;
-
       if (meRes.status === 'fulfilled') setMe(meRes.value);
-
-      if (resRes.status === 'fulfilled') {
-        const completadas = resRes.value.content.filter((r) => r.status === 'COMPLETADA').length;
-        setEvaluacionesHechas(completadas);
-        setResultados(resRes.value.content);
+      if (resRes.status === 'fulfilled') setResultados(resRes.value.content);
+      if (postRes.status === 'fulfilled') setPosts(postRes.value.content);
+      if (ofRes.status === 'fulfilled') {
+        setOfertas(ofRes.value.content);
+        setTotalOfertas(ofRes.value.totalElements);
       }
-
-      if (postRes.status === 'fulfilled') {
-        const list = postRes.value.content;
-        setPostulaciones({
-          total: postRes.value.totalElements,
-          pendientes: list.filter((p) => p.status === 'PENDIENTE').length,
-          aceptadas: list.filter((p) => p.status === 'ACEPTADA').length,
-          rechazadas: list.filter((p) => p.status === 'RECHAZADA').length,
-        });
-      }
-
-      if (ofRes.status === 'fulfilled') setOfertasActivas(ofRes.value.totalElements);
-
       setLoading(false);
     });
-
-    return () => {
-      vivo = false;
-    };
+    return () => { vivo = false; };
   }, []);
 
+  // ----- Skeleton mientras carga -----
   if (loading) {
     return (
-      <div className="text-center py-5">
-        <Spinner style={{ color: 'var(--brand)' }} />
-      </div>
+      <>
+        <Skeleton width={220} height={28} />
+        <Skeleton width={260} height={16} style={{ marginTop: 8 }} />
+        <Skeleton height={120} radius={14} style={{ margin: '20px 0' }} />
+        <div className="d-flex gap-2 mb-4">
+          <Skeleton height={70} radius={10} /><Skeleton height={70} radius={10} /><Skeleton height={70} radius={10} />
+        </div>
+        <Skeleton height={200} radius={14} />
+      </>
     );
   }
 
@@ -78,6 +78,20 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
   const githubScore = me?.githubScore ?? 0;
   const nivel = nivelDeScore(score);
   const githubConectado = !!me?.githubUsername;
+  const evaluacionesHechas = resultados.filter((r) => r.status === 'COMPLETADA').length;
+
+  // Ofertas recomendadas: primero las que cumples, luego el resto. Top 3.
+  const recomendadas = [...ofertas]
+    .sort((a, b) => {
+      const ca = a.minRequiredScore == null || score >= a.minRequiredScore ? 0 : 1;
+      const cb = b.minRequiredScore == null || score >= b.minRequiredScore ? 0 : 1;
+      return ca - cb;
+    })
+    .slice(0, 3);
+
+  const recientes = [...posts]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 4);
 
   return (
     <>
@@ -86,86 +100,103 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
         <p className="text-secondary" style={{ margin: '2px 0 0' }}>Este es tu progreso en SkillMatch</p>
       </div>
 
-      <div style={{ background: 'var(--brand-light)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <div className="d-flex align-items-center justify-content-between">
-          <div>
-            <div style={{ fontSize: 13, color: 'var(--brand-dark)' }}>Tu SkillMatch Score</div>
-            <div style={{ fontSize: 40, fontWeight: 600, color: 'var(--brand-dark)', lineHeight: 1 }}>{score.toFixed(2)}</div>
-            <div style={{ fontSize: 12, color: 'var(--brand)', marginTop: 6 }}>
-              Score técnico {score.toFixed(2)} · GitHub {githubScore.toFixed(2)}
-            </div>
-          </div>
-          <div className="text-center">
-            <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 4 }}>{nivel.emoji}</div>
-            <NivelBadge score={score} size="md" />
-          </div>
-        </div>
-
-        {/* Progreso hacia el siguiente nivel */}
-        {nivel.siguiente ? (
-          <div style={{ marginTop: 14 }}>
-            <div className="d-flex justify-content-between" style={{ fontSize: 11, color: 'var(--brand-dark)', marginBottom: 4 }}>
-              <span>Progreso a {nivel.siguiente}</span>
-              <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
-            </div>
-            <div style={{ height: 8, background: '#fff', borderRadius: 6, overflow: 'hidden' }}>
-              <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)', transition: 'width .3s' }} />
-            </div>
-          </div>
-        ) : (
-          <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
-            ¡Estás en el nivel máximo! 🎉
-          </div>
-        )}
-      </div>
-
+      {/* Métricas */}
       <div className="d-flex gap-2 mb-4">
         <MetricCard label="Evaluaciones" value={evaluacionesHechas} />
-        <MetricCard label="Postulaciones" value={postulaciones.total} />
-        <MetricCard label="Ofertas activas" value={ofertasActivas} />
+        <MetricCard label="Postulaciones" value={posts.length} />
+        <MetricCard label="Ofertas activas" value={totalOfertas} />
       </div>
 
-      {/* Gráfico de progreso por evaluación */}
-      <div className="mb-4" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 14, padding: '1.25rem 1.5rem' }}>
-        <div style={{ fontWeight: 600, marginBottom: 8 }}>📈 Tu progreso</div>
-        <ProgresoChart resultados={resultados} />
-      </div>
+      <Row className="g-3">
+        {/* Columna izquierda: score + progreso */}
+        <Col lg={7}>
+          <div style={{ background: 'var(--brand-light)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <div style={{ fontSize: 13, color: 'var(--brand-dark)' }}>Tu SkillMatch Score</div>
+                <div style={{ fontSize: 40, fontWeight: 600, color: 'var(--brand-dark)', lineHeight: 1 }}>{score.toFixed(2)}</div>
+                <div style={{ fontSize: 12, color: 'var(--brand)', marginTop: 6 }}>
+                  Score técnico {score.toFixed(2)} · GitHub {githubScore.toFixed(2)}
+                </div>
+              </div>
+              <div className="text-center">
+                <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 4 }}>{nivel.emoji}</div>
+                <NivelBadge score={score} size="md" />
+              </div>
+            </div>
+            {nivel.siguiente ? (
+              <div style={{ marginTop: 14 }}>
+                <div className="d-flex justify-content-between" style={{ fontSize: 11, color: 'var(--brand-dark)', marginBottom: 4 }}>
+                  <span>Progreso a {nivel.siguiente}</span>
+                  <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
+                </div>
+                <div style={{ height: 8, background: '#fff', borderRadius: 6, overflow: 'hidden' }}>
+                  <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)', transition: 'width .3s' }} />
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>¡Estás en el nivel máximo! 🎉</div>
+            )}
+          </div>
 
-      {postulaciones.total > 0 && (
-        <div className="mb-4" style={{ fontSize: 14 }}>
-          <span className="text-secondary">Tus postulaciones: </span>
-          <span style={{ color: '#9a7d0a' }}>{postulaciones.pendientes} pendientes</span>
-          {' · '}
-          <span style={{ color: '#3B6D11' }}>{postulaciones.aceptadas} aceptadas</span>
-          {' · '}
-          <span style={{ color: '#a32d2d' }}>{postulaciones.rechazadas} rechazadas</span>
+          <div style={{ ...cardStyle, padding: '1.25rem 1.5rem' }}>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>📈 Tu progreso</div>
+            <ProgresoChart resultados={resultados} />
+          </div>
+        </Col>
+
+        {/* Columna derecha: acciones, github, postulaciones recientes */}
+        <Col lg={5}>
+          <div style={{ ...cardStyle, padding: '1rem 1.25rem', marginBottom: '1rem' }}>
+            <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Acciones rápidas</div>
+            <Link to="/evaluaciones" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--brand-light)', borderRadius: 10, padding: '0.7rem 1rem', marginBottom: 8 }}>
+              <span style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>🧑‍💻 Rinde una evaluación</span>
+            </Link>
+            <Link to="/ofertas" className="lift-card d-block" style={{ textDecoration: 'none', background: '#f4f4f8', borderRadius: 10, padding: '0.7rem 1rem' }}>
+              <span style={{ fontWeight: 600, color: '#1f2230' }}>💼 Explora ofertas</span>
+            </Link>
+          </div>
+
+          {!githubConectado && (
+            <Link to="/github" style={{ textDecoration: 'none' }}>
+              <div className="lift-card d-flex justify-content-between align-items-center" style={{ ...cardStyle, padding: '0.85rem 1.25rem', marginBottom: '1rem' }}>
+                <span style={{ fontSize: 14, color: '#1f2230' }}>🐙 Conecta tu GitHub</span>
+                <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Conectar →</span>
+              </div>
+            </Link>
+          )}
+
+          <div style={{ ...cardStyle, padding: '1rem 1.25rem' }}>
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <span style={{ fontWeight: 600 }}>Postulaciones recientes</span>
+              <Link to="/mis-postulaciones" className="brand-link" style={{ fontSize: 12 }}>Ver todas</Link>
+            </div>
+            {recientes.length === 0 ? (
+              <div className="text-secondary" style={{ fontSize: 13 }}>Aún no te has postulado a ninguna oferta.</div>
+            ) : (
+              recientes.map((p) => (
+                <div key={p.id} className="d-flex justify-content-between align-items-center py-1" style={{ borderTop: '0.5px solid #f0f0f4' }}>
+                  <span style={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '65%' }}>{p.offerTitle}</span>
+                  {postBadge(p.status)}
+                </div>
+              ))
+            )}
+          </div>
+        </Col>
+      </Row>
+
+      {/* Ofertas recomendadas */}
+      {recomendadas.length > 0 && (
+        <div className="mt-4">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h5 style={{ fontWeight: 600, margin: 0 }}>Ofertas recomendadas para ti</h5>
+            <Link to="/ofertas" className="brand-link" style={{ fontSize: 14 }}>Ver todas →</Link>
+          </div>
+          {recomendadas.map((o) => (
+            <OfertaCard key={o.id} oferta={o} miScore={score} />
+          ))}
         </div>
       )}
-
-      {!githubConectado && (
-        <Link to="/github" style={{ textDecoration: 'none' }}>
-          <div className="d-flex justify-content-between align-items-center mb-3" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '0.85rem 1.25rem' }}>
-            <span style={{ fontSize: 14, color: '#1f2230' }}>🐙 Conecta tu GitHub para mejorar tu score</span>
-            <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Conectar →</span>
-          </div>
-        </Link>
-      )}
-
-      <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Próximos pasos</div>
-      <div className="d-flex gap-2">
-        <Link to="/ofertas" style={{ textDecoration: 'none', flex: 1 }}>
-          <div style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
-            <div style={{ fontWeight: 600, color: '#1f2230' }}>💼 Explora ofertas</div>
-            <div style={{ fontSize: 12, color: '#6b6b76' }}>Encuentra tu próximo reto</div>
-          </div>
-        </Link>
-        <Link to="/evaluaciones" style={{ textDecoration: 'none', flex: 1 }}>
-          <div style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1rem 1.25rem' }}>
-            <div style={{ fontWeight: 600, color: '#1f2230' }}>🧑‍💻 Rinde una evaluación</div>
-            <div style={{ fontSize: 12, color: '#6b6b76' }}>Sube tu score técnico</div>
-          </div>
-        </Link>
-      </div>
     </>
   );
 }

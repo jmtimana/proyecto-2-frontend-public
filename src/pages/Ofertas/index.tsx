@@ -8,7 +8,7 @@
 // Mantiene el patrón de 4 estados: cargando / error / vacío / datos.
 // =========================================================
 import { useEffect, useMemo, useState } from 'react';
-import { Container, Spinner, Alert, Button, Form, Row, Col, Card } from 'react-bootstrap';
+import { Container, Alert, Button, Form, Row, Col, Card } from 'react-bootstrap';
 import { OfertaApi } from '../../api/OfertaApi';
 import { UserApi } from '../../api/UserApi';
 import { OfertaGuardadaApi } from '../../api/OfertaGuardadaApi';
@@ -16,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import { MODALIDAD } from '../../utils/constants';
 import OfertaCard from './components/OfertaCard';
+import Skeleton from '../../common/Skeleton';
 
 const PAGE_SIZE = 10;
 
@@ -172,8 +173,15 @@ export default function Ofertas() {
 
       {/* Estado: cargando */}
       {loading && (
-        <div className="text-center py-5">
-          <Spinner style={{ color: 'var(--brand)' }} />
+        <div>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem' }}>
+              <Skeleton width="55%" height={20} />
+              <Skeleton width="35%" height={14} style={{ marginTop: 8 }} />
+              <Skeleton width="100%" height={12} style={{ marginTop: 14 }} />
+              <Skeleton width="80%" height={12} style={{ marginTop: 6 }} />
+            </div>
+          ))}
         </div>
       )}
 

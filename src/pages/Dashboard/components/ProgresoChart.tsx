@@ -1,12 +1,9 @@
 // =========================================================
-// Gráfico de línea (SVG puro, sin librerías) con el % obtenido
-// en cada evaluación COMPLETADA, en orden cronológico.
-// Muestra cómo evoluciona el desempeño del estudiante.
+// Gráfico de BARRAS (sin librerías) con el % obtenido en cada
+// evaluación COMPLETADA, en orden cronológico. Las barras se ven
+// bien incluso con un solo dato (a diferencia de una línea).
 // =========================================================
 import type { ResultadoResponse } from '../../../api/types/Resultado';
-
-const BRAND = '#534AB7';
-const BRAND_DARK = '#3b3490';
 
 export default function ProgresoChart({ resultados }: { resultados: ResultadoResponse[] }) {
   const datos = [...resultados]
@@ -19,46 +16,38 @@ export default function ProgresoChart({ resultados }: { resultados: ResultadoRes
 
   if (datos.length === 0) {
     return (
-      <div className="text-center text-secondary py-3" style={{ fontSize: 13 }}>
-        Aún no tienes evaluaciones completadas. ¡Rinde una para ver tu progreso!
+      <div className="text-center text-secondary py-4">
+        <div style={{ fontSize: 34 }}>📈</div>
+        <div style={{ fontSize: 13, marginTop: 4 }}>
+          Aún no tienes evaluaciones completadas.<br />¡Rinde una para ver tu progreso aquí!
+        </div>
       </div>
     );
   }
 
-  const W = 320;
-  const H = 150;
-  const P = 26; // padding interno
-  const innerW = W - P * 2;
-  const innerH = H - P * 2;
-  const n = datos.length;
-
-  const x = (i: number) => (n === 1 ? P + innerW / 2 : P + (innerW * i) / (n - 1));
-  const y = (pct: number) => P + innerH - (innerH * pct) / 100;
-
-  const linea = datos.map((d, i) => `${x(i)},${y(d.pct)}`).join(' ');
+  const ALTO = 130; // alto máximo de una barra en px
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-      {/* Líneas guía 0 / 50 / 100 */}
-      {[0, 50, 100].map((g) => (
-        <g key={g}>
-          <line x1={P} y1={y(g)} x2={W - P} y2={y(g)} stroke="#eee" strokeWidth={1} />
-          <text x={2} y={y(g) + 3} fontSize={8} fill="#aaa">{g}</text>
-        </g>
-      ))}
-
-      {/* Línea de progreso */}
-      <polyline points={linea} fill="none" stroke={BRAND} strokeWidth={2} strokeLinejoin="round" />
-
-      {/* Puntos con su % */}
-      {datos.map((d, i) => (
-        <g key={i}>
-          <circle cx={x(i)} cy={y(d.pct)} r={3.5} fill={BRAND} />
-          <text x={x(i)} y={y(d.pct) - 7} fontSize={9} fill={BRAND_DARK} textAnchor="middle" fontWeight="600">
-            {d.pct}%
-          </text>
-        </g>
-      ))}
-    </svg>
+    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: datos.length < 4 ? 'flex-start' : 'space-around', gap: 18, height: ALTO + 36, paddingTop: 6 }}>
+      {datos.map((d, i) => {
+        const h = Math.max(6, Math.round((d.pct / 100) * ALTO));
+        return (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 84 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand-dark)', marginBottom: 4 }}>{d.pct}%</div>
+            <div
+              style={{
+                width: 34, height: h,
+                background: 'linear-gradient(180deg, var(--brand) 0%, #8076d8 100%)',
+                borderRadius: '7px 7px 0 0',
+                transition: 'height .4s ease',
+              }}
+            />
+            <div title={d.label} style={{ fontSize: 10, color: '#8a8a96', marginTop: 6, maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}>
+              {d.label}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
