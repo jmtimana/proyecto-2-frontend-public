@@ -4,6 +4,7 @@ import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap'
 import { PostulacionApi } from '../../api/PostulacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 function estadoBadge(estado: string) {
   if (estado === 'ACEPTADA') return 'success';
@@ -36,7 +37,7 @@ export default function Postulantes() {
 
       setPostulantes((prev) => prev.map((p) => (p.id === postulacionId ? actualizada : p)));
     } catch (err: any) {
-      alert(err?.response?.data?.message ?? 'No se pudo actualizar el estado.');
+      alert(getErrorMessage(err));
     } finally {
       setActualizando(null);
     }

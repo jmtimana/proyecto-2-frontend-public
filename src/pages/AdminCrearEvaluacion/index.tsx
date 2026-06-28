@@ -6,6 +6,7 @@ import { HabilidadApi } from '../../api/HabilidadApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { DIFICULTAD } from '../../utils/constants';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export default function AdminCrearEvaluacion() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function AdminCrearEvaluacion() {
 
       navigate(`/admin/evaluaciones/${creada.id}/preguntas`);
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'No se pudo crear la evaluación.');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

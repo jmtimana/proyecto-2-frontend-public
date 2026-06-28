@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
 import { GithubApi } from '../../api/GithubApi';
 import type { GithubProfileResponse } from '../../api/types/Github';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export default function ConectarGitHub() {
   const [profile, setProfile] = useState<GithubProfileResponse | null>(null);
@@ -33,7 +34,7 @@ export default function ConectarGitHub() {
       setProfile(p);
       setToken('');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'No se pudo conectar. Revisa que el token sea válido.');
+      setError(getErrorMessage(err));
     } finally {
       setConectando(false);
     }

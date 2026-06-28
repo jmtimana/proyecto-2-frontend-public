@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { HabilidadApi } from '../../api/HabilidadApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export default function AdminHabilidades() {
   const [habilidades, setHabilidades] = useState<HabilidadResponse[]>([]);
@@ -39,7 +40,7 @@ export default function AdminHabilidades() {
       setMensaje({ tipo: 'success', texto: 'Habilidad creada correctamente.' });
       cargar();
     } catch (err: any) {
-      setMensaje({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudo crear la habilidad.' });
+      setMensaje({ tipo: 'danger', texto: getErrorMessage(err) });
     } finally {
       setGuardando(false);
     }

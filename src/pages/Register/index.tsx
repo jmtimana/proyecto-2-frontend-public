@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorHandler';
 import type { RegisterRequest } from '../../api/types/Auth';
 
 type Tipo = 'ESTUDIANTE' | 'EMPRESA';
@@ -83,7 +84,7 @@ export default function Register() {
       await registerUser(payload);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'No se pudo crear la cuenta');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import { HabilidadApi } from '../../api/HabilidadApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { DIFICULTAD } from '../../utils/constants';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export default function AdminEditarEvaluacion() {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ export default function AdminEditarEvaluacion() {
       });
       navigate('/admin/evaluaciones');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'No se pudo guardar la evaluación.');
+      setError(getErrorMessage(err));
     } finally {
       setGuardando(false);
     }

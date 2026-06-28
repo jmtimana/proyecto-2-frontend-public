@@ -7,6 +7,7 @@ import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralDetailResponse } from '../../api/types/Oferta';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export default function OfertaDetail() {
   const { id } = useParams();
@@ -61,12 +62,7 @@ export default function OfertaDetail() {
       setShowModal(false);
     } catch (err: any) {
 
-      if (err?.response?.status === 409) {
-        setModalError('Ya te habías postulado a esta oferta.');
-        setPostulado(true);
-      } else {
-        setModalError(err?.response?.data?.message ?? 'No se pudo enviar la postulación.');
-      }
+      setModalError(getErrorMessage(err));
     } finally {
       setEnviando(false);
     }

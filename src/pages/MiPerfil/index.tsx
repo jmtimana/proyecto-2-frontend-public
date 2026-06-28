@@ -9,6 +9,7 @@ import Breadcrumb from '../../common/Breadcrumb';
 import type { UserDetailResponse } from '../../api/types/User';
 import NivelBadge from '../../common/NivelBadge';
 import { nivelDeScore } from '../../utils/nivel';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const userSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -108,7 +109,7 @@ export default function MiPerfil() {
       updateSessionUser({ firstName: actualizado.firstName, lastName: actualizado.lastName });
       setMsgUser({ tipo: 'success', texto: 'Tus datos se guardaron correctamente.' });
     } catch (err: any) {
-      setMsgUser({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudieron guardar tus datos.' });
+      setMsgUser({ tipo: 'danger', texto: getErrorMessage(err) });
     } finally {
       setGuardandoUser(false);
     }
@@ -136,7 +137,7 @@ export default function MiPerfil() {
       }
       setMsgEmp({ tipo: 'success', texto: 'Los datos de tu empresa se guardaron correctamente.' });
     } catch (err: any) {
-      setMsgEmp({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudieron guardar los datos de la empresa.' });
+      setMsgEmp({ tipo: 'danger', texto: getErrorMessage(err) });
     } finally {
       setGuardandoEmp(false);
     }

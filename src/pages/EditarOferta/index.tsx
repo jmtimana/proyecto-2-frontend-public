@@ -9,6 +9,7 @@ import { HabilidadApi } from '../../api/HabilidadApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { MODALIDAD, ESTADO_OFERTA } from '../../utils/constants';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const schema = z.object({
   titulo: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
@@ -105,7 +106,7 @@ export default function EditarOferta() {
       });
       navigate('/empresa/ofertas');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'No se pudo guardar la oferta.');
+      setError(getErrorMessage(err));
     } finally {
       setGuardando(false);
     }

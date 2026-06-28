@@ -5,6 +5,7 @@ import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
 import { TIPO_PREGUNTA, LENGUAJES } from '../../utils/constants';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const FORM_VACIO = {
   enunciado: '',
@@ -66,7 +67,7 @@ export default function AdminPreguntas() {
       setMensaje({ tipo: 'success', texto: 'Pregunta agregada correctamente.' });
       cargar();
     } catch (err: any) {
-      setMensaje({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudo agregar la pregunta.' });
+      setMensaje({ tipo: 'danger', texto: getErrorMessage(err) });
     } finally {
       setGuardando(false);
     }

@@ -5,6 +5,7 @@ import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const PAGE_SIZE = 10;
 
@@ -48,7 +49,7 @@ export default function AdminEvaluaciones() {
       setAEliminar(null);
       cargar();
     } catch (err: any) {
-      setErrorEliminar(err?.response?.data?.message ?? 'No se pudo eliminar la evaluación.');
+      setErrorEliminar(getErrorMessage(err));
     } finally {
       setEliminando(false);
     }

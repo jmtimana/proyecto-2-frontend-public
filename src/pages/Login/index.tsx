@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const schema = z.object({
   email: z.string().email('Ingresa un correo válido'),
@@ -37,7 +38,7 @@ export default function Login() {
       await login({ email: data.email, password: data.password });
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'Correo o contraseña incorrectos');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

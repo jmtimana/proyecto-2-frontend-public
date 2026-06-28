@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import OfertaQR from '../../common/OfertaQR';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 function estadoColor(e: string) {
   if (e === 'ACTIVA') return 'success';
@@ -48,7 +49,7 @@ export default function EmpresaOfertas() {
       setAEliminar(null);
       cargar();
     } catch (err: any) {
-      setErrorEliminar(err?.response?.data?.message ?? 'No se pudo eliminar la oferta.');
+      setErrorEliminar(getErrorMessage(err));
     } finally {
       setEliminando(false);
     }
