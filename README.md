@@ -1,10 +1,8 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/vHoPmQxV)
+
 # SkillMatch — Frontend
 
 Frontend en **React + TypeScript + Vite + react-bootstrap** para la plataforma SkillMatch.
-
-Este es el **andamiaje inicial**: trae login, registro y un dashboard funcionando
-de verdad contra tu backend. Las demás pantallas (ofertas, evaluaciones,
-postulaciones, etc.) se irán agregando una por una.
 
 ---
 
@@ -17,8 +15,6 @@ Necesitas tener instalado **Node.js** (versión 18 o superior). Luego, en esta c
 npm install
 ```
 
-Esto descarga todas las librerías (React, react-bootstrap, axios...). Se hace una sola vez.
-
 ### 2. Configura la URL de tu backend
 Copia el archivo de ejemplo y edítalo:
 
@@ -29,7 +25,7 @@ cp .env.example .env
 Abre el `.env` y pon la URL real de tu backend (con el prefijo `/api/v1`):
 
 ```
-VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_API_BASE_URL=https://skillmatch-tim.duckdns.org/api/v1
 ```
 
 ### 3. Arranca la app
@@ -41,29 +37,19 @@ Abre el navegador en la dirección que te muestre (normalmente **http://localhos
 
 ---
 
-## Qué puedes probar ya
-
-- **Registrarte** (como estudiante o empresa) en `/register`.
-- **Iniciar sesión** en `/login`.
-- Al entrar, te lleva al **Dashboard** que muestra tus datos de sesión.
-
-> Para que login/registro funcionen, tu backend tiene que estar corriendo
-> y aceptar peticiones desde este frontend (revisa la config de CORS).
-
----
-
 ## Estructura del proyecto
 
 ```
 src/
-  api/            -> llamadas al backend (AuthApi) + tipos + config de axios
+  api/            -> llamadas al backend + tipos + config de axios (interceptores, refresh token)
   context/        -> AuthContext (la "memoria" de la sesión)
   components/     -> guards de rutas (ProtectedRoute, RoleRoute)
-  common/         -> componentes compartidos (Navbar)
-  pages/          -> cada pantalla (Home, Login, Register, Dashboard)
+  common/         -> componentes compartidos (Navbar, Pagination, ErrorBoundary, OfertaQR...)
+  hooks/          -> hooks reutilizables (useFetch, useDebounce, usePaginationParams)
+  pages/          -> cada pantalla (Home, Login, Ofertas, Evaluaciones, Dashboard...)
   utils/          -> helpers (tokenStorage, constantes)
   main.tsx        -> punto de arranque
-  Router.tsx      -> qué pantalla se ve en cada URL
+  Router.tsx      -> qué pantalla se ve en cada URL (con lazy loading)
 ```
 
 ---
