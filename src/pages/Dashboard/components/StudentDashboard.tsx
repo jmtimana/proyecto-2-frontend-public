@@ -16,7 +16,7 @@ import NivelBadge from '../../../common/NivelBadge';
 import Skeleton from '../../../common/Skeleton';
 import { nivelDeScore } from '../../../utils/nivel';
 
-const cardStyle = { background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 14 } as const;
+const cardStyle = { background: 'var(--app-surface)', border: '0.5px solid var(--app-border)', borderRadius: 14 } as const;
 
 function postBadge(status: string) {
   if (status === 'ACEPTADA') return <Badge bg="success">Aceptada</Badge>;
@@ -121,7 +121,7 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
                   <span>Progreso a {nivel.siguiente}</span>
                   <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
                 </div>
-                <div style={{ height: 8, background: '#fff', borderRadius: 6, overflow: 'hidden' }}>
+                <div style={{ height: 8, background: 'var(--app-surface)', borderRadius: 6, overflow: 'hidden' }}>
                   <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)', transition: 'width .3s' }} />
                 </div>
               </div>
@@ -142,15 +142,15 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
             <Link to="/evaluaciones" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--brand-light)', borderRadius: 10, padding: '0.7rem 1rem', marginBottom: 8 }}>
               <span style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>🧑‍💻 Rinde una evaluación</span>
             </Link>
-            <Link to="/ofertas" className="lift-card d-block" style={{ textDecoration: 'none', background: '#f4f4f8', borderRadius: 10, padding: '0.7rem 1rem' }}>
-              <span style={{ fontWeight: 600, color: '#1f2230' }}>💼 Explora ofertas</span>
+            <Link to="/ofertas" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--app-surface-soft)', borderRadius: 10, padding: '0.7rem 1rem' }}>
+              <span style={{ fontWeight: 600, color: 'var(--app-text)' }}>💼 Explora ofertas</span>
             </Link>
           </div>
 
           {!githubConectado && (
             <Link to="/github" style={{ textDecoration: 'none' }}>
               <div className="lift-card d-flex justify-content-between align-items-center" style={{ ...cardStyle, padding: '0.85rem 1.25rem', marginBottom: '1rem' }}>
-                <span style={{ fontSize: 14, color: '#1f2230' }}>🐙 Conecta tu GitHub</span>
+                <span style={{ fontSize: 14, color: 'var(--app-text)' }}>🐙 Conecta tu GitHub</span>
                 <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Conectar →</span>
               </div>
             </Link>

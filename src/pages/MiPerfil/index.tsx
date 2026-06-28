@@ -213,7 +213,7 @@ export default function MiPerfil() {
                     <span>Progreso a {nivel.siguiente}</span>
                     <span>Te faltan {nivel.faltaParaSiguiente?.toFixed(2)}</span>
                   </div>
-                  <div style={{ height: 8, background: '#eee', borderRadius: 6, overflow: 'hidden' }}>
+                  <div style={{ height: 8, background: 'var(--app-surface-soft)', borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{ width: `${nivel.progreso}%`, height: '100%', background: 'var(--brand)' }} />
                   </div>
                 </div>

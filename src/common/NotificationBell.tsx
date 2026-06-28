@@ -137,8 +137,8 @@ export default function NotificationBell() {
             width: 340,
             maxHeight: 440,
             overflowY: 'auto',
-            background: '#fff',
-            border: '0.5px solid #e6e6ef',
+            background: 'var(--app-surface-raised)',
+            border: '0.5px solid var(--app-border)',
             borderRadius: 12,
             boxShadow: '0 8px 28px rgba(0,0,0,0.12)',
             zIndex: 1080,
@@ -183,9 +183,9 @@ export default function NotificationBell() {
                 onClick={() => clickNotificacion(n)}
                 style={{
                   padding: '10px 14px',
-                  borderBottom: '0.5px solid #f0f0f4',
+                  borderBottom: '0.5px solid var(--app-border-soft)',
                   cursor: n.read ? 'default' : 'pointer',
-                  background: n.read ? '#fff' : '#f6f5ff',
+                  background: n.read ? 'var(--app-surface-raised)' : 'var(--brand-light)',
                   display: 'flex',
                   gap: 8,
                 }}
@@ -203,10 +203,10 @@ export default function NotificationBell() {
                   />
                 )}
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, color: '#2a2a33', fontWeight: n.read ? 400 : 500 }}>
+                  <div style={{ fontSize: 13, color: 'var(--app-text)', fontWeight: n.read ? 400 : 500 }}>
                     {n.message}
                   </div>
-                  <div style={{ fontSize: 11, color: '#9a9aa6', marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--app-muted)', marginTop: 2 }}>
                     {tiempoRelativo(n.createdAt)}
                   </div>
                 </div>

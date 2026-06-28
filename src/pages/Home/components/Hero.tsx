@@ -52,8 +52,8 @@ export default function Hero() {
                 className="lift-card"
                 style={{
                   position: 'absolute', top: 40, left: 36, right: 0,
-                  background: '#fff', borderRadius: 18, padding: 28,
-                  boxShadow: '0 16px 40px rgba(83,74,183,0.16)', border: '0.5px solid #ece9ff',
+                  background: 'var(--app-surface)', borderRadius: 18, padding: 28,
+                  boxShadow: 'var(--app-shadow)', border: '0.5px solid var(--app-border)',
                 }}
               >
                 <div style={{ fontSize: 13, color: 'var(--brand-dark)' }}>
@@ -67,11 +67,11 @@ export default function Hero() {
                 </span>
               </div>
 
-              <div style={{ position: 'absolute', top: 4, left: 0, background: '#fff', borderRadius: 12, padding: '8px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)', fontSize: 13, fontWeight: 600, color: '#1f9d57' }}>
+              <div style={{ position: 'absolute', top: 4, left: 0, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: '#1f9d57' }}>
                 ✓ Cumples el score
               </div>
 
-              <div style={{ position: 'absolute', bottom: 4, right: 8, background: '#fff', borderRadius: 12, padding: '8px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)', fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>
+              <div style={{ position: 'absolute', bottom: 4, right: 8, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>
                 🧑‍💻 Evaluación completada
               </div>
             </div>

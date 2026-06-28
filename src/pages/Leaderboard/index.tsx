@@ -49,12 +49,12 @@ export default function Leaderboard() {
             key={u.id}
             className="mb-2"
             style={{
-              border: esYo ? '1.5px solid var(--brand)' : '0.5px solid #e6e6ef',
-              background: esYo ? '#f6f5ff' : '#fff',
+              border: esYo ? '1.5px solid var(--brand)' : '0.5px solid var(--app-border)',
+              background: esYo ? 'var(--brand-light)' : 'var(--app-surface)',
             }}
           >
             <Card.Body className="p-3 d-flex align-items-center gap-3">
-              <div style={{ width: 42, textAlign: 'center', fontSize: i < 3 ? 24 : 16, fontWeight: 700, color: '#6b6b76' }}>
+              <div style={{ width: 42, textAlign: 'center', fontSize: i < 3 ? 24 : 16, fontWeight: 700, color: 'var(--app-muted)' }}>
                 {medalla(i)}
               </div>
               <div style={{ flex: 1 }}>

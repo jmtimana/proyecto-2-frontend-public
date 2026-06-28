@@ -51,7 +51,7 @@ export default function OfertaQR({ ofertaId, titulo }: Props) {
           </p>
 
           <div ref={contenedorRef} className="d-flex justify-content-center my-3">
-            <div style={{ background: '#fff', padding: 16, borderRadius: 12, border: '0.5px solid #e6e6ef' }}>
+            <div className="qr-surface">
               <QRCodeCanvas
                 value={url}
                 size={220}

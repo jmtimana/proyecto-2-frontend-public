@@ -211,7 +211,7 @@ export default function Ofertas() {
       <h3 style={{ fontWeight: 600 }} className="mb-1">Ofertas laborales</h3>
       <p className="text-secondary mb-4">Explora las vacantes activas y encuentra tu próximo reto.</p>
 
-      <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
+      <Card className="mb-4" style={{ border: '0.5px solid var(--app-border)' }}>
         <Card.Body className="p-3">
           <Row className="g-2 align-items-end">
             <Col xs={12} md={6}>
@@ -319,7 +319,7 @@ export default function Ofertas() {
       {loading && (
         <div>
           {[0, 1, 2].map((i) => (
-            <div key={i} style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem' }}>
+            <div key={i} style={{ background: 'var(--app-surface)', border: '0.5px solid var(--app-border)', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem' }}>
               <Skeleton width="55%" height={20} />
               <Skeleton width="35%" height={14} style={{ marginTop: 8 }} />
               <Skeleton width="100%" height={12} style={{ marginTop: 14 }} />
@@ -332,7 +332,7 @@ export default function Ofertas() {
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && filtradas.length === 0 && (
-        <div className="text-center py-5" style={{ color: '#999' }}>
+        <div className="text-center py-5" style={{ color: 'var(--app-empty)' }}>
           <div style={{ fontSize: 40 }}>{hayFiltros ? '🔍' : '📭'}</div>
           {hayFiltros ? (
             <>

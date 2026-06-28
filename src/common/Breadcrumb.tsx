@@ -11,7 +11,7 @@ interface Props {
 
 export default function Breadcrumb({ items }: Props) {
   return (
-    <nav style={{ fontSize: 13, color: '#888', marginBottom: 16 }}>
+    <nav className="app-breadcrumb" style={{ fontSize: 13, marginBottom: 16 }}>
       {items.map((item, i) => {
         const last = i === items.length - 1;
         return (
@@ -21,11 +21,11 @@ export default function Breadcrumb({ items }: Props) {
                 {item.label}
               </Link>
             ) : (
-              <span style={{ color: last ? 'var(--brand-dark)' : '#888', fontWeight: last ? 500 : 400 }}>
+              <span className={last ? 'app-breadcrumb-current' : undefined} style={{ fontWeight: last ? 500 : 400 }}>
                 {item.label}
               </span>
             )}
-            {!last && <span style={{ margin: '0 6px', color: '#ccc' }}>/</span>}
+            {!last && <span className="app-breadcrumb-separator" style={{ margin: '0 6px' }}>/</span>}
           </span>
         );
       })}

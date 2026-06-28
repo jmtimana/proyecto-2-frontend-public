@@ -14,7 +14,7 @@ interface Props {
   userId?: number;
 }
 
-const cardStyle = { background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 14 } as const;
+const cardStyle = { background: 'var(--app-surface)', border: '0.5px solid var(--app-border)', borderRadius: 14 } as const;
 
 function ofertaEstadoColor(e: string) {
   if (e === 'ACTIVA') return 'success';
@@ -127,7 +127,7 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
                           <span style={{ fontSize: 12, color: 'var(--brand-dark)', fontWeight: 600 }}>{apps} postul.</span>
                         </div>
                       </div>
-                      <div style={{ height: 6, background: '#eee', borderRadius: 4, overflow: 'hidden', marginTop: 6 }}>
+                      <div style={{ height: 6, background: 'var(--app-surface-soft)', borderRadius: 4, overflow: 'hidden', marginTop: 6 }}>
                         <div style={{ width: `${Math.round((apps / maxApp) * 100)}%`, height: '100%', background: 'var(--brand)' }} />
                       </div>
                     </div>
@@ -144,8 +144,8 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
             <Link to="/empresa/ofertas/nueva" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--brand-light)', borderRadius: 10, padding: '0.7rem 1rem', marginBottom: 8 }}>
               <span style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>📢 Publicar oferta</span>
             </Link>
-            <Link to="/empresa/candidatos" className="lift-card d-block" style={{ textDecoration: 'none', background: '#f4f4f8', borderRadius: 10, padding: '0.7rem 1rem' }}>
-              <span style={{ fontWeight: 600, color: '#1f2230' }}>🔍 Buscar candidatos</span>
+            <Link to="/empresa/candidatos" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--app-surface-soft)', borderRadius: 10, padding: '0.7rem 1rem' }}>
+              <span style={{ fontWeight: 600, color: 'var(--app-text)' }}>🔍 Buscar candidatos</span>
             </Link>
           </div>
 

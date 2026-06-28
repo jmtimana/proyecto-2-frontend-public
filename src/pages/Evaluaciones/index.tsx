@@ -81,10 +81,10 @@ export default function Evaluaciones() {
       <Card
         className="mb-3"
         style={{
-          border: '0.5px solid #e6e6ef',
+          border: '0.5px solid var(--app-border)',
           cursor: hecha ? 'default' : 'pointer',
           opacity: hecha ? 0.7 : 1,
-          background: hecha ? '#fafafa' : '#fff',
+          background: hecha ? 'var(--app-surface-soft)' : 'var(--app-surface)',
         }}
       >
         <Card.Body className="p-4">
@@ -151,7 +151,7 @@ export default function Evaluaciones() {
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && data && data.empty && (
-        <div className="text-center py-5" style={{ color: '#999' }}>
+        <div className="text-center py-5" style={{ color: 'var(--app-empty)' }}>
           <div style={{ fontSize: 40 }}>🧩</div>
           <p className="mt-2 mb-0">Todavía no hay evaluaciones disponibles.</p>
         </div>

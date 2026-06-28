@@ -7,16 +7,76 @@
   --brand: #534ab7;        /* morado principal */
   --brand-dark: #3c3489;   /* morado oscuro (texto sobre fondos claros) */
   --brand-light: #eeedfe;  /* morado muy claro (fondos suaves) */
+  --brand-contrast: #fff;
+
+  --app-bg: #f7f7fb;
+  --app-surface: #fff;
+  --app-surface-soft: #f4f4f8;
+  --app-surface-raised: #fff;
+  --app-text: #1f2230;
+  --app-muted: #6b6b76;
+  --app-muted-strong: #3a3a44;
+  --app-border: #e6e6ef;
+  --app-border-soft: #f0f0f4;
+  --app-empty: #8a8a96;
+  --app-shadow: 0 12px 30px rgba(83, 74, 183, 0.13);
+  --app-navbar-bg: #fff;
+  --app-footer-bg: #1c1a33;
+  --app-footer-text: #cfcde6;
+  --app-footer-muted: #8f8cb3;
+  --app-code-bg: #1e1e2e;
+  --app-code-text: #e6e6f0;
 
   /* Le decimos a Bootstrap que su color "primary" sea nuestro morado */
   --bs-primary: var(--brand);
+  --bs-body-bg: var(--app-bg);
+  --bs-body-color: var(--app-text);
+  --bs-border-color: var(--app-border);
+  --bs-secondary-color: var(--app-muted);
+  --bs-tertiary-bg: var(--app-surface-soft);
+  --bs-link-color: var(--brand);
+  --bs-link-hover-color: var(--brand-dark);
+}
+
+:root[data-theme='dark'] {
+  --brand: #9b92ff;
+  --brand-dark: #d8d4ff;
+  --brand-light: #29254a;
+  --brand-contrast: #151323;
+
+  --app-bg: #11131d;
+  --app-surface: #191b27;
+  --app-surface-soft: #222435;
+  --app-surface-raised: #202232;
+  --app-text: #f0f1f7;
+  --app-muted: #b5b8c8;
+  --app-muted-strong: #d8daE6;
+  --app-border: #34374a;
+  --app-border-soft: #292c3d;
+  --app-empty: #a7aabc;
+  --app-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  --app-navbar-bg: #171925;
+  --app-footer-bg: #0c0e16;
+  --app-footer-text: #d5d7e8;
+  --app-footer-muted: #8f93aa;
+  --app-code-bg: #0c0e16;
+  --app-code-text: #eef0ff;
+
+  --bs-primary: var(--brand);
+  --bs-body-bg: var(--app-bg);
+  --bs-body-color: var(--app-text);
+  --bs-border-color: var(--app-border);
+  --bs-secondary-color: var(--app-muted);
+  --bs-tertiary-bg: var(--app-surface-soft);
+  --bs-link-color: var(--brand);
+  --bs-link-hover-color: var(--brand-dark);
 }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f7f7fb;
-  color: #1f2230;
+  background-color: var(--app-bg);
+  color: var(--app-text);
 }
 
 /* Hacemos que los botones variant="primary" usen el morado de marca */
@@ -49,11 +109,127 @@ a.brand-link:hover {
   height: 30px;
   border-radius: 8px;
   background: var(--brand);
-  color: #fff;
+  color: var(--brand-contrast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+}
+
+.app-navbar {
+  background: var(--app-navbar-bg);
+}
+
+.app-navbar .navbar-brand,
+.app-navbar .nav-link {
+  color: var(--app-text);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+  color: var(--brand);
+}
+
+.app-footer {
+  background: var(--app-footer-bg);
+  color: var(--app-footer-text);
+}
+
+.app-footer-links a {
+  color: var(--app-footer-text);
+  text-decoration: none;
+}
+
+.app-footer-links a:hover,
+.app-footer-links a:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.app-footer-meta {
+  color: var(--app-footer-muted);
+}
+
+.app-breadcrumb {
+  color: var(--app-muted);
+}
+
+.app-breadcrumb-current {
+  color: var(--brand-dark);
+}
+
+.app-breadcrumb-separator {
+  color: var(--app-border);
+}
+
+.card,
+.modal-content,
+.dropdown-menu,
+.list-group-item {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--app-border) !important;
+}
+
+.modal-header,
+.modal-footer,
+.border-bottom {
+  border-color: var(--app-border) !important;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--app-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--brand) 22%, transparent);
+}
+
+.form-control::placeholder {
+  color: var(--app-muted);
+}
+
+.text-secondary,
+.text-muted,
+.form-text {
+  color: var(--app-muted) !important;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--app-muted-strong);
+  --bs-btn-border-color: var(--app-border);
+  --bs-btn-hover-bg: var(--app-surface-soft);
+  --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-hover-color: var(--app-text);
+  --bs-btn-active-bg: var(--app-surface-soft);
+  --bs-btn-active-border-color: var(--brand);
+  --bs-btn-active-color: var(--app-text);
+}
+
+.alert-light {
+  --bs-alert-bg: var(--app-surface-soft);
+  --bs-alert-color: var(--app-text);
+  --bs-alert-border-color: var(--app-border);
+}
+
+.badge.bg-light {
+  background-color: var(--app-surface-soft) !important;
+  color: var(--app-text) !important;
+  border-color: var(--app-border) !important;
+}
+
+.qr-surface {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 0.5px solid var(--app-border);
 }
 
 /* ===========================================================
@@ -62,7 +238,7 @@ a.brand-link:hover {
 
 /* Degradado suave para el hero de la landing */
 .hero-gradient {
-  background: linear-gradient(135deg, #f0edff 0%, #f7f7fb 55%, #ebeeff 100%);
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--app-bg) 55%, var(--app-surface-soft) 100%);
 }
 
 /* Tarjetas que se "levantan" al pasar el mouse */
@@ -71,12 +247,12 @@ a.brand-link:hover {
 }
 .lift-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(83, 74, 183, 0.13);
+  box-shadow: var(--app-shadow);
 }
 
 /* Bloque "cargando" con brillo animado (skeleton) */
 .skeleton {
-  background: linear-gradient(90deg, #ececf2 25%, #f5f5f9 37%, #ececf2 63%);
+  background: linear-gradient(90deg, var(--app-border) 25%, var(--app-surface-soft) 37%, var(--app-border) 63%);
   background-size: 400% 100%;
   animation: skeleton-shimmer 1.3s ease infinite;
   border-radius: 8px;

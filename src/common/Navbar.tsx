@@ -1,10 +1,12 @@
 import { Navbar as BsNavbar, Container, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const esEmpresa = user?.type === 'EMPRESA';
@@ -16,7 +18,7 @@ export default function Navbar() {
   }
 
   return (
-    <BsNavbar bg="white" className="border-bottom py-2">
+    <BsNavbar className="app-navbar border-bottom py-2">
       <Container>
         <BsNavbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2">
           <span className="brand-logo">S</span>
@@ -49,6 +51,15 @@ export default function Navbar() {
         </Nav>
 
         <Nav className="align-items-center gap-2">
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          >
+            {theme === 'dark' ? 'Claro' : 'Oscuro'}
+          </Button>
           {isAuthenticated ? (
             <>
               <NotificationBell />

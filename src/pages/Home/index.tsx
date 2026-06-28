@@ -38,7 +38,7 @@ export default function Home() {
         <Row className="g-4">
           {PASOS.map((p, i) => (
             <Col md={4} key={i}>
-              <div className="lift-card text-center h-100" style={{ background: '#fff', border: '0.5px solid #e6e6ef', borderRadius: 16, padding: '2rem 1.5rem' }}>
+              <div className="lift-card text-center h-100" style={{ background: 'var(--app-surface)', border: '0.5px solid var(--app-border)', borderRadius: 16, padding: '2rem 1.5rem' }}>
                 <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--brand-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, margin: '0 auto 14px' }}>
                   {p.icon}
                 </div>

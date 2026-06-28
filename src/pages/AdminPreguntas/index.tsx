@@ -100,7 +100,7 @@ export default function AdminPreguntas() {
       <p className="text-secondary mb-4">{preguntas.length} pregunta(s) en esta evaluación.</p>
 
       {preguntas.length === 0 ? (
-        <div className="text-center py-4 mb-4" style={{ color: '#999', background: '#fafafa', borderRadius: 12 }}>
+        <div className="text-center py-4 mb-4" style={{ color: 'var(--app-empty)', background: 'var(--app-surface-soft)', borderRadius: 12 }}>
           <div style={{ fontSize: 34 }}>❓</div>
           <p className="mt-2 mb-0">Aún no hay preguntas. Agrega la primera abajo.</p>
         </div>

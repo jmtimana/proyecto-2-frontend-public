@@ -141,15 +141,15 @@ export default function MisPostulaciones() {
                     <div
                       className="mt-3"
                       style={{
-                        background: '#faf9ff',
-                        border: '0.5px solid #ecebf6',
+                        background: 'var(--brand-light)',
+                        border: '0.5px solid var(--app-border)',
                         borderRadius: 10,
                         padding: '0.75rem 1rem',
                         fontSize: 14,
-                        color: '#3a3a44',
+                        color: 'var(--app-muted-strong)',
                       }}
                     >
-                      <div style={{ fontSize: 12, color: '#8a8a96', marginBottom: 4 }}>Tu carta de presentación</div>
+                      <div style={{ fontSize: 12, color: 'var(--app-muted)', marginBottom: 4 }}>Tu carta de presentación</div>
                       {p.coverLetter}
                     </div>
                   )}

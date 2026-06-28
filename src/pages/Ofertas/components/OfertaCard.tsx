@@ -36,7 +36,7 @@ export default function OfertaCard({
     <Link to={`/ofertas/${oferta.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card
         className="mb-3 oferta-card"
-        style={{ position: 'relative', border: '0.5px solid #e6e6ef', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow .15s' }}
+        style={{ position: 'relative', border: '0.5px solid var(--app-border)', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow .15s' }}
       >
         {mostrarGuardar && (
           <OverlayTrigger
@@ -78,7 +78,7 @@ export default function OfertaCard({
             <Badge bg={modalidadColor(oferta.modalidad)} style={{ marginRight: mostrarGuardar ? 28 : 0 }}>{oferta.modalidad}</Badge>
           </div>
 
-          <p className="mb-3" style={{ fontSize: 14, color: '#555' }}>
+          <p className="mb-3" style={{ fontSize: 14, color: 'var(--app-muted-strong)' }}>
             {oferta.description.length > 160 ? oferta.description.slice(0, 160) + '...' : oferta.description}
           </p>
 
