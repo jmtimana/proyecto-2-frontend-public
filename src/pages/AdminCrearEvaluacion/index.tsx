@@ -133,9 +133,19 @@ export default function AdminCrearEvaluacion() {
                 <Badge
                   key={h.id}
                   onClick={() => toggleHabilidad(h.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleHabilidad(h.id);
+                    }
+                  }}
+                  role="checkbox"
+                  tabIndex={0}
+                  aria-checked={activa}
                   bg={activa ? 'primary' : 'light'}
                   text={activa ? undefined : 'dark'}
-                  style={{ cursor: 'pointer', fontWeight: 400, padding: '8px 12px', border: '0.5px solid #ddd' }}
+                  className="selectable-badge"
+                  style={{ fontWeight: 400, padding: '8px 12px', border: '0.5px solid var(--app-border)' }}
                 >
                   {h.name}
                 </Badge>
@@ -144,8 +154,8 @@ export default function AdminCrearEvaluacion() {
           </div>
         </Form.Group>
 
-        <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? <Spinner size="sm" /> : 'Crear y agregar preguntas'}
+        <Button type="submit" variant="primary" disabled={loading} aria-busy={loading}>
+          {loading ? <><Spinner size="sm" role="status" /> <span className="visually-hidden">Creando evaluacion</span></> : 'Crear y agregar preguntas'}
         </Button>
       </Form>
     </Container>

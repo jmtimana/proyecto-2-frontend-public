@@ -80,8 +80,8 @@ export default function Login() {
               <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" variant="primary" className="w-100" disabled={loading}>
-              {loading ? <Spinner size="sm" /> : 'Entrar'}
+            <Button type="submit" variant="primary" className="w-100" disabled={loading} aria-busy={loading}>
+              {loading ? <><Spinner size="sm" role="status" /> <span className="visually-hidden">Iniciando sesion</span></> : 'Entrar'}
             </Button>
           </Form>
 

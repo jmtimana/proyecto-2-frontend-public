@@ -171,9 +171,19 @@ export default function AdminEditarEvaluacion() {
                 <Badge
                   key={h.id}
                   onClick={() => toggleHabilidad(h.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleHabilidad(h.id);
+                    }
+                  }}
+                  role="checkbox"
+                  tabIndex={0}
+                  aria-checked={activa}
                   bg={activa ? 'primary' : 'light'}
                   text={activa ? undefined : 'dark'}
-                  style={{ cursor: 'pointer', fontWeight: 400, padding: '8px 12px', border: '0.5px solid #ddd' }}
+                  className="selectable-badge"
+                  style={{ fontWeight: 400, padding: '8px 12px', border: '0.5px solid var(--app-border)' }}
                 >
                   {h.name}
                 </Badge>
@@ -183,8 +193,8 @@ export default function AdminEditarEvaluacion() {
         </Form.Group>
 
         <div className="d-flex gap-2">
-          <Button type="submit" variant="primary" disabled={guardando}>
-            {guardando ? <Spinner size="sm" /> : 'Guardar cambios'}
+          <Button type="submit" variant="primary" disabled={guardando} aria-busy={guardando}>
+            {guardando ? <><Spinner size="sm" role="status" /> <span className="visually-hidden">Guardando cambios</span></> : 'Guardar cambios'}
           </Button>
           <Button as={Link as any} to={`/admin/evaluaciones/${evalId}/preguntas`} variant="outline-secondary" disabled={guardando}>
             Gestionar preguntas

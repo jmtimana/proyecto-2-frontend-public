@@ -92,6 +92,8 @@ export default function NotificationBell() {
         <button
           onClick={toggle}
           aria-label="Notificaciones"
+          aria-expanded={open}
+          aria-haspopup="dialog"
           style={{
             background: 'none',
             border: 'none',
@@ -149,6 +151,7 @@ export default function NotificationBell() {
             {count > 0 && (
               <button
                 onClick={marcarTodas}
+                aria-label="Marcar todas las notificaciones como leídas"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -164,8 +167,9 @@ export default function NotificationBell() {
           </div>
 
           {loading && (
-            <div className="text-center py-4">
-              <Spinner size="sm" style={{ color: 'var(--brand)' }} />
+            <div className="text-center py-4" aria-live="polite">
+              <Spinner size="sm" style={{ color: 'var(--brand)' }} role="status" />
+              <span className="visually-hidden">Cargando notificaciones</span>
             </div>
           )}
 

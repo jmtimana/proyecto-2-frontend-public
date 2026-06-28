@@ -79,6 +79,11 @@ body {
   color: var(--app-text);
 }
 
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand) 70%, white);
+  outline-offset: 2px;
+}
+
 /* Hacemos que los botones variant="primary" usen el morado de marca */
 .btn-primary {
   --bs-btn-bg: var(--brand);
@@ -223,6 +228,15 @@ a.brand-link:hover {
   background-color: var(--app-surface-soft) !important;
   color: var(--app-text) !important;
   border-color: var(--app-border) !important;
+}
+
+.selectable-badge {
+  cursor: pointer;
+}
+
+.selectable-badge:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand) 70%, white);
+  outline-offset: 2px;
 }
 
 .qr-surface {

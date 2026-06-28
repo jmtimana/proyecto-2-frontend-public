@@ -105,8 +105,8 @@ export default function Register() {
     fontSize: 14,
     fontWeight: activo ? 600 : 400,
     background: activo ? 'var(--brand-light)' : 'transparent',
-    border: activo ? '1.5px solid var(--brand)' : '0.5px solid #ccc',
-    color: activo ? 'var(--brand-dark)' : '#666',
+    border: activo ? '1.5px solid var(--brand)' : '0.5px solid var(--app-border)',
+    color: activo ? 'var(--brand-dark)' : 'var(--app-muted-strong)',
   });
 
   return (
@@ -123,19 +123,30 @@ export default function Register() {
 
           {error && <Alert variant="danger" className="py-2">{error}</Alert>}
 
-          <div className="d-flex gap-2 mb-3">
-            <div style={tipoBtn(tipo === 'ESTUDIANTE')} onClick={() => cambiarTipo('ESTUDIANTE')}>
+          <div className="d-flex gap-2 mb-3" role="group" aria-label="Tipo de cuenta">
+            <button
+              type="button"
+              style={tipoBtn(tipo === 'ESTUDIANTE')}
+              onClick={() => cambiarTipo('ESTUDIANTE')}
+              aria-pressed={tipo === 'ESTUDIANTE'}
+            >
               Estudiante
-            </div>
-            <div style={tipoBtn(tipo === 'EMPRESA')} onClick={() => cambiarTipo('EMPRESA')}>
+            </button>
+            <button
+              type="button"
+              style={tipoBtn(tipo === 'EMPRESA')}
+              onClick={() => cambiarTipo('EMPRESA')}
+              aria-pressed={tipo === 'EMPRESA'}
+            >
               Empresa
-            </div>
+            </button>
           </div>
 
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Row>
               <Col>
                 <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: 14 }}>Nombre</Form.Label>
                   <Form.Control
                     {...register('nombre')}
                     placeholder="Nombre"
@@ -147,6 +158,7 @@ export default function Register() {
               </Col>
               <Col>
                 <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: 14 }}>Apellido</Form.Label>
                   <Form.Control
                     {...register('apellido')}
                     placeholder="Apellido"
@@ -161,6 +173,7 @@ export default function Register() {
             {tipo === 'EMPRESA' && (
               <>
                 <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: 14 }}>Razon social</Form.Label>
                   <Form.Control
                     {...register('razonSocial')}
                     placeholder="Razón social"
@@ -172,6 +185,7 @@ export default function Register() {
                 <Row>
                   <Col>
                     <Form.Group className="mb-3">
+                      <Form.Label style={{ fontSize: 14 }}>RUC</Form.Label>
                       <Form.Control
                         {...register('ruc')}
                         placeholder="RUC"
@@ -183,6 +197,7 @@ export default function Register() {
                   </Col>
                   <Col>
                     <Form.Group className="mb-3">
+                      <Form.Label style={{ fontSize: 14 }}>Sector</Form.Label>
                       <Form.Control
                         {...register('sector')}
                         placeholder="Sector"
@@ -197,6 +212,7 @@ export default function Register() {
             )}
 
             <Form.Group className="mb-3">
+              <Form.Label style={{ fontSize: 14 }}>Correo</Form.Label>
               <Form.Control
                 type="email"
                 {...register('email')}
@@ -208,6 +224,7 @@ export default function Register() {
             </Form.Group>
 
             <Form.Group className="mb-1">
+              <Form.Label style={{ fontSize: 14 }}>Contrasena</Form.Label>
               <Form.Control
                 type="password"
                 {...register('password')}
@@ -219,6 +236,7 @@ export default function Register() {
             </Form.Group>
 
             <Form.Group className="mb-3">
+              <Form.Label style={{ fontSize: 14 }}>Confirmar contrasena</Form.Label>
               <Form.Control
                 type="password"
                 {...register('confirmPassword')}
@@ -233,8 +251,8 @@ export default function Register() {
               Mín. 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.
             </p>
 
-            <Button type="submit" variant="primary" className="w-100" disabled={loading}>
-              {loading ? <Spinner size="sm" /> : 'Crear cuenta'}
+            <Button type="submit" variant="primary" className="w-100" disabled={loading} aria-busy={loading}>
+              {loading ? <><Spinner size="sm" role="status" /> <span className="visually-hidden">Creando cuenta</span></> : 'Crear cuenta'}
             </Button>
           </Form>
 

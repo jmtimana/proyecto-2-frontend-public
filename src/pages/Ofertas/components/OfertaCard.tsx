@@ -33,7 +33,11 @@ export default function OfertaCard({
   const faltan = mostrarMatch ? ((oferta.minRequiredScore as number) - (miScore as number)) : 0;
 
   return (
-    <Link to={`/ofertas/${oferta.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link
+      to={`/ofertas/${oferta.id}`}
+      aria-label={`Ver detalle de la oferta ${oferta.title} en ${oferta.companyName}`}
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    >
       <Card
         className="mb-3 oferta-card"
         style={{ position: 'relative', border: '0.5px solid var(--app-border)', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow .15s' }}
@@ -50,6 +54,7 @@ export default function OfertaCard({
                 onToggleGuardar?.(oferta.id);
               }}
               aria-label={guardada ? 'Quitar de guardadas' : 'Guardar oferta'}
+              aria-pressed={guardada}
               style={{
                 position: 'absolute',
                 top: 10,
