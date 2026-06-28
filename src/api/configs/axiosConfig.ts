@@ -14,6 +14,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const MAX_RETRIES = 3;
+const BASE_DELAY = 1000;
+
 let isRefreshing = false;
 
 api.interceptors.response.use(
@@ -21,6 +24,17 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
     const status = error.response?.status;
+
+    const isRecoverable = !error.response || status === 429 || (status! >= 500 && status! <= 599);
+
+    if (isRecoverable) {
+      const retryCount = original._retryCount || 0;
+      if (retryCount < MAX_RETRIES) {
+        original._retryCount = retryCount + 1;
+        await new Promise((r) => setTimeout(r, BASE_DELAY * Math.pow(2, retryCount)));
+        return api(original);
+      }
+    }
 
     if (status === 401 && !original._retry && tokenStorage.getRefresh()) {
       original._retry = true;
