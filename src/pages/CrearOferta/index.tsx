@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { OfertaApi } from '../../api/OfertaApi';
 import { HabilidadApi } from '../../api/HabilidadApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { MODALIDAD } from '../../utils/constants';
 
@@ -82,6 +83,7 @@ export default function CrearOferta() {
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <Link to="/empresa/ofertas" className="brand-link" style={{ fontSize: 14 }}>← Volver a mis ofertas</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis ofertas', href: '/empresa/ofertas' }, { label: 'Nueva oferta' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Publicar nueva oferta</h3>
 
       {error && <Alert variant="danger">{error}</Alert>}

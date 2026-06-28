@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { ResultadoApi } from '../../api/ResultadoApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { ResultadoResponse } from '../../api/types/Resultado';
 
 function estadoBadge(status: string) {
@@ -28,6 +29,7 @@ export default function MisResultados() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis resultados' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">Mis resultados</h3>
       <p className="text-secondary mb-4">El historial de las evaluaciones que has rendido.</p>
 

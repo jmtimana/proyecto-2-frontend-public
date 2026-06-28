@@ -3,6 +3,7 @@ import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-
 import { useNavigate, Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { HabilidadApi } from '../../api/HabilidadApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { DIFICULTAD } from '../../utils/constants';
 
@@ -62,6 +63,7 @@ export default function AdminCrearEvaluacion() {
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <Link to="/admin/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Admin', href: '/admin/evaluaciones' }, { label: 'Nueva evaluación' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Nueva evaluación</h3>
 
       {error && <Alert variant="danger">{error}</Alert>}

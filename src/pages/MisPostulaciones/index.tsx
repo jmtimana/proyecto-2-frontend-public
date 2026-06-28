@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { PostulacionApi } from '../../api/PostulacionApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
 
@@ -54,6 +55,7 @@ export default function MisPostulaciones() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis postulaciones' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">Mis postulaciones</h3>
       <p className="text-secondary mb-4">Revisa el estado de las ofertas a las que te postulaste.</p>
 

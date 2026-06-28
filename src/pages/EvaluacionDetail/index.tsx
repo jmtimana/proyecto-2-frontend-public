@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Card, Button } from 'react-bootstrap';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
 
 function dificultadColor(d: string) {
@@ -42,6 +43,7 @@ export default function EvaluacionDetail() {
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
       <Link to="/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Evaluaciones', href: '/evaluaciones' }, { label: ev.title }]} />
 
       <div className="d-flex justify-content-between align-items-start mt-3">
         <div>

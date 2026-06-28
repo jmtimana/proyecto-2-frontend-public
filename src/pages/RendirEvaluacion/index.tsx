@@ -7,6 +7,7 @@ import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
 import { sql } from '@codemirror/lang-sql';
 
+import Breadcrumb from '../../common/Breadcrumb';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
 import type {
@@ -218,6 +219,7 @@ export default function RendirEvaluacion() {
       <Link to={`/evaluaciones/${evalId}`} className="brand-link" style={{ fontSize: 14 }}>
         ← Volver al detalle
       </Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Evaluaciones', href: '/evaluaciones' }, { label: 'Rendir evaluación' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-1">{ev.title}</h3>
       <p className="text-secondary">{ev.description}</p>
 

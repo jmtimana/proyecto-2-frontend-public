@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { UserDetailResponse } from '../../api/types/User';
 import NivelBadge from '../../common/NivelBadge';
 import { nivelDeScore } from '../../utils/nivel';
@@ -162,6 +163,7 @@ export default function MiPerfil() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mi perfil' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-4">Mi perfil</h3>
 
       <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>

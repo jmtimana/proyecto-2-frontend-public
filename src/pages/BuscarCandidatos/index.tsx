@@ -3,6 +3,7 @@ import { Container, Form, Button, Row, Col, Spinner, Alert, Card, Badge } from '
 import { Link } from 'react-router-dom';
 import { UserApi } from '../../api/UserApi';
 import { useFetch } from '../../hooks/useFetch';
+import Breadcrumb from '../../common/Breadcrumb';
 import { usePaginationParams } from '../../hooks/usePaginationParams';
 import Pagination from '../../common/Pagination';
 import NivelBadge from '../../common/NivelBadge';
@@ -34,6 +35,7 @@ export default function BuscarCandidatos() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Buscar candidatos' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">Buscar candidatos</h3>
       <p className="text-secondary mb-4">Encuentra estudiantes por su SkillMatch Score (0 a 1).</p>
 

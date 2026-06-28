@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
+import Breadcrumb from '../../common/Breadcrumb';
 import NivelBadge from '../../common/NivelBadge';
 import type { UserResponse } from '../../api/types/User';
 
@@ -27,6 +28,7 @@ export default function Leaderboard() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ranking' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">🏆 Ranking de estudiantes</h3>
       <p className="text-secondary mb-4">Los mejores SkillMatch Score de la plataforma.</p>
 

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge } from 'react-bootstrap';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse, PreguntaResponse } from '../../api/types/Evaluacion';
 import type { RespuestaResponse } from '../../api/types/Respuesta';
 
@@ -79,6 +80,7 @@ export default function ResultadoDetalle() {
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
       <Link to="/mis-resultados" className="brand-link" style={{ fontSize: 14 }}>← Volver a mis resultados</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis resultados', href: '/mis-resultados' }, { label: 'Detalle' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-1">{evaluacion.title}</h3>
       <p className="text-secondary mb-4">Detalle de tus respuestas, pregunta por pregunta.</p>
 

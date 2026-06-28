@@ -3,6 +3,7 @@ import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-boo
 import { Link } from 'react-router-dom';
 import { OfertaApi } from '../../api/OfertaApi';
 import { useAuth } from '../../context/AuthContext';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import OfertaQR from '../../common/OfertaQR';
 
@@ -55,6 +56,7 @@ export default function EmpresaOfertas() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis ofertas' }]} />
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 style={{ fontWeight: 600, margin: 0 }}>Mis ofertas</h3>

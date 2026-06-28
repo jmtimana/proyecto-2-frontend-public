@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
 
@@ -55,6 +56,7 @@ export default function AdminEvaluaciones() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 820 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Admin', href: '/admin/evaluaciones' }, { label: 'Evaluaciones' }]} />
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 style={{ fontWeight: 600, margin: 0 }}>Administrar evaluaciones</h3>

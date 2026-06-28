@@ -3,6 +3,7 @@ import { Container, Spinner, Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { OfertaGuardadaApi } from '../../api/OfertaGuardadaApi';
 import { UserApi } from '../../api/UserApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import OfertaCard from '../Ofertas/components/OfertaCard';
 
@@ -39,6 +40,7 @@ export default function OfertasGuardadas() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ofertas guardadas' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">★ Ofertas guardadas</h3>
       <p className="text-secondary mb-4">Las ofertas que marcaste para revisar después.</p>
 

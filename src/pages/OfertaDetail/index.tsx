@@ -5,6 +5,7 @@ import { OfertaApi } from '../../api/OfertaApi';
 import { PostulacionApi } from '../../api/PostulacionApi';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralDetailResponse } from '../../api/types/Oferta';
 
 export default function OfertaDetail() {
@@ -94,6 +95,7 @@ export default function OfertaDetail() {
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
       <Link to="/ofertas" className="brand-link" style={{ fontSize: 14 }}>← Volver a ofertas</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ofertas', href: '/ofertas' }, { label: oferta.title }]} />
 
       <div className="d-flex justify-content-between align-items-start mt-3">
         <div>

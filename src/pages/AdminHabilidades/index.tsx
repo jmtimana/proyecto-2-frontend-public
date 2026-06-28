@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { HabilidadApi } from '../../api/HabilidadApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 
 export default function AdminHabilidades() {
@@ -47,6 +48,7 @@ export default function AdminHabilidades() {
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
       <Link to="/admin/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Admin', href: '/admin/evaluaciones' }, { label: 'Habilidades' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Habilidades</h3>
 
       {cargando && <div className="text-center py-4"><Spinner style={{ color: 'var(--brand)' }} /></div>}

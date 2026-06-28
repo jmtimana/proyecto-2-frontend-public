@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
 import { TIPO_PREGUNTA, LENGUAJES } from '../../utils/constants';
 
@@ -93,6 +94,7 @@ export default function AdminPreguntas() {
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
       <Link to="/admin/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Admin', href: '/admin/evaluaciones' }, { label: 'Preguntas' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-1">Preguntas · {evaluacion.title}</h3>
       <p className="text-secondary mb-4">{preguntas.length} pregunta(s) en esta evaluación.</p>
 

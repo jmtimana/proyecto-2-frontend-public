@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { OfertaApi } from '../../api/OfertaApi';
 import { HabilidadApi } from '../../api/HabilidadApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
 import { MODALIDAD, ESTADO_OFERTA } from '../../utils/constants';
 
@@ -130,6 +131,7 @@ export default function EditarOferta() {
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <Link to="/empresa/ofertas" className="brand-link" style={{ fontSize: 14 }}>← Volver a mis ofertas</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis ofertas', href: '/empresa/ofertas' }, { label: 'Editar oferta' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Editar oferta</h3>
 
       {error && <Alert variant="danger">{error}</Alert>}

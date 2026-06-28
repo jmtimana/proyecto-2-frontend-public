@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
 import { PostulacionApi } from '../../api/PostulacionApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
 
 function estadoBadge(estado: string) {
@@ -44,6 +45,7 @@ export default function Postulantes() {
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
       <Link to="/empresa/ofertas" className="brand-link" style={{ fontSize: 14 }}>← Volver a mis ofertas</Link>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis ofertas', href: '/empresa/ofertas' }, { label: 'Postulantes' }]} />
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Postulantes</h3>
 
       {loading && <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>}

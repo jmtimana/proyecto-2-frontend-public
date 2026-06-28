@@ -10,6 +10,7 @@ import { usePaginationParams } from '../../hooks/usePaginationParams';
 import { MODALIDAD } from '../../utils/constants';
 import OfertaCard from './components/OfertaCard';
 import Pagination from '../../common/Pagination';
+import Breadcrumb from '../../common/Breadcrumb';
 import Skeleton from '../../common/Skeleton';
 
 export default function Ofertas() {
@@ -111,6 +112,7 @@ export default function Ofertas() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ofertas' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">Ofertas laborales</h3>
       <p className="text-secondary mb-4">Explora las vacantes activas y encuentra tu próximo reto.</p>
 

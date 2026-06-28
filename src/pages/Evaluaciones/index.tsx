@@ -3,6 +3,7 @@ import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { ResultadoApi } from '../../api/ResultadoApi';
+import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
 
@@ -100,6 +101,7 @@ export default function Evaluaciones() {
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Evaluaciones' }]} />
       <div className="d-flex justify-content-between align-items-center mb-1">
         <h3 style={{ fontWeight: 600, margin: 0 }}>Evaluaciones</h3>
         <Button as={Link as any} to="/mis-resultados" variant="outline-secondary" size="sm">
