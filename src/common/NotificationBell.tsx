@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Spinner } from 'react-bootstrap';
+import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { NotificationApi } from '../api/NotificationApi';
 import type { NotificationResponse } from '../api/types/Notification';
 
@@ -88,43 +88,45 @@ export default function NotificationBell() {
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <button
-        onClick={toggle}
-        aria-label="Notificaciones"
-        style={{
-          background: 'none',
-          border: 'none',
-          position: 'relative',
-          cursor: 'pointer',
-          padding: '4px 6px',
-          fontSize: 20,
-          lineHeight: 1,
-        }}
-      >
-        🔔
-        {count > 0 && (
-          <span
-            style={{
-              position: 'absolute',
-              top: -2,
-              right: -2,
-              background: '#dc3545',
-              color: '#fff',
-              borderRadius: 10,
-              fontSize: 10,
-              fontWeight: 700,
-              minWidth: 16,
-              height: 16,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-            }}
-          >
-            {count > 9 ? '9+' : count}
-          </span>
-        )}
-      </button>
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>Ver notificaciones</Tooltip>}>
+        <button
+          onClick={toggle}
+          aria-label="Notificaciones"
+          style={{
+            background: 'none',
+            border: 'none',
+            position: 'relative',
+            cursor: 'pointer',
+            padding: '4px 6px',
+            fontSize: 20,
+            lineHeight: 1,
+          }}
+        >
+          {'\u{1F514}'}
+          {count > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                background: '#dc3545',
+                color: '#fff',
+                borderRadius: 10,
+                fontSize: 10,
+                fontWeight: 700,
+                minWidth: 16,
+                height: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 4px',
+              }}
+            >
+              {count > 9 ? '9+' : count}
+            </span>
+          )}
+        </button>
+      </OverlayTrigger>
 
       {open && (
         <div
@@ -156,7 +158,7 @@ export default function NotificationBell() {
                   padding: 0,
                 }}
               >
-                Marcar todas como leídas
+                Marcar todas como leidas
               </button>
             )}
           </div>
@@ -169,7 +171,7 @@ export default function NotificationBell() {
 
           {!loading && cargado && items.length === 0 && (
             <div className="text-center text-secondary py-4" style={{ fontSize: 13 }}>
-              <div style={{ fontSize: 28 }}>🔕</div>
+              <div style={{ fontSize: 28 }}>{'\u{1F515}'}</div>
               No tienes notificaciones.
             </div>
           )}

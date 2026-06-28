@@ -1,4 +1,4 @@
-import { Card, Badge } from 'react-bootstrap';
+import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import type { OfertaLaboralResponse } from '../../../api/types/Oferta';
 
@@ -39,36 +39,40 @@ export default function OfertaCard({
         style={{ position: 'relative', border: '0.5px solid #e6e6ef', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow .15s' }}
       >
         {mostrarGuardar && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggleGuardar?.(oferta.id);
-            }}
-            aria-label={guardada ? 'Quitar de guardadas' : 'Guardar oferta'}
-            title={guardada ? 'Quitar de guardadas' : 'Guardar oferta'}
-            style={{
-              position: 'absolute',
-              top: 10,
-              right: 10,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 20,
-              lineHeight: 1,
-              color: guardada ? '#f5b301' : '#c9c9d2',
-              zIndex: 2,
-            }}
+          <OverlayTrigger
+            placement="left"
+            overlay={<Tooltip>{guardada ? 'Quitar de guardadas' : 'Guardar oferta'}</Tooltip>}
           >
-            {guardada ? '★' : '☆'}
-          </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleGuardar?.(oferta.id);
+              }}
+              aria-label={guardada ? 'Quitar de guardadas' : 'Guardar oferta'}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 20,
+                lineHeight: 1,
+                color: guardada ? '#f5b301' : '#c9c9d2',
+                zIndex: 2,
+              }}
+            >
+              {guardada ? '\u2605' : '\u2606'}
+            </button>
+          </OverlayTrigger>
         )}
         <Card.Body className="p-4">
           <div className="d-flex justify-content-between align-items-start">
             <div>
               <h5 className="mb-1" style={{ fontWeight: 600 }}>{oferta.title}</h5>
               <p className="text-secondary mb-2" style={{ fontSize: 14 }}>
-                {oferta.companyName} · {oferta.ubicacion}
+                {oferta.companyName} - {oferta.ubicacion}
               </p>
             </div>
             <Badge bg={modalidadColor(oferta.modalidad)} style={{ marginRight: mostrarGuardar ? 28 : 0 }}>{oferta.modalidad}</Badge>
@@ -90,11 +94,11 @@ export default function OfertaCard({
             <span className="text-secondary">{salario(oferta.minSalary, oferta.maxSalary)}</span>
             <div className="d-flex align-items-center gap-2">
               {oferta.minRequiredScore != null && (
-                <span style={{ color: 'var(--brand-dark)', fontWeight: 500 }}>Score mínimo: {oferta.minRequiredScore}</span>
+                <span style={{ color: 'var(--brand-dark)', fontWeight: 500 }}>Score minimo: {oferta.minRequiredScore}</span>
               )}
               {mostrarMatch && (
                 cumple ? (
-                  <Badge bg="success">✓ Cumples</Badge>
+                  <Badge bg="success">Cumples</Badge>
                 ) : (
                   <Badge bg="warning" text="dark">Te faltan {faltan.toFixed(2)}</Badge>
                 )

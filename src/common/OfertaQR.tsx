@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { QRCodeCanvas } from 'qrcode.react';
 
 interface Props {
@@ -35,9 +35,11 @@ export default function OfertaQR({ ofertaId, titulo }: Props) {
 
   return (
     <>
-      <Button variant="outline-secondary" size="sm" onClick={() => setShow(true)}>
-        Generar QR
-      </Button>
+      <OverlayTrigger placement="top" overlay={<Tooltip>Mostrar codigo QR para compartir la oferta</Tooltip>}>
+        <Button variant="outline-secondary" size="sm" onClick={() => setShow(true)}>
+          Generar QR
+        </Button>
+      </OverlayTrigger>
 
       <Modal show={show} onHide={() => setShow(false)} centered>
         <Modal.Header closeButton>
