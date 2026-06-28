@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
+import { useEffect, useMemo, useState } from 'react';
+import { Container, Spinner, Alert, Card, Badge, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { PostulacionApi } from '../../api/PostulacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -7,6 +7,13 @@ import type { Page } from '../../api/types/Page';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
 
 const PAGE_SIZE = 10;
+type PostulacionSort = 'recent_desc' | 'recent_asc' | 'status_pending' | 'title_asc';
+
+const estadoRank: Record<string, number> = {
+  PENDIENTE: 1,
+  ACEPTADA: 2,
+  RECHAZADA: 3,
+};
 
 function estadoBadge(estado: string) {
   if (estado === 'ACEPTADA') return { bg: 'success', texto: '✓ Aceptada' };
@@ -31,6 +38,7 @@ export default function MisPostulaciones() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sort, setSort] = useState<PostulacionSort>('recent_desc');
 
   useEffect(() => {
     let cancelado = false;
@@ -53,11 +61,35 @@ export default function MisPostulaciones() {
     };
   }, [page]);
 
+  const postulacionesOrdenadas = useMemo(() => {
+    const items = data?.content ?? [];
+    return items.slice().sort((a, b) => {
+      if (sort === 'recent_asc') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sort === 'status_pending') {
+        return (estadoRank[a.status] ?? 99) - (estadoRank[b.status] ?? 99);
+      }
+      if (sort === 'title_asc') return a.offerTitle.localeCompare(b.offerTitle);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [data?.content, sort]);
+
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis postulaciones' }]} />
       <h3 style={{ fontWeight: 600 }} className="mb-1">Mis postulaciones</h3>
       <p className="text-secondary mb-4">Revisa el estado de las ofertas a las que te postulaste.</p>
+
+      <div className="d-flex justify-content-end mb-3">
+        <Form.Group style={{ minWidth: 220 }}>
+          <Form.Label style={{ fontSize: 13 }}>Ordenar por</Form.Label>
+          <Form.Select value={sort} onChange={(e) => setSort(e.target.value as PostulacionSort)}>
+            <option value="recent_desc">Mas recientes</option>
+            <option value="recent_asc">Mas antiguas</option>
+            <option value="status_pending">Estado pendiente primero</option>
+            <option value="title_asc">Oferta A-Z</option>
+          </Form.Select>
+        </Form.Group>
+      </div>
 
       {loading && (
         <div className="text-center py-5">
@@ -80,7 +112,7 @@ export default function MisPostulaciones() {
 
       {!loading && !error && data && !data.empty && (
         <>
-          {data.content.map((p) => {
+          {postulacionesOrdenadas.map((p) => {
             const badge = estadoBadge(p.status);
             return (
               <Card key={p.id} className="mb-3" style={{ border: '0.5px solid #e6e6ef' }}>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
+import { useEffect, useMemo, useState } from 'react';
+import { Container, Spinner, Alert, Button, Card, Badge, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { OfertaApi } from '../../api/OfertaApi';
 import { useAuth } from '../../context/AuthContext';
@@ -7,6 +7,32 @@ import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import OfertaQR from '../../common/OfertaQR';
 import { getErrorMessage } from '../../utils/errorHandler';
+
+type EmpresaOfertaSort =
+  | 'recent_desc'
+  | 'applications_desc'
+  | 'status_active'
+  | 'salary_desc'
+  | 'salary_asc'
+  | 'score_desc'
+  | 'score_asc'
+  | 'title_asc';
+
+function salaryValue(min: number | null, max: number | null) {
+  return max ?? min ?? null;
+}
+
+function compareNullable(a: number | null, b: number | null, direction: 'asc' | 'desc') {
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
+  return direction === 'asc' ? a - b : b - a;
+}
+
+const estadoRank: Record<string, number> = {
+  ACTIVA: 1,
+  PAUSADA: 2,
+};
 
 function estadoColor(e: string) {
   if (e === 'ACTIVA') return 'success';
@@ -19,6 +45,7 @@ export default function EmpresaOfertas() {
   const [ofertas, setOfertas] = useState<OfertaLaboralResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sort, setSort] = useState<EmpresaOfertaSort>('recent_desc');
 
   const [aEliminar, setAEliminar] = useState<OfertaLaboralResponse | null>(null);
   const [eliminando, setEliminando] = useState(false);
@@ -40,6 +67,23 @@ export default function EmpresaOfertas() {
 
   }, [user?.userId]);
 
+  const ofertasOrdenadas = useMemo(() => {
+    return ofertas.slice().sort((a, b) => {
+      if (sort === 'applications_desc') return b.applicationsCount - a.applicationsCount;
+      if (sort === 'status_active') return (estadoRank[a.status] ?? 99) - (estadoRank[b.status] ?? 99);
+      if (sort === 'salary_desc') {
+        return compareNullable(salaryValue(a.minSalary, a.maxSalary), salaryValue(b.minSalary, b.maxSalary), 'desc');
+      }
+      if (sort === 'salary_asc') {
+        return compareNullable(salaryValue(a.minSalary, a.maxSalary), salaryValue(b.minSalary, b.maxSalary), 'asc');
+      }
+      if (sort === 'score_desc') return compareNullable(a.minRequiredScore, b.minRequiredScore, 'desc');
+      if (sort === 'score_asc') return compareNullable(a.minRequiredScore, b.minRequiredScore, 'asc');
+      if (sort === 'title_asc') return a.title.localeCompare(b.title);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [ofertas, sort]);
+
   async function confirmarEliminar() {
     if (!aEliminar) return;
     setEliminando(true);
@@ -58,14 +102,29 @@ export default function EmpresaOfertas() {
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Mis ofertas' }]} />
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-start gap-3 mb-4 flex-wrap">
         <div>
           <h3 style={{ fontWeight: 600, margin: 0 }}>Mis ofertas</h3>
           <p className="text-secondary mb-0">Gestiona tus vacantes y revisa postulantes</p>
         </div>
-        <Button as={Link as any} to="/empresa/ofertas/nueva" variant="primary">
-          + Publicar oferta
-        </Button>
+        <div className="d-flex align-items-end gap-2 flex-wrap">
+          <Form.Group style={{ minWidth: 220 }}>
+            <Form.Label style={{ fontSize: 13 }}>Ordenar por</Form.Label>
+            <Form.Select value={sort} onChange={(e) => setSort(e.target.value as EmpresaOfertaSort)}>
+              <option value="recent_desc">Mas recientes</option>
+              <option value="applications_desc">Mas postulantes</option>
+              <option value="status_active">Activas primero</option>
+              <option value="salary_desc">Salario mayor</option>
+              <option value="salary_asc">Salario menor</option>
+              <option value="score_desc">Score maximo</option>
+              <option value="score_asc">Score minimo</option>
+              <option value="title_asc">Nombre A-Z</option>
+            </Form.Select>
+          </Form.Group>
+          <Button as={Link as any} to="/empresa/ofertas/nueva" variant="primary">
+            + Publicar oferta
+          </Button>
+        </div>
       </div>
 
       {loading && (
@@ -82,7 +141,7 @@ export default function EmpresaOfertas() {
         </div>
       )}
 
-      {!loading && !error && ofertas.map((o) => (
+      {!loading && !error && ofertasOrdenadas.map((o) => (
         <Card key={o.id} className="mb-3" style={{ border: '0.5px solid #e6e6ef' }}>
           <Card.Body className="p-4">
             <div className="d-flex justify-content-between align-items-start gap-3">

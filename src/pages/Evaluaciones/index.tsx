@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
+import { useEffect, useMemo, useState } from 'react';
+import { Container, Spinner, Alert, Button, Card, Badge, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { ResultadoApi } from '../../api/ResultadoApi';
@@ -8,6 +8,13 @@ import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
 
 const PAGE_SIZE = 10;
+type EvaluacionSort = 'recent_desc' | 'title_asc' | 'difficulty_asc' | 'score_desc' | 'time_asc';
+
+const dificultadRank: Record<string, number> = {
+  FACIL: 1,
+  MEDIO: 2,
+  DIFICIL: 3,
+};
 
 function dificultadColor(d: string) {
   if (d === 'FACIL') return 'success';
@@ -28,6 +35,7 @@ export default function Evaluaciones() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sort, setSort] = useState<EvaluacionSort>('recent_desc');
 
   useEffect(() => {
     let vivo = true;
@@ -51,6 +59,21 @@ export default function Evaluaciones() {
       vivo = false;
     };
   }, [page]);
+
+  const evaluacionesOrdenadas = useMemo(() => {
+    const items = data?.content ?? [];
+    return items.slice().sort((a, b) => {
+      if (sort === 'title_asc') return a.title.localeCompare(b.title);
+      if (sort === 'difficulty_asc') {
+        return (dificultadRank[a.difficulty] ?? 99) - (dificultadRank[b.difficulty] ?? 99);
+      }
+      if (sort === 'score_desc') return (b.maxScore ?? -1) - (a.maxScore ?? -1);
+      if (sort === 'time_asc') {
+        return (a.timeLimitSeconds ?? Number.MAX_SAFE_INTEGER) - (b.timeLimitSeconds ?? Number.MAX_SAFE_INTEGER);
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [data?.content, sort]);
 
   function TarjetaEval({ ev }: { ev: EvaluacionResponse }) {
     const hecha = completadas.has(ev.id);
@@ -110,6 +133,19 @@ export default function Evaluaciones() {
       </div>
       <p className="text-secondary mb-4">Rinde evaluaciones técnicas para subir tu SkillMatch Score.</p>
 
+      <div className="d-flex justify-content-end mb-3">
+        <Form.Group style={{ minWidth: 220 }}>
+          <Form.Label style={{ fontSize: 13 }}>Ordenar por</Form.Label>
+          <Form.Select value={sort} onChange={(e) => setSort(e.target.value as EvaluacionSort)}>
+            <option value="recent_desc">Mas recientes</option>
+            <option value="title_asc">Nombre A-Z</option>
+            <option value="difficulty_asc">Dificultad menor</option>
+            <option value="score_desc">Mayor puntaje</option>
+            <option value="time_asc">Menor tiempo</option>
+          </Form.Select>
+        </Form.Group>
+      </div>
+
       {loading && <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>}
 
       {!loading && error && <Alert variant="danger">{error}</Alert>}
@@ -123,7 +159,7 @@ export default function Evaluaciones() {
 
       {!loading && !error && data && !data.empty && (
         <>
-          {data.content.map((ev) => <TarjetaEval key={ev.id} ev={ev} />)}
+          {evaluacionesOrdenadas.map((ev) => <TarjetaEval key={ev.id} ev={ev} />)}
 
           <div className="d-flex justify-content-between align-items-center mt-4">
             <Button variant="outline-secondary" size="sm" disabled={data.first} onClick={() => setPage((p) => p - 1)}>← Anterior</Button>

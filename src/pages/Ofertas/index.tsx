@@ -13,6 +13,34 @@ import Pagination from '../../common/Pagination';
 import Breadcrumb from '../../common/Breadcrumb';
 import Skeleton from '../../common/Skeleton';
 
+type SortOption =
+  | 'salary_asc'
+  | 'salary_desc'
+  | 'score_asc'
+  | 'score_desc'
+  | 'recent_desc'
+  | 'recent_asc'
+  | 'title_asc'
+  | 'title_desc'
+  | 'applications_desc';
+
+function numberParam(value: string) {
+  if (value.trim() === '') return null;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function salaryValue(min: number | null, max: number | null) {
+  return max ?? min ?? null;
+}
+
+function compareNullable(a: number | null, b: number | null, direction: 'asc' | 'desc') {
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
+  return direction === 'asc' ? a - b : b - a;
+}
+
 export default function Ofertas() {
 
   const { user } = useAuth();
@@ -67,6 +95,11 @@ export default function Ofertas() {
 
   const { page, size, getParam, setParams, setPage, setSize } = usePaginationParams({ size: 10 });
   const modalidad = getParam('modalidad', 'TODAS');
+  const sort = getParam('sort', 'recent_desc') as SortOption;
+  const salarioMin = getParam('salarioMin');
+  const salarioMax = getParam('salarioMax');
+  const scoreMin = getParam('scoreMin');
+  const scoreMax = getParam('scoreMax');
 
   const [textoInput, setTextoInput] = useState(getParam('q'));
   const debounced = useDebounce(textoInput, 350);
@@ -88,16 +121,63 @@ export default function Ofertas() {
 
   const filtradas = useMemo(() => {
     const q = debounced.trim().toLowerCase();
-    return todas.filter((o) => {
+    const salarioMinNumber = numberParam(salarioMin);
+    const salarioMaxNumber = numberParam(salarioMax);
+    const scoreMinNumber = numberParam(scoreMin);
+    const scoreMaxNumber = numberParam(scoreMax);
+
+    const resultado = todas.filter((o) => {
       const coincideTexto =
         !q ||
         o.title.toLowerCase().includes(q) ||
         o.companyName.toLowerCase().includes(q) ||
         (o.description ?? '').toLowerCase().includes(q);
       const coincideModalidad = modalidad === 'TODAS' || o.modalidad === modalidad;
-      return coincideTexto && coincideModalidad;
+      const salario = salaryValue(o.minSalary, o.maxSalary);
+      const score = o.minRequiredScore;
+      const coincideSalarioMin = salarioMinNumber == null || (salario != null && salario >= salarioMinNumber);
+      const coincideSalarioMax = salarioMaxNumber == null || (salario != null && salario <= salarioMaxNumber);
+      const coincideScoreMin = scoreMinNumber == null || (score != null && score >= scoreMinNumber);
+      const coincideScoreMax = scoreMaxNumber == null || (score != null && score <= scoreMaxNumber);
+
+      return (
+        coincideTexto &&
+        coincideModalidad &&
+        coincideSalarioMin &&
+        coincideSalarioMax &&
+        coincideScoreMin &&
+        coincideScoreMax
+      );
     });
-  }, [todas, debounced, modalidad]);
+
+    return resultado.slice().sort((a, b) => {
+      if (sort === 'salary_asc') {
+        return compareNullable(salaryValue(a.minSalary, a.maxSalary), salaryValue(b.minSalary, b.maxSalary), 'asc');
+      }
+      if (sort === 'salary_desc') {
+        return compareNullable(salaryValue(a.minSalary, a.maxSalary), salaryValue(b.minSalary, b.maxSalary), 'desc');
+      }
+      if (sort === 'score_asc') {
+        return compareNullable(a.minRequiredScore, b.minRequiredScore, 'asc');
+      }
+      if (sort === 'score_desc') {
+        return compareNullable(a.minRequiredScore, b.minRequiredScore, 'desc');
+      }
+      if (sort === 'recent_asc') {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+      if (sort === 'title_asc') {
+        return a.title.localeCompare(b.title);
+      }
+      if (sort === 'title_desc') {
+        return b.title.localeCompare(a.title);
+      }
+      if (sort === 'applications_desc') {
+        return b.applicationsCount - a.applicationsCount;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [todas, debounced, modalidad, salarioMin, salarioMax, scoreMin, scoreMax, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtradas.length / size));
   const pageSafe = Math.min(page, totalPages - 1);
@@ -105,10 +185,25 @@ export default function Ofertas() {
 
   function limpiar() {
     setTextoInput('');
-    setParams({ q: null, modalidad: null });
+    setParams({
+      q: null,
+      modalidad: null,
+      sort: null,
+      salarioMin: null,
+      salarioMax: null,
+      scoreMin: null,
+      scoreMax: null,
+    });
   }
 
-  const hayFiltros = debounced.trim() !== '' || modalidad !== 'TODAS';
+  const hayFiltros =
+    debounced.trim() !== '' ||
+    modalidad !== 'TODAS' ||
+    sort !== 'recent_desc' ||
+    salarioMin !== '' ||
+    salarioMax !== '' ||
+    scoreMin !== '' ||
+    scoreMax !== '';
 
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
@@ -145,6 +240,77 @@ export default function Ofertas() {
               <Button variant="outline-secondary" className="w-100" onClick={limpiar} disabled={!hayFiltros}>
                 Limpiar
               </Button>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group>
+                <Form.Label style={{ fontSize: 13 }}>Ordenar por</Form.Label>
+                <Form.Select
+                  value={sort}
+                  onChange={(e) => setParams({ sort: e.target.value === 'recent_desc' ? null : e.target.value })}
+                >
+                  <option value="recent_desc">Mas recientes</option>
+                  <option value="recent_asc">Mas antiguas</option>
+                  <option value="salary_desc">Salario mayor</option>
+                  <option value="salary_asc">Salario menor</option>
+                  <option value="score_desc">Score maximo</option>
+                  <option value="score_asc">Score minimo</option>
+                  <option value="title_asc">Nombre A-Z</option>
+                  <option value="title_desc">Nombre Z-A</option>
+                  <option value="applications_desc">Mas postulaciones</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={6} md={2}>
+              <Form.Group>
+                <Form.Label style={{ fontSize: 13 }}>Salario min.</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  placeholder="0"
+                  value={salarioMin}
+                  onChange={(e) => setParams({ salarioMin: e.target.value || null })}
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6} md={2}>
+              <Form.Group>
+                <Form.Label style={{ fontSize: 13 }}>Salario max.</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  placeholder="10000"
+                  value={salarioMax}
+                  onChange={(e) => setParams({ salarioMax: e.target.value || null })}
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6} md={2}>
+              <Form.Group>
+                <Form.Label style={{ fontSize: 13 }}>Score min.</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  placeholder="0.00"
+                  value={scoreMin}
+                  onChange={(e) => setParams({ scoreMin: e.target.value || null })}
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6} md={2}>
+              <Form.Group>
+                <Form.Label style={{ fontSize: 13 }}>Score max.</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  placeholder="1.00"
+                  value={scoreMax}
+                  onChange={(e) => setParams({ scoreMax: e.target.value || null })}
+                />
+              </Form.Group>
             </Col>
           </Row>
         </Card.Body>
