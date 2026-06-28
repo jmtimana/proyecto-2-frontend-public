@@ -1,4 +1,3 @@
-// Tipos para enviar y consultar respuestas (coinciden con tus DTO).
 export interface RespuestaSubmitRequest {
   preguntaId: number;
   evaluacionId: number;
@@ -18,6 +17,6 @@ export interface RespuestaResponse {
   executionTimeMs: number | null;
   memoryKb: number | null;
   attempts: number;
-  status: string; // PENDIENTE | CORRECTA | INCORRECTA | ERROR
+  status: string;
   createdAt: string;
 }

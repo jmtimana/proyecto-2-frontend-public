@@ -1,8 +1,3 @@
-// =========================================================
-// Postulantes de una oferta (empresa). Lista quién se postuló
-// y permite aceptar / rechazar (PATCH estado).
-// Ruta: /empresa/ofertas/:id/postulantes
-// =========================================================
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
@@ -12,7 +7,7 @@ import type { PostulacionResponse } from '../../api/types/Postulacion';
 function estadoBadge(estado: string) {
   if (estado === 'ACEPTADA') return 'success';
   if (estado === 'RECHAZADA') return 'danger';
-  return 'warning'; // PENDIENTE
+  return 'warning';
 }
 
 export default function Postulantes() {
@@ -37,7 +32,7 @@ export default function Postulantes() {
     setActualizando(postulacionId);
     try {
       const actualizada = await PostulacionApi.updateEstado(postulacionId, estado);
-      // Actualizamos solo esa fila en la lista, sin recargar todo.
+
       setPostulantes((prev) => prev.map((p) => (p.id === postulacionId ? actualizada : p)));
     } catch (err: any) {
       alert(err?.response?.data?.message ?? 'No se pudo actualizar el estado.');
@@ -83,7 +78,6 @@ export default function Postulantes() {
               </p>
             )}
 
-            {/* Solo se puede decidir si está PENDIENTE */}
             {p.status === 'PENDIENTE' && (
               <div className="d-flex gap-2">
                 <Button

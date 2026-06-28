@@ -1,4 +1,3 @@
-// Resultado = un "intento" de evaluación del usuario.
 export interface ResultadoResponse {
   id: number;
   userId: number;
@@ -7,7 +6,7 @@ export interface ResultadoResponse {
   obtainedScore: number;
   maxScore: number;
   percentage?: number | null;
-  status: string; // EN_PROGRESO | COMPLETADA | ...
+  status: string;
   startDate: string;
   endDate?: string | null;
   totalTimeSeconds?: number | null;

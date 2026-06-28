@@ -1,4 +1,3 @@
-// Pie de página global (se muestra en todas las pantallas).
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 

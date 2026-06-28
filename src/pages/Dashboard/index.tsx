@@ -1,7 +1,3 @@
-// =========================================================
-// Dashboard role-aware: decide qué versión mostrar según el
-// tipo de usuario (ESTUDIANTE o EMPRESA).
-// =========================================================
 import { Container } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import StudentDashboard from './components/StudentDashboard';

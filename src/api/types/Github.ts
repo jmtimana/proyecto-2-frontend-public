@@ -1,9 +1,3 @@
-// =========================================================
-// Tipos de GitHub (coinciden con tus DTO del backend).
-// Varios campos son opcionales porque el backend omite los vacíos.
-// =========================================================
-
-// Lo que enviamos al conectar -> POST /github/connect
 export interface GithubConnectRequest {
   githubToken: string;
 }
@@ -17,7 +11,6 @@ export interface GithubRepoResponse {
   url?: string | null;
 }
 
-// GET /github/profile
 export interface GithubProfileResponse {
   githubUsername: string;
   avatarUrl: string;

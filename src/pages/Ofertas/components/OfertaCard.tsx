@@ -1,7 +1,3 @@
-// =========================================================
-// Tarjeta de una oferta laboral en la lista.
-// Toda la tarjeta es clickeable y lleva al detalle (/ofertas/:id).
-// =========================================================
 import { Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import type { OfertaLaboralResponse } from '../../../api/types/Oferta';
@@ -31,7 +27,7 @@ export default function OfertaCard({
   guardada?: boolean;
   onToggleGuardar?: (id: number) => void;
 }) {
-  // Si tenemos el score del estudiante y la oferta exige un mínimo, comparamos.
+
   const mostrarMatch = miScore != null && oferta.minRequiredScore != null;
   const cumple = mostrarMatch && (miScore as number) >= (oferta.minRequiredScore as number);
   const faltan = mostrarMatch ? ((oferta.minRequiredScore as number) - (miScore as number)) : 0;
@@ -42,7 +38,6 @@ export default function OfertaCard({
         className="mb-3 oferta-card"
         style={{ position: 'relative', border: '0.5px solid #e6e6ef', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow .15s' }}
       >
-        {/* Botón de guardar (estrella). No navega: detiene el clic. */}
         {mostrarGuardar && (
           <button
             onClick={(e) => {

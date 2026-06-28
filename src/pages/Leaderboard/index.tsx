@@ -1,8 +1,3 @@
-// =========================================================
-// Ranking de los mejores estudiantes por SkillMatch Score.
-// Consume: GET /users/leaderboard (UserApi.leaderboard).
-// Resalta tu propia fila si apareces en el top.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
 import { UserApi } from '../../api/UserApi';

@@ -1,8 +1,3 @@
-// =========================================================
-// Detalle de una evaluación: info + preguntas + botón "Rendir".
-// (El botón de rendir se activa en la Etapa 2.)
-// Ruta: /evaluaciones/:id
-// =========================================================
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Card, Button } from 'react-bootstrap';
@@ -94,7 +89,6 @@ export default function EvaluacionDetail() {
 
       <hr className="my-4" />
 
-      {/* Botón de rendir */}
       <div>
         <Button as={Link as any} to={`/evaluaciones/${ev.id}/rendir`} variant="primary" size="lg">
           Rendir evaluación

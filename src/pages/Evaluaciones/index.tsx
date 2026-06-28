@@ -1,7 +1,3 @@
-// =========================================================
-// Lista de evaluaciones disponibles (requiere sesión).
-// Las que ya completaste salen como "Completado" y bloqueadas.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -26,7 +22,7 @@ function tiempo(segundos: number | null) {
 
 export default function Evaluaciones() {
   const [data, setData] = useState<Page<EvaluacionResponse> | null>(null);
-  // Set con los ids de evaluaciones que el usuario ya completó.
+
   const [completadas, setCompletadas] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -36,7 +32,7 @@ export default function Evaluaciones() {
     let vivo = true;
     setLoading(true);
     setError('');
-    // Pedimos evaluaciones y resultados a la vez.
+
     Promise.all([EvaluacionApi.list(page, PAGE_SIZE), ResultadoApi.list(0, 50)])
       .then(([evs, resultados]) => {
         if (!vivo) return;
@@ -55,7 +51,6 @@ export default function Evaluaciones() {
     };
   }, [page]);
 
-  // Tarjeta interna (con o sin enlace según esté completada).
   function TarjetaEval({ ev }: { ev: EvaluacionResponse }) {
     const hecha = completadas.has(ev.id);
     const contenido = (
@@ -95,7 +90,6 @@ export default function Evaluaciones() {
       </Card>
     );
 
-    // Si ya está completada, NO es un enlace (no se puede volver a entrar).
     if (hecha) return contenido;
     return (
       <Link to={`/evaluaciones/${ev.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>

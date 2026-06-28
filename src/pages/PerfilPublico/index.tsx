@@ -1,8 +1,3 @@
-// =========================================================
-// Perfil público de un candidato (lo ve la empresa).
-// Ruta: /candidatos/:id   ·   Consume: GET /users/{id}
-// Solo lectura: nombre, nivel, score, GitHub, bio.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
@@ -51,7 +46,6 @@ export default function PerfilPublico() {
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <Link to="/empresa/candidatos" className="brand-link" style={{ fontSize: 14 }}>← Volver a candidatos</Link>
 
-      {/* Cabecera */}
       <Card className="mt-3 mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4 d-flex align-items-center gap-3">
           <div
@@ -71,7 +65,6 @@ export default function PerfilPublico() {
         </Card.Body>
       </Card>
 
-      {/* Scores */}
       <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4">
           <div className="d-flex justify-content-between">
@@ -87,7 +80,6 @@ export default function PerfilPublico() {
             </div>
           </div>
 
-          {/* Barra al siguiente nivel */}
           {nivel.siguiente && (
             <div style={{ marginTop: 14 }}>
               <div className="d-flex justify-content-between text-secondary" style={{ fontSize: 11, marginBottom: 4 }}>
@@ -116,7 +108,6 @@ export default function PerfilPublico() {
         </Card.Body>
       </Card>
 
-      {/* Bio */}
       {u.bio && (
         <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
           <Card.Body className="p-4">

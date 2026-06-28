@@ -1,13 +1,3 @@
-// =========================================================
-// AuthContext: "la memoria de la sesión" para toda la app.
-//
-// Cualquier componente puede preguntar useAuth() para saber:
-//   - quién está logueado (user)
-//   - si está logueado (isAuthenticated)
-//   - y llamar a login(), register() o logout().
-//
-// Así no tenemos que pasar el usuario manualmente de pantalla en pantalla.
-// =========================================================
 import {
   createContext,
   useContext,
@@ -23,7 +13,6 @@ import type {
   RegisterRequest,
 } from '../api/types/Auth';
 
-// La info de usuario que guardamos en memoria (sale del AuthResponse).
 interface SessionUser {
   userId: number;
   email: string;
@@ -40,14 +29,12 @@ interface AuthContextValue {
   login: (payload: LoginRequest) => Promise<void>;
   register: (payload: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
-  // Actualiza algunos campos del usuario en memoria (ej. tras editar el perfil),
-  // para que la Navbar y demás lo reflejen sin tener que volver a iniciar sesión.
+
   updateSessionUser: (partial: Partial<SessionUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// Convierte la respuesta del backend en nuestro objeto de sesión.
 function toSessionUser(res: AuthResponse): SessionUser {
   return {
     userId: res.userId,
@@ -63,8 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Al cargar la app: si hay tokens guardados, recuperamos el usuario del
-  // localStorage (lo guardamos junto a los tokens en login/register).
   useEffect(() => {
     const access = tokenStorage.getAccess();
     const saved = localStorage.getItem('sm_user');
@@ -95,14 +80,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await AuthApi.logout();
     } catch {
-      // Aunque el backend falle, limpiamos la sesión local igual.
+
     }
     tokenStorage.clear();
     localStorage.removeItem('sm_user');
     setUser(null);
   }
 
-  // Mezcla campos nuevos en el usuario actual (y los guarda en localStorage).
   function updateSessionUser(partial: Partial<SessionUser>) {
     setUser((prev) => {
       if (!prev) return prev;
@@ -129,7 +113,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook práctico: useAuth() en cualquier componente.
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>');

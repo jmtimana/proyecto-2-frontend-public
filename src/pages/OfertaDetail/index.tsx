@@ -1,13 +1,3 @@
-// =========================================================
-// Detalle de una oferta + flujo de "Postularme".
-// Ruta: /ofertas/:id
-//
-// El botón de postular cambia según el estado:
-//  - No logueado     -> "Inicia sesión para postular"
-//  - Estudiante      -> "Postularme" (abre modal con carta)
-//  - Empresa         -> aviso de que las empresas no postulan
-//  - Ya postulado    -> mensaje de éxito
-// =========================================================
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Button, Modal, Form } from 'react-bootstrap';
@@ -26,14 +16,12 @@ export default function OfertaDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Estado del modal de postulación
   const [showModal, setShowModal] = useState(false);
   const [carta, setCarta] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [postulado, setPostulado] = useState(false);
   const [modalError, setModalError] = useState('');
 
-  // Score del estudiante, para mostrar si cumple el mínimo de esta oferta.
   const [miScore, setMiScore] = useState<number | null>(null);
 
   useEffect(() => {
@@ -71,7 +59,7 @@ export default function OfertaDetail() {
       setPostulado(true);
       setShowModal(false);
     } catch (err: any) {
-      // 409 = ya te postulaste antes (constraint UNIQUE user+oferta)
+
       if (err?.response?.status === 409) {
         setModalError('Ya te habías postulado a esta oferta.');
         setPostulado(true);
@@ -150,7 +138,6 @@ export default function OfertaDetail() {
 
       <hr className="my-4" />
 
-      {/* Aviso de match: ¿el estudiante cumple el score mínimo? */}
       {esEstudiante && oferta.minRequiredScore != null && miScore != null && (
         miScore >= oferta.minRequiredScore ? (
           <Alert variant="success" className="py-2">
@@ -165,7 +152,6 @@ export default function OfertaDetail() {
         )
       )}
 
-      {/* Zona de postulación */}
       {postulado ? (
         <Alert variant="success">✅ ¡Postulación enviada! Revisa su estado en tu panel.</Alert>
       ) : esEstudiante ? (
@@ -178,7 +164,6 @@ export default function OfertaDetail() {
         </Button>
       )}
 
-      {/* Modal de postulación */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: 18 }}>Postularme a {oferta.title}</Modal.Title>

@@ -1,8 +1,3 @@
-// =========================================================
-// ADMIN · Editar una evaluación existente.
-// 1) Carga la evaluación con GET /evaluaciones/{id} y rellena el form.
-// 2) Al guardar -> PUT /evaluaciones/{id} (actualización parcial).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate, useParams, Link } from 'react-router-dom';

@@ -1,8 +1,3 @@
-// =========================================================
-// Dashboard de la EMPRESA (rediseñado: 2 columnas, métricas,
-// tus ofertas con barra de postulantes, postulantes recientes
-// de TODAS tus ofertas, acciones rápidas y skeletons).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -52,7 +47,6 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
         setMias(misOfertas);
       }
 
-      // Postulantes recientes: juntamos los de todas mis ofertas que tienen alguno.
       const conPostulantes = misOfertas.filter((o) => (o.applicationsCount ?? 0) > 0).slice(0, 15);
       const listas = await Promise.all(
         conPostulantes.map((o) =>
@@ -100,7 +94,6 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
         </Badge>
       </div>
 
-      {/* Métricas */}
       <div className="d-flex gap-2 mb-4">
         <MetricCard label="Ofertas publicadas" value={publicadas} />
         <MetricCard label="Ofertas activas" value={activas} />
@@ -108,7 +101,6 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
       </div>
 
       <Row className="g-3">
-        {/* Izquierda: tus ofertas con barra de postulantes */}
         <Col lg={7}>
           <div style={{ ...cardStyle, padding: '1.1rem 1.35rem' }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -146,7 +138,6 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
           </div>
         </Col>
 
-        {/* Derecha: acciones + postulantes recientes */}
         <Col lg={5}>
           <div style={{ ...cardStyle, padding: '1rem 1.25rem', marginBottom: '1rem' }}>
             <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Acciones rápidas</div>

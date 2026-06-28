@@ -1,18 +1,8 @@
-// =========================================================
-// Campana de notificaciones para la barra superior.
-// - Muestra un contador rojo con las no leídas.
-// - Al abrir, trae la lista; cada notificación se marca leída al hacer clic.
-// - Botón "Marcar todas como leídas".
-// - El contador se refresca solo cada 45 segundos.
-// Endpoints: GET /notifications, GET /notifications/unread-count,
-//            PATCH /notifications/{id}/read, PATCH /notifications/read-all
-// =========================================================
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { NotificationApi } from '../api/NotificationApi';
 import type { NotificationResponse } from '../api/types/Notification';
 
-// Convierte la fecha ISO en algo corto: "ahora", "hace 5 min", "hace 2 h"...
 function tiempoRelativo(iso: string): string {
   try {
     const fecha = new Date(iso);
@@ -38,7 +28,6 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Refresca solo el contador (barato; se llama cada 45s).
   const refrescarContador = useCallback(() => {
     NotificationApi.unreadCount().then(setCount).catch(() => {});
   }, []);
@@ -49,7 +38,6 @@ export default function NotificationBell() {
     return () => window.clearInterval(id);
   }, [refrescarContador]);
 
-  // Cerrar el panel al hacer clic fuera de la campana.
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -74,7 +62,7 @@ export default function NotificationBell() {
   function toggle() {
     const next = !open;
     setOpen(next);
-    if (next) cargarLista(); // al abrir, traemos lo último
+    if (next) cargarLista();
   }
 
   async function clickNotificacion(n: NotificationResponse) {
@@ -84,7 +72,7 @@ export default function NotificationBell() {
       setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
       setCount((c) => Math.max(0, c - 1));
     } catch {
-      // si falla, no rompemos la UI
+
     }
   }
 
@@ -94,13 +82,12 @@ export default function NotificationBell() {
       setItems((prev) => prev.map((x) => ({ ...x, read: true })));
       setCount(0);
     } catch {
-      // ignoramos el error
+
     }
   }
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      {/* Campana + contador */}
       <button
         onClick={toggle}
         aria-label="Notificaciones"
@@ -139,7 +126,6 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* Panel desplegable */}
       {open && (
         <div
           style={{

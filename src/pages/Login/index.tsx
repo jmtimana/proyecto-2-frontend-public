@@ -1,6 +1,3 @@
-// =========================================================
-// Página de Login. Llama de verdad a tu backend (/auth/login).
-// =========================================================
 import { useState } from 'react';
 import { Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
@@ -21,9 +18,9 @@ export default function Login() {
     setLoading(true);
     try {
       await login({ email, password });
-      navigate('/dashboard'); // entró bien -> al panel
+      navigate('/dashboard');
     } catch (err: any) {
-      // El backend devuelve un mensaje en err.response.data.message
+
       setError(err?.response?.data?.message ?? 'Correo o contraseña incorrectos');
     } finally {
       setLoading(false);

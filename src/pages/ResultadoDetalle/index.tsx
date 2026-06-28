@@ -1,10 +1,3 @@
-// =========================================================
-// Detalle de un resultado, pregunta por pregunta.
-// Ruta: /mis-resultados/:evaluacionId
-// Junta la evaluación (para el enunciado de cada pregunta) con
-// mis respuestas (GET /respuestas/evaluacion/{id}) y muestra,
-// por cada pregunta: estado, código enviado y salida obtenida.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge } from 'react-bootstrap';
@@ -13,7 +6,6 @@ import { RespuestaApi } from '../../api/RespuestaApi';
 import type { EvaluacionDetailResponse, PreguntaResponse } from '../../api/types/Evaluacion';
 import type { RespuestaResponse } from '../../api/types/Respuesta';
 
-// Para cada pregunta nos quedamos con el último envío (el de más intentos).
 function ultimaRespuesta(respuestas: RespuestaResponse[], preguntaId: number): RespuestaResponse | null {
   const delaPregunta = respuestas.filter((r) => r.preguntaId === preguntaId);
   if (delaPregunta.length === 0) return null;
@@ -28,7 +20,6 @@ function estadoBadge(status: string | undefined) {
   return <Badge bg="light" text="dark">Sin responder</Badge>;
 }
 
-// Bloque de código simple (monoespaciado).
 function Bloque({ titulo, contenido }: { titulo: string; contenido: string }) {
   return (
     <div className="mt-2">

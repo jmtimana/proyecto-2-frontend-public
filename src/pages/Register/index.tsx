@@ -1,8 +1,3 @@
-// =========================================================
-// Página de Registro. Un solo formulario "inteligente":
-// el botón Estudiante/Empresa cambia qué campos se piden.
-// Llama de verdad a tu backend (/auth/register).
-// =========================================================
 import { useState } from 'react';
 import { Card, Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
@@ -28,7 +23,6 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Actualiza un campo del formulario por su "name".
   function update(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
@@ -38,7 +32,6 @@ export default function Register() {
     setError('');
     setLoading(true);
 
-    // Armamos el payload. Solo mandamos campos de empresa si tipo === EMPRESA.
     const payload: RegisterRequest = {
       email: form.email,
       password: form.password,
@@ -62,7 +55,6 @@ export default function Register() {
     }
   }
 
-  // Estilo del botón de tipo según esté activo o no.
   const tipoBtn = (activo: boolean): React.CSSProperties => ({
     flex: 1,
     textAlign: 'center',
@@ -90,7 +82,6 @@ export default function Register() {
 
           {error && <Alert variant="danger" className="py-2">{error}</Alert>}
 
-          {/* Selector Estudiante / Empresa */}
           <div className="d-flex gap-2 mb-3">
             <div style={tipoBtn(tipo === 'ESTUDIANTE')} onClick={() => setTipo('ESTUDIANTE')}>
               Estudiante
@@ -114,7 +105,6 @@ export default function Register() {
               </Col>
             </Row>
 
-            {/* Campos extra SOLO si es empresa */}
             {tipo === 'EMPRESA' && (
               <>
                 <Form.Group className="mb-3">

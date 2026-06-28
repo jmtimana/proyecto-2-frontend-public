@@ -1,8 +1,3 @@
-// =========================================================
-// Hero de la landing: degradado, titular y un "stack" de tarjetas.
-// Si el usuario está logueado, se personaliza (su score real y
-// botones para ir a su panel).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -20,7 +15,6 @@ export default function Hero() {
     UserApi.me().then((u) => setScore(u.skillMatchScore ?? 0)).catch(() => {});
   }, [esEstudiante]);
 
-  // Score a mostrar: el real del estudiante, o 0.87 de ejemplo para visitantes.
   const scoreMostrado = esEstudiante && score != null ? score : 0.87;
   const nivel = nivelDeScore(scoreMostrado);
 
@@ -53,9 +47,7 @@ export default function Hero() {
           </Col>
 
           <Col lg={5} className="d-none d-lg-block">
-            {/* Stack de tarjetas que da sensación de "producto vivo" */}
             <div style={{ position: 'relative', height: 280 }}>
-              {/* Tarjeta principal: score + nivel */}
               <div
                 className="lift-card"
                 style={{
@@ -75,12 +67,10 @@ export default function Hero() {
                 </span>
               </div>
 
-              {/* Tarjetita flotante: match */}
               <div style={{ position: 'absolute', top: 4, left: 0, background: '#fff', borderRadius: 12, padding: '8px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)', fontSize: 13, fontWeight: 600, color: '#1f9d57' }}>
                 ✓ Cumples el score
               </div>
 
-              {/* Tarjetita flotante: evaluación */}
               <div style={{ position: 'absolute', bottom: 4, right: 8, background: '#fff', borderRadius: 12, padding: '8px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)', fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>
                 🧑‍💻 Evaluación completada
               </div>

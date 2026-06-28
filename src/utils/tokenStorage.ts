@@ -1,10 +1,3 @@
-// =========================================================
-// Guarda y lee los tokens en el navegador (localStorage).
-// Lo aislamos aquí para que el resto del código no toque
-// localStorage directamente; si mañana cambiamos la forma de
-// guardar, solo editamos este archivo.
-// =========================================================
-
 const ACCESS_KEY = 'sm_access_token';
 const REFRESH_KEY = 'sm_refresh_token';
 

@@ -1,8 +1,3 @@
-// =========================================================
-// ADMIN · Gestionar habilidades.
-// Lista las existentes y permite crear nuevas (POST /habilidades).
-// Las habilidades se usan para etiquetar evaluaciones y ofertas.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -54,7 +49,6 @@ export default function AdminHabilidades() {
       <Link to="/admin/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-4">Habilidades</h3>
 
-      {/* Lista actual */}
       {cargando && <div className="text-center py-4"><Spinner style={{ color: 'var(--brand)' }} /></div>}
       {!cargando && errorCarga && <Alert variant="danger">{errorCarga}</Alert>}
       {!cargando && !errorCarga && (
@@ -75,7 +69,6 @@ export default function AdminHabilidades() {
         </Card>
       )}
 
-      {/* Formulario nueva habilidad */}
       <Card style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4">
           <h5 style={{ fontWeight: 600 }} className="mb-3">Nueva habilidad</h5>

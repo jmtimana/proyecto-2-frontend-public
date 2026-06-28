@@ -1,9 +1,3 @@
-// =========================================================
-// ADMIN · Lista y gestión de evaluaciones.
-// Permite crear, editar, eliminar evaluaciones y entrar a
-// gestionar las preguntas de cada una.
-// Solo accesible con rol ROLE_ADMIN (protegido en el Router).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -41,7 +35,7 @@ export default function AdminEvaluaciones() {
 
   useEffect(() => {
     cargar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [page]);
 
   async function confirmarEliminar() {
@@ -127,7 +121,6 @@ export default function AdminEvaluaciones() {
         </>
       )}
 
-      {/* Modal de confirmación de borrado */}
       <Modal show={!!aEliminar} onHide={() => !eliminando && setAEliminar(null)} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: 18 }}>Eliminar evaluación</Modal.Title>

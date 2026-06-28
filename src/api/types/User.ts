@@ -1,8 +1,3 @@
-// =========================================================
-// Tipos del usuario. Coinciden con UserResponse / UserDetailResponse
-// y EmpresaResponse de tu backend.
-// =========================================================
-
 export interface HabilidadResponse {
   id: number;
   name: string;
@@ -10,7 +5,6 @@ export interface HabilidadResponse {
   description: string | null;
 }
 
-// POST /habilidades (solo ADMIN) -> campos en ESPAÑOL.
 export interface HabilidadCreateRequest {
   nombre: string;
   categoria?: string;
@@ -26,7 +20,7 @@ export interface EmpresaResponse {
   size: string | null;
   description: string | null;
   web: string | null;
-  subscription: string; // FREE | PRO
+  subscription: string;
   createdAt: string;
 }
 
@@ -57,16 +51,12 @@ export interface ScoreResponse {
   level: string;
 }
 
-// Lo que enviamos al EDITAR mi perfil -> PUT /users/me
-// OJO: campos en ESPAÑOL (así los espera tu backend). Todos opcionales.
 export interface UserUpdateRequest {
   nombre?: string;
   apellido?: string;
   githubUsername?: string;
 }
 
-// Lo que enviamos al EDITAR mi empresa -> PUT /empresas/me
-// También en ESPAÑOL. Solo aplica a usuarios tipo EMPRESA.
 export interface EmpresaUpdateRequest {
   razonSocial?: string;
   sector?: string;

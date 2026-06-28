@@ -1,67 +1,35 @@
-// =========================================================
-// "Buscar candidatos" (empresa).
-// La empresa busca estudiantes por rango de SkillMatch Score.
-// Consume: GET /users/search?scoreMin&scoreMax&page&size (UserApi.search).
-// Reusa el patrón de 4 estados: cargando / error / vacío / datos.
-// =========================================================
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Container, Form, Button, Row, Col, Spinner, Alert, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { UserApi } from '../../api/UserApi';
-import type { Page } from '../../api/types/Page';
-import type { UserResponse } from '../../api/types/User';
+import { useFetch } from '../../hooks/useFetch';
+import { usePaginationParams } from '../../hooks/usePaginationParams';
+import Pagination from '../../common/Pagination';
 import NivelBadge from '../../common/NivelBadge';
 
-const PAGE_SIZE = 10;
-
 export default function BuscarCandidatos() {
-  // Filtros que el usuario ESTÁ escribiendo (todavía sin aplicar).
-  const [scoreMin, setScoreMin] = useState('0');
-  const [scoreMax, setScoreMax] = useState('1');
+  const { page, size, getParam, setParams, setPage, setSize } = usePaginationParams({ size: 10 });
 
-  // Filtros YA aplicados (los que se envían al backend). Separarlos evita
-  // que cada tecleo dispare una búsqueda: solo se busca al dar "Buscar".
-  const [filtros, setFiltros] = useState({ scoreMin: 0, scoreMax: 1 });
-  const [page, setPage] = useState(0);
+  const scoreMin = Number(getParam('scoreMin', '0'));
+  const scoreMax = Number(getParam('scoreMax', '1'));
 
-  const [data, setData] = useState<Page<UserResponse> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [minInput, setMinInput] = useState(getParam('scoreMin', '0'));
+  const [maxInput, setMaxInput] = useState(getParam('scoreMax', '1'));
 
-  // Cada vez que cambian los filtros aplicados o la página, buscamos.
-  useEffect(() => {
-    let cancelado = false;
-    setLoading(true);
-    setError('');
-
-    UserApi.search({
-      scoreMin: filtros.scoreMin,
-      scoreMax: filtros.scoreMax,
-      page,
-      size: PAGE_SIZE,
-    })
-      .then((res) => {
-        if (!cancelado) setData(res);
-      })
-      .catch(() => {
-        if (!cancelado) setError('No se pudo realizar la búsqueda de candidatos.');
-      })
-      .finally(() => {
-        if (!cancelado) setLoading(false);
-      });
-
-    return () => {
-      cancelado = true;
-    };
-  }, [filtros, page]);
+  const { data, loading, error } = useFetch(
+    (signal) => UserApi.search({ scoreMin, scoreMax, page, size }, signal),
+    [scoreMin, scoreMax, page, size],
+    'No se pudo realizar la búsqueda de candidatos.',
+  );
 
   function buscar(e: React.FormEvent) {
     e.preventDefault();
-    // Aplicamos los filtros (convertimos texto -> número) y volvemos a la página 0.
-    const min = scoreMin ? Number(scoreMin) : 0;
-    const max = scoreMax ? Number(scoreMax) : 1;
-    setPage(0);
-    setFiltros({ scoreMin: min, scoreMax: max });
+
+    setParams({
+      scoreMin: minInput || '0',
+      scoreMax: maxInput || '1',
+      page: 0,
+    });
   }
 
   return (
@@ -69,7 +37,6 @@ export default function BuscarCandidatos() {
       <h3 style={{ fontWeight: 600 }} className="mb-1">Buscar candidatos</h3>
       <p className="text-secondary mb-4">Encuentra estudiantes por su SkillMatch Score (0 a 1).</p>
 
-      {/* Filtros */}
       <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-3">
           <Form onSubmit={buscar}>
@@ -79,8 +46,8 @@ export default function BuscarCandidatos() {
                   <Form.Label style={{ fontSize: 13 }}>Score mínimo</Form.Label>
                   <Form.Control
                     type="number" step="0.1" min="0" max="1"
-                    value={scoreMin}
-                    onChange={(e) => setScoreMin(e.target.value)}
+                    value={minInput}
+                    onChange={(e) => setMinInput(e.target.value)}
                   />
                 </Form.Group>
               </Col>
@@ -89,8 +56,8 @@ export default function BuscarCandidatos() {
                   <Form.Label style={{ fontSize: 13 }}>Score máximo</Form.Label>
                   <Form.Control
                     type="number" step="0.1" min="0" max="1"
-                    value={scoreMax}
-                    onChange={(e) => setScoreMax(e.target.value)}
+                    value={maxInput}
+                    onChange={(e) => setMaxInput(e.target.value)}
                   />
                 </Form.Group>
               </Col>
@@ -102,15 +69,12 @@ export default function BuscarCandidatos() {
         </Card.Body>
       </Card>
 
-      {/* Estado: cargando */}
       {loading && (
         <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>
       )}
 
-      {/* Estado: error */}
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Estado: vacío */}
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: '#999' }}>
           <div style={{ fontSize: 40 }}>🔍</div>
@@ -119,13 +83,8 @@ export default function BuscarCandidatos() {
         </div>
       )}
 
-      {/* Estado: con datos */}
       {!loading && !error && data && !data.empty && (
         <>
-          <p className="text-secondary mb-3" style={{ fontSize: 14 }}>
-            {data.totalElements} candidato(s) encontrado(s)
-          </p>
-
           {data.content.map((u) => {
             const inicial = (u.firstName || u.email || '?').charAt(0).toUpperCase();
             return (
@@ -174,18 +133,18 @@ export default function BuscarCandidatos() {
             );
           })}
 
-          {/* Paginación (mismo patrón de siempre) */}
-          <div className="d-flex justify-content-between align-items-center mt-4">
-            <Button variant="outline-secondary" size="sm" disabled={data.first} onClick={() => setPage((p) => p - 1)}>
-              ← Anterior
-            </Button>
-            <span className="text-secondary" style={{ fontSize: 14 }}>
-              Página {data.number + 1} de {data.totalPages}
-            </span>
-            <Button variant="outline-secondary" size="sm" disabled={data.last} onClick={() => setPage((p) => p + 1)}>
-              Siguiente →
-            </Button>
-          </div>
+          <Pagination
+            page={data.number}
+            totalPages={data.totalPages}
+            totalElements={data.totalElements}
+            pageSize={data.size}
+            itemsInPage={data.numberOfElements}
+            first={data.first}
+            last={data.last}
+            onPrev={() => setPage(data.number - 1)}
+            onNext={() => setPage(data.number + 1)}
+            onSizeChange={setSize}
+          />
         </>
       )}
     </Container>

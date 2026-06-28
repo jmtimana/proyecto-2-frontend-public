@@ -1,7 +1,3 @@
-// =========================================================
-// Formulario para publicar una oferta (empresa).
-// Escribe al backend: POST /ofertas-laborales.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
@@ -27,7 +23,6 @@ export default function CrearOferta() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Cargamos las habilidades disponibles para el selector.
   useEffect(() => {
     HabilidadApi.list().then(setHabilidades).catch(() => {});
   }, []);
@@ -52,13 +47,13 @@ export default function CrearOferta() {
         descripcion: form.descripcion,
         ubicacion: form.ubicacion || undefined,
         modalidad: form.modalidad,
-        // Convertimos a número solo si el usuario escribió algo.
+
         salarioMin: form.salarioMin ? Number(form.salarioMin) : undefined,
         salarioMax: form.salarioMax ? Number(form.salarioMax) : undefined,
         scoreMinimoRequerido: form.scoreMinimoRequerido ? Number(form.scoreMinimoRequerido) : undefined,
         habilidadIds: seleccionadas,
       });
-      navigate('/empresa/ofertas'); // creada -> volvemos a la lista
+      navigate('/empresa/ofertas');
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'No se pudo crear la oferta.');
     } finally {

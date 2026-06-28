@@ -1,8 +1,3 @@
-// =========================================================
-// "Ofertas guardadas" del estudiante (favoritos).
-// Consume: GET /ofertas-guardadas (OfertaGuardadaApi.list).
-// Reusa OfertaCard; al quitar una estrella, la saca de la lista.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -32,14 +27,13 @@ export default function OfertasGuardadas() {
     };
   }, []);
 
-  // Quitar de guardadas -> la sacamos de la lista al instante.
   async function quitar(id: number) {
     const previa = ofertas;
     setOfertas((prev) => prev.filter((o) => o.id !== id));
     try {
       await OfertaGuardadaApi.quitar(id);
     } catch {
-      setOfertas(previa); // si falla, la devolvemos
+      setOfertas(previa);
     }
   }
 

@@ -1,16 +1,11 @@
-// =========================================================
-// Nivel del usuario según su SkillMatch Score.
-// Usa los MISMOS cortes que el backend (ScoreServiceImpl):
-//   BASICO  (< 0.4) · REGULAR (>= 0.4) · BUENO (>= 0.6) · EXCELENTE (>= 0.8)
-// =========================================================
 export interface NivelInfo {
-  nombre: string; // BASICO | REGULAR | BUENO | EXCELENTE
+  nombre: string;
   emoji: string;
-  color: string; // variant de react-bootstrap para el fondo del badge
-  hex: string; // color sólido por si se necesita
-  progreso: number; // 0..100 dentro de la banda actual (para la barra)
-  siguiente: string | null; // nombre del próximo nivel (null si ya es el máximo)
-  faltaParaSiguiente: number | null; // cuánto score falta para subir (0..1)
+  color: string;
+  hex: string;
+  progreso: number;
+  siguiente: string | null;
+  faltaParaSiguiente: number | null;
 }
 
 export function nivelDeScore(scoreRaw: number | null | undefined): NivelInfo {

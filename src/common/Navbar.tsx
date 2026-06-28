@@ -1,6 +1,3 @@
-// =========================================================
-// Barra superior que se ve en todas las páginas.
-// =========================================================
 import { Navbar as BsNavbar, Container, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

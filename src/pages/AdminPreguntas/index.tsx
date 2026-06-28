@@ -1,13 +1,3 @@
-// =========================================================
-// ADMIN · Gestionar las preguntas de una evaluación.
-// - Lista las preguntas actuales (vienen en GET /evaluaciones/{id}).
-// - Permite agregar una nueva -> POST /evaluaciones/{id}/preguntas.
-//
-// IMPORTANTE: "Solución esperada" es la salida EXACTA que debe imprimir
-// el código del estudiante. El backend la compara (quitando espacios al
-// inicio/fin) contra el stdout. Por ejemplo, para "imprime 5" la solución
-// esperada es simplemente: 5
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
@@ -48,7 +38,7 @@ export default function AdminPreguntas() {
 
   useEffect(() => {
     cargar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [evalId]);
 
   function update(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -60,7 +50,7 @@ export default function AdminPreguntas() {
     setMensaje(null);
     setGuardando(true);
     try {
-      // El orden de la nueva pregunta = cantidad actual + 1.
+
       const siguienteOrden = (evaluacion?.questions.length ?? 0) + 1;
       await EvaluacionApi.createPregunta(evalId, {
         enunciado: form.enunciado,
@@ -71,9 +61,9 @@ export default function AdminPreguntas() {
         puntaje: form.puntaje ? Number(form.puntaje) : 0,
         orden: siguienteOrden,
       });
-      setForm(FORM_VACIO);          // limpiamos para la siguiente
+      setForm(FORM_VACIO);
       setMensaje({ tipo: 'success', texto: 'Pregunta agregada correctamente.' });
-      cargar();                     // refrescamos la lista
+      cargar();
     } catch (err: any) {
       setMensaje({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudo agregar la pregunta.' });
     } finally {
@@ -106,7 +96,6 @@ export default function AdminPreguntas() {
       <h3 style={{ fontWeight: 600 }} className="mt-3 mb-1">Preguntas · {evaluacion.title}</h3>
       <p className="text-secondary mb-4">{preguntas.length} pregunta(s) en esta evaluación.</p>
 
-      {/* Lista de preguntas existentes */}
       {preguntas.length === 0 ? (
         <div className="text-center py-4 mb-4" style={{ color: '#999', background: '#fafafa', borderRadius: 12 }}>
           <div style={{ fontSize: 34 }}>❓</div>
@@ -135,7 +124,6 @@ export default function AdminPreguntas() {
           ))
       )}
 
-      {/* Formulario: agregar pregunta */}
       <Card className="mt-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4">
           <h5 style={{ fontWeight: 600 }} className="mb-3">Agregar pregunta</h5>

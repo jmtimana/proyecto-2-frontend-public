@@ -1,7 +1,3 @@
-// =========================================================
-// Mis resultados: lista de intentos del usuario con su puntaje
-// y estado. Ruta: /mis-resultados
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';

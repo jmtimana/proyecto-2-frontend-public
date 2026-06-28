@@ -1,4 +1,3 @@
-// Tarjeta pequeña de métrica (un número con su etiqueta). Reutilizable.
 interface Props {
   label: string;
   value: number | string;

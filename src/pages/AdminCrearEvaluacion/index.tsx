@@ -1,8 +1,3 @@
-// =========================================================
-// ADMIN · Crear una nueva evaluación.
-// Escribe al backend: POST /evaluaciones.
-// Tras crearla, te lleva a gestionar sus preguntas.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
@@ -55,7 +50,7 @@ export default function AdminCrearEvaluacion() {
         activa: form.activa,
         habilidadIds: seleccionadas,
       });
-      // Recién creada -> vamos directo a agregarle preguntas.
+
       navigate(`/admin/evaluaciones/${creada.id}/preguntas`);
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'No se pudo crear la evaluación.');

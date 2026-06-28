@@ -1,9 +1,3 @@
-// =========================================================
-// Rendir una evaluación: iniciar -> escribir código por
-// pregunta -> enviar -> "vigilar" (polling) hasta que Piston
-// califique -> mostrar resultado.
-// Ruta: /evaluaciones/:id/rendir
-// =========================================================
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
@@ -20,7 +14,6 @@ import type {
   PreguntaResponse,
 } from '../../api/types/Evaluacion';
 
-// Elige la extensión de CodeMirror según el lenguaje de la pregunta.
 function extensionsFor(lenguaje: string | null) {
   const l = (lenguaje || '').toLowerCase();
   if (l.includes('python')) return [python()];
@@ -32,9 +25,6 @@ function extensionsFor(lenguaje: string | null) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// =========================================================
-// Tarjeta de una pregunta: editor + enviar + resultado.
-// =========================================================
 function PreguntaCard({
   pregunta,
   numero,
@@ -46,14 +36,13 @@ function PreguntaCard({
 }) {
   const [code, setCode] = useState(pregunta.templateCode || '');
   const [phase, setPhase] = useState<'editing' | 'running' | 'done'>('editing');
-  const [status, setStatus] = useState<string>(''); // CORRECTA | INCORRECTA | ERROR
+  const [status, setStatus] = useState<string>('');
   const [output, setOutput] = useState<string | null>(null);
   const [error, setError] = useState('');
 
-  // Para cancelar el polling si el componente se desmonta.
   const vivo = useRef(true);
   useEffect(() => {
-    vivo.current = true; // <- clave: re-activar al montar (arregla el bug de StrictMode)
+    vivo.current = true;
     return () => {
       vivo.current = false;
     };
@@ -67,7 +56,7 @@ function PreguntaCard({
     setOutput(null);
     setPhase('running');
     try {
-      // 1. Enviar la respuesta -> queda PENDIENTE
+
       const creada = await RespuestaApi.submit({
         preguntaId: pregunta.id,
         evaluacionId,
@@ -75,9 +64,8 @@ function PreguntaCard({
         lenguaje: pregunta.lenguaje || 'python',
       });
 
-      // 2. Polling: consultar el estado hasta que deje de estar PENDIENTE
       let intentos = 0;
-      const MAX = 20; // ~40s
+      const MAX = 20;
       while (vivo.current && intentos < MAX) {
         await sleep(2000);
         if (!vivo.current) return;
@@ -90,7 +78,7 @@ function PreguntaCard({
         }
         intentos++;
       }
-      // Si salió del bucle sin resolver
+
       if (vivo.current) {
         setError('La calificación está tardando más de lo normal. Intenta de nuevo en un momento.');
         setPhase('editing');
@@ -123,7 +111,6 @@ function PreguntaCard({
         </div>
         <p style={{ color: '#444' }}>{pregunta.questionText}</p>
 
-        {/* Editor de código */}
         <div style={{ border: '1px solid #e0e0e8', borderRadius: 8, overflow: 'hidden' }}>
           <CodeMirror
             value={code}
@@ -136,7 +123,6 @@ function PreguntaCard({
 
         {error && <Alert variant="danger" className="mt-3 mb-0 py-2" style={{ fontSize: 14 }}>{error}</Alert>}
 
-        {/* Resultado */}
         {phase === 'done' && (
           <div className="mt-3">
             {correcta ? (
@@ -159,7 +145,6 @@ function PreguntaCard({
           </div>
         )}
 
-        {/* Botón */}
         <div className="mt-3">
           {!correcta && (
             <Button variant="primary" onClick={enviar} disabled={phase === 'running'}>
@@ -178,9 +163,6 @@ function PreguntaCard({
   );
 }
 
-// =========================================================
-// Página principal: intro -> iniciar -> responder.
-// =========================================================
 export default function RendirEvaluacion() {
   const { id } = useParams();
   const evalId = Number(id);
@@ -210,7 +192,7 @@ export default function RendirEvaluacion() {
     try {
       await EvaluacionApi.iniciar(evalId);
     } catch (e: any) {
-      // Si ya hay un intento en progreso, no es un error fatal: seguimos.
+
       setStartWarn('Ya tenías un intento en progreso, continuamos con ese.');
     } finally {
       setStarting(false);
@@ -240,7 +222,7 @@ export default function RendirEvaluacion() {
       <p className="text-secondary">{ev.description}</p>
 
       {!started ? (
-        // ---- Pantalla de intro ----
+
         <Card style={{ border: '0.5px solid #e6e6ef' }} className="mt-4">
           <Card.Body className="p-4 text-center">
             <div style={{ fontSize: 40 }}>🚀</div>
@@ -255,7 +237,7 @@ export default function RendirEvaluacion() {
           </Card.Body>
         </Card>
       ) : (
-        // ---- Responder las preguntas ----
+
         <div className="mt-4">
           {startWarn && <Alert variant="info" className="py-2" style={{ fontSize: 14 }}>{startWarn}</Alert>}
           {preguntas.map((q, i) => (

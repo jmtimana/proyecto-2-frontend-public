@@ -1,12 +1,3 @@
-// =========================================================
-// "Mi perfil" (cualquier usuario logueado).
-// - Muestra datos de solo-lectura (email, tipo, score, habilidades).
-// - Permite EDITAR los datos básicos -> PUT /users/me.
-// - Si el usuario es EMPRESA, también edita el perfil de empresa
-//   (razón social, sector, descripción, web) -> PUT /empresas/me.
-// Tras guardar, refrescamos los datos y actualizamos la sesión para
-// que la barra superior ("Hola, X") muestre el nombre nuevo.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { UserApi } from '../../api/UserApi';
@@ -22,17 +13,14 @@ export default function MiPerfil() {
   const [loading, setLoading] = useState(true);
   const [errorCarga, setErrorCarga] = useState('');
 
-  // --- Formulario de datos básicos (todos los usuarios) ---
   const [userForm, setUserForm] = useState({ nombre: '', apellido: '', githubUsername: '' });
   const [guardandoUser, setGuardandoUser] = useState(false);
   const [msgUser, setMsgUser] = useState<{ tipo: 'success' | 'danger'; texto: string } | null>(null);
 
-  // --- Formulario de empresa (solo EMPRESA) ---
   const [empForm, setEmpForm] = useState({ razonSocial: '', sector: '', descripcion: '', web: '' });
   const [guardandoEmp, setGuardandoEmp] = useState(false);
   const [msgEmp, setMsgEmp] = useState<{ tipo: 'success' | 'danger'; texto: string } | null>(null);
 
-  // Rellena los formularios a partir de los datos del usuario.
   function llenarFormularios(u: UserDetailResponse) {
     setUserForm({
       nombre: u.firstName ?? '',
@@ -49,7 +37,6 @@ export default function MiPerfil() {
     }
   }
 
-  // Carga inicial.
   useEffect(() => {
     let vivo = true;
     UserApi.me()
@@ -65,7 +52,6 @@ export default function MiPerfil() {
     };
   }, []);
 
-  // Guardar datos básicos.
   async function guardarUser(e: React.FormEvent) {
     e.preventDefault();
     setGuardandoUser(true);
@@ -76,7 +62,7 @@ export default function MiPerfil() {
         apellido: userForm.apellido,
         githubUsername: userForm.githubUsername || undefined,
       });
-      // Refrescamos el perfil completo y la sesión (para la Navbar).
+
       const actualizado = await UserApi.me();
       setMe(actualizado);
       llenarFormularios(actualizado);
@@ -89,7 +75,6 @@ export default function MiPerfil() {
     }
   }
 
-  // Guardar datos de empresa.
   async function guardarEmpresa(e: React.FormEvent) {
     e.preventDefault();
     setGuardandoEmp(true);
@@ -135,7 +120,6 @@ export default function MiPerfil() {
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <h3 style={{ fontWeight: 600 }} className="mb-4">Mi perfil</h3>
 
-      {/* Cabecera de solo-lectura */}
       <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4 d-flex align-items-center gap-3">
           <div
@@ -157,7 +141,6 @@ export default function MiPerfil() {
         </Card.Body>
       </Card>
 
-      {/* Score (solo informativo, para estudiantes) */}
       {!esEmpresa && (
         <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
           <Card.Body className="p-4">
@@ -175,7 +158,6 @@ export default function MiPerfil() {
               </div>
             </div>
 
-            {/* Progreso al siguiente nivel */}
             {(() => {
               const nivel = nivelDeScore(me.skillMatchScore);
               return nivel.siguiente ? (
@@ -207,7 +189,6 @@ export default function MiPerfil() {
         </Card>
       )}
 
-      {/* Formulario: datos básicos */}
       <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
         <Card.Body className="p-4">
           <h5 style={{ fontWeight: 600 }} className="mb-3">Datos básicos</h5>
@@ -252,7 +233,6 @@ export default function MiPerfil() {
         </Card.Body>
       </Card>
 
-      {/* Formulario: datos de empresa (solo EMPRESA) */}
       {esEmpresa && (
         <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
           <Card.Body className="p-4">

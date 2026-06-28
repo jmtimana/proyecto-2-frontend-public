@@ -1,4 +1,3 @@
-// Insignia (medalla) con el nivel del usuario según su score.
 import { Badge } from 'react-bootstrap';
 import { nivelDeScore } from '../utils/nivel';
 

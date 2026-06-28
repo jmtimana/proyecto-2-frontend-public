@@ -1,8 +1,3 @@
-// =========================================================
-// Gráfico de BARRAS (sin librerías) con el % obtenido en cada
-// evaluación COMPLETADA, en orden cronológico. Las barras se ven
-// bien incluso con un solo dato (a diferencia de una línea).
-// =========================================================
 import type { ResultadoResponse } from '../../../api/types/Resultado';
 
 export default function ProgresoChart({ resultados }: { resultados: ResultadoResponse[] }) {
@@ -25,7 +20,7 @@ export default function ProgresoChart({ resultados }: { resultados: ResultadoRes
     );
   }
 
-  const ALTO = 130; // alto máximo de una barra en px
+  const ALTO = 130;
 
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: datos.length < 4 ? 'flex-start' : 'space-around', gap: 18, height: ALTO + 36, paddingTop: 6 }}>

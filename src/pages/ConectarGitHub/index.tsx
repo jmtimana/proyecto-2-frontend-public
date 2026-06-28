@@ -1,9 +1,3 @@
-// =========================================================
-// Conectar GitHub.
-// Al cargar, intenta traer el perfil. Si ya está conectado,
-// muestra los datos. Si no, muestra el formulario para pegar
-// el token personal (PAT).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
 import { GithubApi } from '../../api/GithubApi';
@@ -13,18 +7,16 @@ export default function ConectarGitHub() {
   const [profile, setProfile] = useState<GithubProfileResponse | null>(null);
   const [cargando, setCargando] = useState(true);
 
-  // Estado del formulario de conexión
   const [token, setToken] = useState('');
   const [conectando, setConectando] = useState(false);
   const [error, setError] = useState('');
 
-  // Al cargar: ¿ya está conectado? Intentamos traer el perfil.
   useEffect(() => {
     let vivo = true;
     GithubApi.profile()
       .then((p) => vivo && setProfile(p))
       .catch(() => {
-        // Falla = no está conectado todavía. Se muestra el formulario.
+
       })
       .finally(() => vivo && setCargando(false));
     return () => {
@@ -38,7 +30,7 @@ export default function ConectarGitHub() {
     setConectando(true);
     try {
       const p = await GithubApi.connect({ githubToken: token });
-      setProfile(p); // conectó -> mostramos el perfil
+      setProfile(p);
       setToken('');
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'No se pudo conectar. Revisa que el token sea válido.');
@@ -51,7 +43,6 @@ export default function ConectarGitHub() {
     return <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>;
   }
 
-  // ---------- Vista CONECTADO ----------
   if (profile) {
     return (
       <Container className="py-5" style={{ maxWidth: 680 }}>
@@ -93,7 +84,6 @@ export default function ConectarGitHub() {
     );
   }
 
-  // ---------- Vista NO CONECTADO ----------
   return (
     <Container className="py-5" style={{ maxWidth: 520 }}>
       <Card style={{ border: 'none', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>

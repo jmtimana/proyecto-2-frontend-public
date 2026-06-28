@@ -1,11 +1,3 @@
-// =========================================================
-// Editar una oferta existente (empresa).
-// 1) Carga la oferta actual con GET /ofertas-laborales/{id} y rellena el form.
-// 2) Carga las habilidades disponibles para el multiselect.
-// 3) Al guardar -> PUT /ofertas-laborales/{id} (actualización parcial).
-// Es "primo" de CrearOferta, pero además permite cambiar el ESTADO
-// (ACTIVA / PAUSADA / CERRADA).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -32,12 +24,11 @@ export default function EditarOferta() {
   const [habilidades, setHabilidades] = useState<HabilidadResponse[]>([]);
   const [seleccionadas, setSeleccionadas] = useState<number[]>([]);
 
-  const [cargandoOferta, setCargandoOferta] = useState(true); // estado inicial: trayendo la oferta
+  const [cargandoOferta, setCargandoOferta] = useState(true);
   const [errorCarga, setErrorCarga] = useState('');
-  const [error, setError] = useState(''); // error al guardar
+  const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
 
-  // Al montar: pedimos la oferta y las habilidades en paralelo.
   useEffect(() => {
     let vivo = true;
 
@@ -46,7 +37,7 @@ export default function EditarOferta() {
         if (!vivo) return;
         setHabilidades(habs);
         setSeleccionadas(oferta.skills.map((s) => s.id));
-        // Rellenamos el formulario con los datos actuales de la oferta.
+
         setForm({
           titulo: oferta.title ?? '',
           descripcion: oferta.description ?? '',
@@ -92,7 +83,7 @@ export default function EditarOferta() {
         estado: form.estado,
         habilidadIds: seleccionadas,
       });
-      navigate('/empresa/ofertas'); // guardada -> volvemos a la lista
+      navigate('/empresa/ofertas');
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'No se pudo guardar la oferta.');
     } finally {
@@ -100,7 +91,6 @@ export default function EditarOferta() {
     }
   }
 
-  // Estado inicial: cargando la oferta.
   if (cargandoOferta) {
     return (
       <Container className="py-5 text-center" style={{ maxWidth: 680 }}>
@@ -109,7 +99,6 @@ export default function EditarOferta() {
     );
   }
 
-  // Estado: no se pudo cargar.
   if (errorCarga) {
     return (
       <Container className="py-5" style={{ maxWidth: 680 }}>
@@ -175,7 +164,6 @@ export default function EditarOferta() {
           </Col>
         </Row>
 
-        {/* Lo nuevo respecto a "crear": cambiar el estado de la oferta. */}
         <Form.Group className="mb-3">
           <Form.Label>Estado de la oferta</Form.Label>
           <Form.Select name="estado" value={form.estado} onChange={update}>

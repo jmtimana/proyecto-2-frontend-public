@@ -1,17 +1,10 @@
-// =========================================================
-// "Mis ofertas" (empresa). Lista las ofertas de esta empresa,
-// con botones para: publicar una nueva, ver postulantes,
-// EDITAR y ELIMINAR cada oferta.
-//
-// Nota: como no hay endpoint propio de "mis ofertas", traemos
-// todas y filtramos por empresaUserId en el frontend.
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { OfertaApi } from '../../api/OfertaApi';
 import { useAuth } from '../../context/AuthContext';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
+import OfertaQR from '../../common/OfertaQR';
 
 function estadoColor(e: string) {
   if (e === 'ACTIVA') return 'success';
@@ -25,13 +18,10 @@ export default function EmpresaOfertas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Estado del modal de "¿Seguro que quieres eliminar?".
   const [aEliminar, setAEliminar] = useState<OfertaLaboralResponse | null>(null);
   const [eliminando, setEliminando] = useState(false);
   const [errorEliminar, setErrorEliminar] = useState('');
 
-  // Función para (re)cargar la lista. La separamos para poder
-  // llamarla otra vez después de eliminar.
   function cargar() {
     setLoading(true);
     setError('');
@@ -45,7 +35,7 @@ export default function EmpresaOfertas() {
 
   useEffect(() => {
     cargar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [user?.userId]);
 
   async function confirmarEliminar() {
@@ -55,7 +45,7 @@ export default function EmpresaOfertas() {
     try {
       await OfertaApi.remove(aEliminar.id);
       setAEliminar(null);
-      cargar(); // refrescamos la lista
+      cargar();
     } catch (err: any) {
       setErrorEliminar(err?.response?.data?.message ?? 'No se pudo eliminar la oferta.');
     } finally {
@@ -104,7 +94,6 @@ export default function EmpresaOfertas() {
               </div>
             </div>
 
-            {/* Botones de acción */}
             <div className="d-flex gap-2 mt-3 flex-wrap">
               <Button
                 as={Link as any}
@@ -122,6 +111,7 @@ export default function EmpresaOfertas() {
               >
                 Editar
               </Button>
+              <OfertaQR ofertaId={o.id} titulo={o.title} />
               <Button
                 variant="outline-danger"
                 size="sm"
@@ -134,7 +124,6 @@ export default function EmpresaOfertas() {
         </Card>
       ))}
 
-      {/* Modal de confirmación de borrado */}
       <Modal show={!!aEliminar} onHide={() => !eliminando && setAEliminar(null)} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: 18 }}>Eliminar oferta</Modal.Title>

@@ -1,8 +1,3 @@
-// =========================================================
-// Dashboard del ESTUDIANTE (rediseñado: 2 columnas, ofertas
-// recomendadas, postulaciones recientes, acciones rápidas y
-// skeletons mientras carga).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -59,7 +54,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
     return () => { vivo = false; };
   }, []);
 
-  // ----- Skeleton mientras carga -----
   if (loading) {
     return (
       <>
@@ -80,7 +74,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
   const githubConectado = !!me?.githubUsername;
   const evaluacionesHechas = resultados.filter((r) => r.status === 'COMPLETADA').length;
 
-  // Ofertas recomendadas: primero las que cumples, luego el resto. Top 3.
   const recomendadas = [...ofertas]
     .sort((a, b) => {
       const ca = a.minRequiredScore == null || score >= a.minRequiredScore ? 0 : 1;
@@ -100,7 +93,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
         <p className="text-secondary" style={{ margin: '2px 0 0' }}>Este es tu progreso en SkillMatch</p>
       </div>
 
-      {/* Métricas */}
       <div className="d-flex gap-2 mb-4">
         <MetricCard label="Evaluaciones" value={evaluacionesHechas} />
         <MetricCard label="Postulaciones" value={posts.length} />
@@ -108,7 +100,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
       </div>
 
       <Row className="g-3">
-        {/* Columna izquierda: score + progreso */}
         <Col lg={7}>
           <div style={{ background: 'var(--brand-light)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
             <div className="d-flex align-items-center justify-content-between">
@@ -145,7 +136,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
           </div>
         </Col>
 
-        {/* Columna derecha: acciones, github, postulaciones recientes */}
         <Col lg={5}>
           <div style={{ ...cardStyle, padding: '1rem 1.25rem', marginBottom: '1rem' }}>
             <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Acciones rápidas</div>
@@ -185,7 +175,6 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
         </Col>
       </Row>
 
-      {/* Ofertas recomendadas */}
       {recomendadas.length > 0 && (
         <div className="mt-4">
           <div className="d-flex justify-content-between align-items-center mb-3">

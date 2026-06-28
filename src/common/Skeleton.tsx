@@ -1,4 +1,3 @@
-// Bloque "cargando" con brillo animado. Se usa en lugar de los spinners.
 interface Props {
   width?: number | string;
   height?: number | string;

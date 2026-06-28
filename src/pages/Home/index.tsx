@@ -1,8 +1,3 @@
-// =========================================================
-// Página de inicio pública. Ahora con varias secciones para
-// que no se sienta vacía: hero + cómo funciona + stats +
-// ofertas destacadas. (El footer es global, va en App.)
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -22,7 +17,7 @@ export default function Home() {
   const [totalOfertas, setTotalOfertas] = useState(0);
 
   useEffect(() => {
-    // GET /ofertas-laborales es público, funciona aunque no estés logueado.
+
     OfertaApi.list({ estado: 'ACTIVA', size: 3 })
       .then((r) => {
         setDestacadas(r.content);
@@ -35,7 +30,6 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* Cómo funciona */}
       <Container className="py-5 fade-up">
         <h2 className="text-center mb-1" style={{ fontWeight: 700 }}>Cómo funciona</h2>
         <p className="text-center text-secondary mb-5">
@@ -56,7 +50,6 @@ export default function Home() {
         </Row>
       </Container>
 
-      {/* Banda de estadísticas */}
       <div style={{ background: 'var(--brand)', color: '#fff' }}>
         <Container className="py-4">
           <Row className="text-center g-3">
@@ -76,7 +69,6 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* Ofertas destacadas */}
       {destacadas.length > 0 && (
         <Container className="py-5 fade-up">
           <div className="d-flex justify-content-between align-items-center mb-4">

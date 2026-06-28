@@ -1,10 +1,3 @@
-// =========================================================
-// "Mis postulaciones" (estudiante).
-// Lista las ofertas a las que el estudiante se ha postulado,
-// con su estado (PENDIENTE / ACEPTADA / RECHAZADA).
-// Reusa el patrón de 4 estados: cargando / error / vacío / datos.
-// Consume: GET /postulaciones/mis-postulaciones (PostulacionApi.mine).
-// =========================================================
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -14,14 +7,12 @@ import type { PostulacionResponse } from '../../api/types/Postulacion';
 
 const PAGE_SIZE = 10;
 
-// Cada estado de la postulación tiene su color e ícono.
 function estadoBadge(estado: string) {
   if (estado === 'ACEPTADA') return { bg: 'success', texto: '✓ Aceptada' };
   if (estado === 'RECHAZADA') return { bg: 'danger', texto: '✕ Rechazada' };
   return { bg: 'warning', texto: '⏳ Pendiente' };
 }
 
-// Convierte la fecha ISO del backend a algo legible (ej. "5 jun 2026").
 function fecha(iso: string) {
   try {
     return new Date(iso).toLocaleDateString('es-PE', {
@@ -66,17 +57,14 @@ export default function MisPostulaciones() {
       <h3 style={{ fontWeight: 600 }} className="mb-1">Mis postulaciones</h3>
       <p className="text-secondary mb-4">Revisa el estado de las ofertas a las que te postulaste.</p>
 
-      {/* Estado: cargando */}
       {loading && (
         <div className="text-center py-5">
           <Spinner style={{ color: 'var(--brand)' }} />
         </div>
       )}
 
-      {/* Estado: error */}
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Estado: vacío */}
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: '#999' }}>
           <div style={{ fontSize: 40 }}>📭</div>
@@ -88,7 +76,6 @@ export default function MisPostulaciones() {
         </div>
       )}
 
-      {/* Estado: con datos */}
       {!loading && !error && data && !data.empty && (
         <>
           {data.content.map((p) => {
@@ -137,7 +124,6 @@ export default function MisPostulaciones() {
             );
           })}
 
-          {/* Paginación (mismo patrón que la lista de ofertas) */}
           <div className="d-flex justify-content-between align-items-center mt-4">
             <Button
               variant="outline-secondary"
