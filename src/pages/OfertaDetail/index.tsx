@@ -6,6 +6,7 @@ import { PostulacionApi } from '../../api/PostulacionApi';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import Breadcrumb from '../../common/Breadcrumb';
+import NotFound from '../NotFound';
 import type { OfertaLaboralDetailResponse } from '../../api/types/Oferta';
 import { getErrorMessage } from '../../utils/errorHandler';
 
@@ -17,6 +18,7 @@ export default function OfertaDetail() {
   const [oferta, setOferta] = useState<OfertaLaboralDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [notFound, setNotFound] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [carta, setCarta] = useState('');
@@ -39,10 +41,27 @@ export default function OfertaDetail() {
 
   useEffect(() => {
     let vivo = true;
+    const ofertaId = Number(id);
+
+    if (!id || Number.isNaN(ofertaId)) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    OfertaApi.getById(Number(id))
+    setError('');
+    setNotFound(false);
+    OfertaApi.getById(ofertaId)
       .then((res) => vivo && setOferta(res))
-      .catch(() => vivo && setError('No se pudo cargar la oferta.'))
+      .catch((err) => {
+        if (!vivo) return;
+        if (err?.response?.status === 404) {
+          setNotFound(true);
+          return;
+        }
+        setError('No se pudo cargar la oferta.');
+      })
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;
@@ -73,6 +92,15 @@ export default function OfertaDetail() {
       <div className="text-center py-5">
         <Spinner style={{ color: 'var(--brand)' }} />
       </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <NotFound
+        title="Oferta no encontrada"
+        message="La oferta que intentas consultar no existe, fue eliminada o ya no esta disponible."
+      />
     );
   }
 

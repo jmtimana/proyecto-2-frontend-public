@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Card, Button } from 'react-bootstrap';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
+import NotFound from '../NotFound';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
 
 function dificultadColor(d: string) {
@@ -17,12 +18,31 @@ export default function EvaluacionDetail() {
   const [ev, setEv] = useState<EvaluacionDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     let vivo = true;
-    EvaluacionApi.getById(Number(id))
+    const evaluacionId = Number(id);
+
+    if (!id || Number.isNaN(evaluacionId)) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setNotFound(false);
+    EvaluacionApi.getById(evaluacionId)
       .then((res) => vivo && setEv(res))
-      .catch(() => vivo && setError('No se pudo cargar la evaluación.'))
+      .catch((err) => {
+        if (!vivo) return;
+        if (err?.response?.status === 404) {
+          setNotFound(true);
+          return;
+        }
+        setError('No se pudo cargar la evaluacion.');
+      })
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;
@@ -31,18 +51,27 @@ export default function EvaluacionDetail() {
 
   if (loading) return <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>;
 
+  if (notFound) {
+    return (
+      <NotFound
+        title="Evaluacion no encontrada"
+        message="La evaluacion que intentas consultar no existe, fue eliminada o ya no esta disponible."
+      />
+    );
+  }
+
   if (error || !ev) {
     return (
       <Container className="py-5" style={{ maxWidth: 720 }}>
-        <Alert variant="danger">{error || 'Evaluación no encontrada.'}</Alert>
-        <Link to="/evaluaciones" className="brand-link">← Volver a evaluaciones</Link>
+        <Alert variant="danger">{error || 'Evaluacion no encontrada.'}</Alert>
+        <Link to="/evaluaciones" className="brand-link">Volver a evaluaciones</Link>
       </Container>
     );
   }
 
   return (
     <Container className="py-5" style={{ maxWidth: 720 }}>
-      <Link to="/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>← Volver a evaluaciones</Link>
+      <Link to="/evaluaciones" className="brand-link" style={{ fontSize: 14 }}>Volver a evaluaciones</Link>
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Evaluaciones', href: '/evaluaciones' }, { label: ev.title }]} />
 
       <div className="d-flex justify-content-between align-items-start mt-3">
@@ -54,9 +83,9 @@ export default function EvaluacionDetail() {
       </div>
 
       <div className="d-flex gap-4 mt-3 text-secondary" style={{ fontSize: 14 }}>
-        {ev.timeLimitSeconds && <span>⏱ {Math.round(ev.timeLimitSeconds / 60)} min</span>}
-        {ev.maxScore != null && <span>🎯 {ev.maxScore} puntos</span>}
-        <span>❓ {ev.questions.length} pregunta(s)</span>
+        {ev.timeLimitSeconds && <span>{Math.round(ev.timeLimitSeconds / 60)} min</span>}
+        {ev.maxScore != null && <span>{ev.maxScore} puntos</span>}
+        <span>{ev.questions.length} pregunta(s)</span>
       </div>
 
       {ev.skills.length > 0 && (
@@ -93,7 +122,7 @@ export default function EvaluacionDetail() {
 
       <div>
         <Button as={Link as any} to={`/evaluaciones/${ev.id}/rendir`} variant="primary" size="lg">
-          Rendir evaluación
+          Rendir evaluacion
         </Button>
       </div>
     </Container>

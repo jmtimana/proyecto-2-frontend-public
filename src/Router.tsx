@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -29,6 +29,7 @@ const AdminCrearEvaluacion = lazy(() => import('./pages/AdminCrearEvaluacion'));
 const AdminEditarEvaluacion = lazy(() => import('./pages/AdminEditarEvaluacion'));
 const AdminPreguntas = lazy(() => import('./pages/AdminPreguntas'));
 const AdminHabilidades = lazy(() => import('./pages/AdminHabilidades'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleRoute from './components/RoleRoute';
@@ -74,7 +75,7 @@ export default function Router() {
         <Route path="/admin/evaluaciones/:id/preguntas" element={<RoleRoute role="ROLE_ADMIN"><AdminPreguntas /></RoleRoute>} />
         <Route path="/admin/habilidades" element={<RoleRoute role="ROLE_ADMIN"><AdminHabilidades /></RoleRoute>} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
