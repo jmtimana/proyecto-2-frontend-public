@@ -1,26 +1,42 @@
 import { useState } from 'react';
 import { Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuth } from '../../context/AuthContext';
+
+const schema = z.object({
+  email: z.string().email('Ingresa un correo válido'),
+  password: z.string().min(1, 'Ingresa tu contraseña'),
+});
+
+type FormValues = z.infer<typeof schema>;
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: 'onChange',
+    resolver: zodResolver(schema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  async function onSubmit(data: FormValues) {
     setError('');
     setLoading(true);
     try {
-      await login({ email, password });
+      await login({ email: data.email, password: data.password });
       navigate('/dashboard');
     } catch (err: any) {
-
       setError(err?.response?.data?.message ?? 'Correo o contraseña incorrectos');
     } finally {
       setLoading(false);
@@ -41,26 +57,26 @@ export default function Login() {
 
           {error && <Alert variant="danger" className="py-2">{error}</Alert>}
 
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3">
               <Form.Label style={{ fontSize: 14 }}>Correo</Form.Label>
               <Form.Control
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('email')}
                 placeholder="tucorreo@ejemplo.com"
-                required
+                isInvalid={!!errors.email}
               />
+              <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-4">
               <Form.Label style={{ fontSize: 14 }}>Contraseña</Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                {...register('password')}
+                isInvalid={!!errors.password}
               />
+              <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="w-100" disabled={loading}>

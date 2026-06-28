@@ -1,35 +1,55 @@
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { OfertaApi } from '../../api/OfertaApi';
 import { HabilidadApi } from '../../api/HabilidadApi';
 import type { HabilidadResponse } from '../../api/types/User';
 import { MODALIDAD } from '../../utils/constants';
 
+const schema = z.object({
+  titulo: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
+  descripcion: z.string().min(20, 'La descripción debe tener al menos 20 caracteres'),
+  ubicacion: z.string().optional(),
+  modalidad: z.string().min(1, 'Selecciona una modalidad'),
+  salarioMin: z.string().optional(),
+  salarioMax: z.string().optional(),
+  scoreMinimoRequerido: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof schema>;
+
 export default function CrearOferta() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    titulo: '',
-    descripcion: '',
-    ubicacion: '',
-    modalidad: 'REMOTO',
-    salarioMin: '',
-    salarioMax: '',
-    scoreMinimoRequerido: '',
-  });
   const [habilidades, setHabilidades] = useState<HabilidadResponse[]>([]);
   const [seleccionadas, setSeleccionadas] = useState<number[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: 'onChange',
+    resolver: zodResolver(schema),
+    defaultValues: {
+      titulo: '',
+      descripcion: '',
+      ubicacion: '',
+      modalidad: 'REMOTO',
+      salarioMin: '',
+      salarioMax: '',
+      scoreMinimoRequerido: '',
+    },
+  });
+
   useEffect(() => {
     HabilidadApi.list().then(setHabilidades).catch(() => {});
   }, []);
-
-  function update(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
 
   function toggleHabilidad(id: number) {
     setSeleccionadas((prev) =>
@@ -37,20 +57,18 @@ export default function CrearOferta() {
     );
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data: FormValues) {
     setError('');
     setLoading(true);
     try {
       await OfertaApi.create({
-        titulo: form.titulo,
-        descripcion: form.descripcion,
-        ubicacion: form.ubicacion || undefined,
-        modalidad: form.modalidad,
-
-        salarioMin: form.salarioMin ? Number(form.salarioMin) : undefined,
-        salarioMax: form.salarioMax ? Number(form.salarioMax) : undefined,
-        scoreMinimoRequerido: form.scoreMinimoRequerido ? Number(form.scoreMinimoRequerido) : undefined,
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        ubicacion: data.ubicacion || undefined,
+        modalidad: data.modalidad,
+        salarioMin: data.salarioMin ? Number(data.salarioMin) : undefined,
+        salarioMax: data.salarioMax ? Number(data.salarioMax) : undefined,
+        scoreMinimoRequerido: data.scoreMinimoRequerido ? Number(data.scoreMinimoRequerido) : undefined,
         habilidadIds: seleccionadas,
       });
       navigate('/empresa/ofertas');
@@ -68,30 +86,50 @@ export default function CrearOferta() {
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Form.Group className="mb-3">
           <Form.Label>Título *</Form.Label>
-          <Form.Control name="titulo" value={form.titulo} onChange={update} required placeholder="Ej. Desarrollador Backend Java" />
+          <Form.Control
+            {...register('titulo')}
+            placeholder="Ej. Desarrollador Backend Java"
+            isInvalid={!!errors.titulo}
+          />
+          <Form.Control.Feedback type="invalid">{errors.titulo?.message}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Descripción *</Form.Label>
-          <Form.Control as="textarea" rows={4} name="descripcion" value={form.descripcion} onChange={update} required placeholder="Describe el puesto, responsabilidades y requisitos..." />
+          <Form.Control
+            as="textarea" rows={4}
+            {...register('descripcion')}
+            placeholder="Describe el puesto, responsabilidades y requisitos..."
+            isInvalid={!!errors.descripcion}
+          />
+          <Form.Control.Feedback type="invalid">{errors.descripcion?.message}</Form.Control.Feedback>
         </Form.Group>
 
         <Row>
           <Col md={6}>
             <Form.Group className="mb-3">
               <Form.Label>Ubicación</Form.Label>
-              <Form.Control name="ubicacion" value={form.ubicacion} onChange={update} placeholder="Ej. Lima, Perú" />
+              <Form.Control
+                {...register('ubicacion')}
+                placeholder="Ej. Lima, Perú"
+                isInvalid={!!errors.ubicacion}
+              />
+              <Form.Control.Feedback type="invalid">{errors.ubicacion?.message}</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col md={6}>
             <Form.Group className="mb-3">
               <Form.Label>Modalidad</Form.Label>
-              <Form.Select name="modalidad" value={form.modalidad} onChange={update}>
+              <Form.Select
+                {...register('modalidad')}
+                isInvalid={!!errors.modalidad}
+              >
                 {MODALIDAD.map((m) => <option key={m} value={m}>{m}</option>)}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">{errors.modalidad?.message}</Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>
@@ -100,19 +138,34 @@ export default function CrearOferta() {
           <Col md={4}>
             <Form.Group className="mb-3">
               <Form.Label>Salario mín. (S/)</Form.Label>
-              <Form.Control type="number" name="salarioMin" value={form.salarioMin} onChange={update} />
+              <Form.Control
+                type="number"
+                {...register('salarioMin')}
+                isInvalid={!!errors.salarioMin}
+              />
+              <Form.Control.Feedback type="invalid">{errors.salarioMin?.message}</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
               <Form.Label>Salario máx. (S/)</Form.Label>
-              <Form.Control type="number" name="salarioMax" value={form.salarioMax} onChange={update} />
+              <Form.Control
+                type="number"
+                {...register('salarioMax')}
+                isInvalid={!!errors.salarioMax}
+              />
+              <Form.Control.Feedback type="invalid">{errors.salarioMax?.message}</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
               <Form.Label>Score mín. (0-1)</Form.Label>
-              <Form.Control type="number" step="0.1" min="0" max="1" name="scoreMinimoRequerido" value={form.scoreMinimoRequerido} onChange={update} />
+              <Form.Control
+                type="number" step="0.1" min="0" max="1"
+                {...register('scoreMinimoRequerido')}
+                isInvalid={!!errors.scoreMinimoRequerido}
+              />
+              <Form.Control.Feedback type="invalid">{errors.scoreMinimoRequerido?.message}</Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>

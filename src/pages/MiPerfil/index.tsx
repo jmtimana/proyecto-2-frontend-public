@@ -1,10 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import type { UserDetailResponse } from '../../api/types/User';
 import NivelBadge from '../../common/NivelBadge';
 import { nivelDeScore } from '../../utils/nivel';
+
+const userSchema = z.object({
+  nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  apellido: z.string().optional(),
+  githubUsername: z.string().optional(),
+});
+
+const empresaSchema = z.object({
+  razonSocial: z.string().optional(),
+  sector: z.string().optional(),
+  descripcion: z.string().optional(),
+  web: z.string().url('Ingresa una URL válida').optional().or(z.literal('')),
+});
+
+type UserFormValues = z.infer<typeof userSchema>;
+type EmpresaFormValues = z.infer<typeof empresaSchema>;
 
 export default function MiPerfil() {
   const { updateSessionUser } = useAuth();
@@ -13,29 +32,33 @@ export default function MiPerfil() {
   const [loading, setLoading] = useState(true);
   const [errorCarga, setErrorCarga] = useState('');
 
-  const [userForm, setUserForm] = useState({ nombre: '', apellido: '', githubUsername: '' });
-  const [guardandoUser, setGuardandoUser] = useState(false);
   const [msgUser, setMsgUser] = useState<{ tipo: 'success' | 'danger'; texto: string } | null>(null);
+  const [guardandoUser, setGuardandoUser] = useState(false);
 
-  const [empForm, setEmpForm] = useState({ razonSocial: '', sector: '', descripcion: '', web: '' });
-  const [guardandoEmp, setGuardandoEmp] = useState(false);
   const [msgEmp, setMsgEmp] = useState<{ tipo: 'success' | 'danger'; texto: string } | null>(null);
+  const [guardandoEmp, setGuardandoEmp] = useState(false);
 
-  function llenarFormularios(u: UserDetailResponse) {
-    setUserForm({
-      nombre: u.firstName ?? '',
-      apellido: u.lastName ?? '',
-      githubUsername: u.githubUsername ?? '',
-    });
-    if (u.companyProfile) {
-      setEmpForm({
-        razonSocial: u.companyProfile.businessName ?? '',
-        sector: u.companyProfile.sector ?? '',
-        descripcion: u.companyProfile.description ?? '',
-        web: u.companyProfile.web ?? '',
-      });
-    }
-  }
+  const {
+    register: registerUser,
+    handleSubmit: handleSubmitUser,
+    formState: { errors: errorsUser, touchedFields: touchedUser },
+    reset: resetUser,
+  } = useForm<UserFormValues>({
+    mode: 'onChange',
+    resolver: zodResolver(userSchema),
+    defaultValues: { nombre: '', apellido: '', githubUsername: '' },
+  });
+
+  const {
+    register: registerEmp,
+    handleSubmit: handleSubmitEmp,
+    formState: { errors: errorsEmp, touchedFields: touchedEmp },
+    reset: resetEmp,
+  } = useForm<EmpresaFormValues>({
+    mode: 'onChange',
+    resolver: zodResolver(empresaSchema),
+    defaultValues: { razonSocial: '', sector: '', descripcion: '', web: '' },
+  });
 
   useEffect(() => {
     let vivo = true;
@@ -43,29 +66,44 @@ export default function MiPerfil() {
       .then((u) => {
         if (!vivo) return;
         setMe(u);
-        llenarFormularios(u);
+        resetUser({
+          nombre: u.firstName ?? '',
+          apellido: u.lastName ?? '',
+          githubUsername: u.githubUsername ?? '',
+        });
+        if (u.companyProfile) {
+          resetEmp({
+            razonSocial: u.companyProfile.businessName ?? '',
+            sector: u.companyProfile.sector ?? '',
+            descripcion: u.companyProfile.description ?? '',
+            web: u.companyProfile.web ?? '',
+          });
+        }
       })
       .catch(() => vivo && setErrorCarga('No se pudo cargar tu perfil.'))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;
     };
-  }, []);
+  }, [resetUser, resetEmp]);
 
-  async function guardarUser(e: React.FormEvent) {
-    e.preventDefault();
+  async function guardarUser(data: UserFormValues) {
     setGuardandoUser(true);
     setMsgUser(null);
     try {
       await UserApi.update({
-        nombre: userForm.nombre,
-        apellido: userForm.apellido,
-        githubUsername: userForm.githubUsername || undefined,
+        nombre: data.nombre,
+        apellido: data.apellido,
+        githubUsername: data.githubUsername || undefined,
       });
 
       const actualizado = await UserApi.me();
       setMe(actualizado);
-      llenarFormularios(actualizado);
+      resetUser({
+        nombre: actualizado.firstName ?? '',
+        apellido: actualizado.lastName ?? '',
+        githubUsername: actualizado.githubUsername ?? '',
+      });
       updateSessionUser({ firstName: actualizado.firstName, lastName: actualizado.lastName });
       setMsgUser({ tipo: 'success', texto: 'Tus datos se guardaron correctamente.' });
     } catch (err: any) {
@@ -75,20 +113,26 @@ export default function MiPerfil() {
     }
   }
 
-  async function guardarEmpresa(e: React.FormEvent) {
-    e.preventDefault();
+  async function guardarEmpresa(data: EmpresaFormValues) {
     setGuardandoEmp(true);
     setMsgEmp(null);
     try {
       await UserApi.updateEmpresa({
-        razonSocial: empForm.razonSocial || undefined,
-        sector: empForm.sector || undefined,
-        descripcion: empForm.descripcion || undefined,
-        web: empForm.web || undefined,
+        razonSocial: data.razonSocial || undefined,
+        sector: data.sector || undefined,
+        descripcion: data.descripcion || undefined,
+        web: data.web || undefined,
       });
       const actualizado = await UserApi.me();
       setMe(actualizado);
-      llenarFormularios(actualizado);
+      if (actualizado.companyProfile) {
+        resetEmp({
+          razonSocial: actualizado.companyProfile.businessName ?? '',
+          sector: actualizado.companyProfile.sector ?? '',
+          descripcion: actualizado.companyProfile.description ?? '',
+          web: actualizado.companyProfile.web ?? '',
+        });
+      }
       setMsgEmp({ tipo: 'success', texto: 'Los datos de tu empresa se guardaron correctamente.' });
     } catch (err: any) {
       setMsgEmp({ tipo: 'danger', texto: err?.response?.data?.message ?? 'No se pudieron guardar los datos de la empresa.' });
@@ -193,35 +237,40 @@ export default function MiPerfil() {
         <Card.Body className="p-4">
           <h5 style={{ fontWeight: 600 }} className="mb-3">Datos básicos</h5>
           {msgUser && <Alert variant={msgUser.tipo}>{msgUser.texto}</Alert>}
-          <Form onSubmit={guardarUser}>
+          <Form onSubmit={handleSubmitUser(guardarUser)} noValidate>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
-                    value={userForm.nombre}
-                    onChange={(e) => setUserForm({ ...userForm, nombre: e.target.value })}
-                    required
+                    {...registerUser('nombre')}
+                    isInvalid={!!errorsUser.nombre}
+                    isValid={!errorsUser.nombre && touchedUser.nombre}
                   />
+                  <Form.Control.Feedback type="invalid">{errorsUser.nombre?.message}</Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Apellido</Form.Label>
                   <Form.Control
-                    value={userForm.apellido}
-                    onChange={(e) => setUserForm({ ...userForm, apellido: e.target.value })}
+                    {...registerUser('apellido')}
+                    isInvalid={!!errorsUser.apellido}
+                    isValid={!errorsUser.apellido && touchedUser.apellido}
                   />
+                  <Form.Control.Feedback type="invalid">{errorsUser.apellido?.message}</Form.Control.Feedback>
                 </Form.Group>
               </Col>
             </Row>
             <Form.Group className="mb-3">
               <Form.Label>Usuario de GitHub</Form.Label>
               <Form.Control
-                value={userForm.githubUsername}
-                onChange={(e) => setUserForm({ ...userForm, githubUsername: e.target.value })}
+                {...registerUser('githubUsername')}
                 placeholder="tu-usuario-github"
+                isInvalid={!!errorsUser.githubUsername}
+                isValid={!errorsUser.githubUsername && touchedUser.githubUsername}
               />
+              <Form.Control.Feedback type="invalid">{errorsUser.githubUsername?.message}</Form.Control.Feedback>
               <Form.Text className="text-secondary">
                 El email no se puede cambiar desde aquí.
               </Form.Text>
@@ -241,45 +290,52 @@ export default function MiPerfil() {
               <p className="text-secondary" style={{ fontSize: 13 }}>RUC: {me.companyProfile.ruc} (no editable)</p>
             )}
             {msgEmp && <Alert variant={msgEmp.tipo}>{msgEmp.texto}</Alert>}
-            <Form onSubmit={guardarEmpresa}>
+            <Form onSubmit={handleSubmitEmp(guardarEmpresa)} noValidate>
               <Form.Group className="mb-3">
                 <Form.Label>Razón social</Form.Label>
                 <Form.Control
-                  value={empForm.razonSocial}
-                  onChange={(e) => setEmpForm({ ...empForm, razonSocial: e.target.value })}
+                  {...registerEmp('razonSocial')}
+                  isInvalid={!!errorsEmp.razonSocial}
+                  isValid={!errorsEmp.razonSocial && touchedEmp.razonSocial}
                 />
+                <Form.Control.Feedback type="invalid">{errorsEmp.razonSocial?.message}</Form.Control.Feedback>
               </Form.Group>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Sector</Form.Label>
                     <Form.Control
-                      value={empForm.sector}
-                      onChange={(e) => setEmpForm({ ...empForm, sector: e.target.value })}
+                      {...registerEmp('sector')}
                       placeholder="Ej. Fintech"
+                      isInvalid={!!errorsEmp.sector}
+                      isValid={!errorsEmp.sector && touchedEmp.sector}
                     />
+                    <Form.Control.Feedback type="invalid">{errorsEmp.sector?.message}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Sitio web</Form.Label>
                     <Form.Control
-                      value={empForm.web}
-                      onChange={(e) => setEmpForm({ ...empForm, web: e.target.value })}
+                      {...registerEmp('web')}
                       placeholder="https://..."
+                      isInvalid={!!errorsEmp.web}
+                      isValid={!errorsEmp.web && touchedEmp.web}
                     />
+                    <Form.Control.Feedback type="invalid">{errorsEmp.web?.message}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
               <Form.Group className="mb-3">
                 <Form.Label>Descripción</Form.Label>
                 <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={empForm.descripcion}
-                  onChange={(e) => setEmpForm({ ...empForm, descripcion: e.target.value })}
+                  as="textarea" rows={3}
+                  {...registerEmp('descripcion')}
                   placeholder="Cuéntale a los candidatos sobre tu empresa..."
+                  isInvalid={!!errorsEmp.descripcion}
+                  isValid={!errorsEmp.descripcion && touchedEmp.descripcion}
                 />
+                <Form.Control.Feedback type="invalid">{errorsEmp.descripcion?.message}</Form.Control.Feedback>
               </Form.Group>
               <Button type="submit" variant="primary" disabled={guardandoEmp}>
                 {guardandoEmp ? <Spinner size="sm" /> : 'Guardar empresa'}
