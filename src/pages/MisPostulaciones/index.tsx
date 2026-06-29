@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Check, Hourglass, Inbox, X } from 'lucide-react';
 import { PostulacionApi } from '../../api/PostulacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
@@ -16,9 +17,9 @@ const estadoRank: Record<string, number> = {
 };
 
 function estadoBadge(estado: string) {
-  if (estado === 'ACEPTADA') return { bg: 'success', texto: '✓ Aceptada' };
-  if (estado === 'RECHAZADA') return { bg: 'danger', texto: '✕ Rechazada' };
-  return { bg: 'warning', texto: '⏳ Pendiente' };
+  if (estado === 'ACEPTADA') return { bg: 'success', texto: 'Aceptada', Icon: Check };
+  if (estado === 'RECHAZADA') return { bg: 'danger', texto: 'Rechazada', Icon: X };
+  return { bg: 'warning', texto: 'Pendiente', Icon: Hourglass };
 }
 
 function fecha(iso: string) {
@@ -101,7 +102,7 @@ export default function MisPostulaciones() {
 
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>📭</div>
+          <Inbox size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">Aún no te has postulado a ninguna oferta.</p>
           <p style={{ fontSize: 13 }}>Explora las vacantes y postúlate a la que te interese.</p>
           <Button as={Link as any} to="/ofertas" variant="primary" size="sm" className="mt-2">
@@ -114,6 +115,7 @@ export default function MisPostulaciones() {
         <>
           {postulacionesOrdenadas.map((p) => {
             const badge = estadoBadge(p.status);
+            const BadgeIcon = badge.Icon;
             return (
               <Card key={p.id} className="mb-3" style={{ border: '0.5px solid #e6e6ef' }}>
                 <Card.Body className="p-4">
@@ -121,7 +123,10 @@ export default function MisPostulaciones() {
                     <div>
                       <div className="d-flex align-items-center gap-2 mb-1">
                         <h5 className="mb-0" style={{ fontWeight: 600 }}>{p.offerTitle}</h5>
-                        <Badge bg={badge.bg}>{badge.texto}</Badge>
+                        <Badge bg={badge.bg} className="d-inline-flex align-items-center gap-1">
+                          <BadgeIcon size={13} aria-hidden="true" />
+                          {badge.texto}
+                        </Badge>
                       </div>
                       <p className="text-secondary mb-0" style={{ fontSize: 13 }}>
                         Postulado el {fecha(p.createdAt)}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
+import { ChartNoAxesCombined, CircleCheck, CircleX, Rocket, TriangleAlert } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
@@ -127,15 +128,17 @@ function PreguntaCard({
         {phase === 'done' && (
           <div className="mt-3">
             {correcta ? (
-              <Alert variant="success" className="mb-0 py-2"><strong>✅ Correcta</strong></Alert>
+              <Alert variant="success" className="mb-0 py-2">
+                <strong className="d-inline-flex align-items-center gap-1"><CircleCheck size={16} /> Correcta</strong>
+              </Alert>
             ) : status === 'ERROR' ? (
               <Alert variant="warning" className="mb-0 py-2">
-                <strong>⚠️ Error al ejecutar</strong>
+                <strong className="d-inline-flex align-items-center gap-1"><TriangleAlert size={16} /> Error al ejecutar</strong>
                 {output && <pre className="mt-2 mb-0" style={{ fontSize: 12, whiteSpace: 'pre-wrap' }}>{output}</pre>}
               </Alert>
             ) : (
               <Alert variant="danger" className="mb-0 py-2">
-                <strong>❌ Incorrecta</strong>
+                <strong className="d-inline-flex align-items-center gap-1"><CircleX size={16} /> Incorrecta</strong>
                 {output != null && (
                   <div className="mt-2" style={{ fontSize: 13 }}>
                     Tu salida fue: <code>{output || '(vacía)'}</code>
@@ -227,7 +230,7 @@ export default function RendirEvaluacion() {
 
         <Card style={{ border: '0.5px solid #e6e6ef' }} className="mt-4">
           <Card.Body className="p-4 text-center">
-            <div style={{ fontSize: 40 }}>🚀</div>
+            <Rocket size={40} color="var(--brand)" aria-hidden="true" />
             <h5 className="mt-2" style={{ fontWeight: 600 }}>¿Listo para comenzar?</h5>
             <p className="text-secondary" style={{ fontSize: 14 }}>
               Tienes {preguntas.length} pregunta(s).
@@ -246,8 +249,9 @@ export default function RendirEvaluacion() {
             <PreguntaCard key={q.id} pregunta={q} numero={i + 1} evaluacionId={evalId} />
           ))}
           <div className="text-center mt-4">
-            <Button as={Link as any} to="/mis-resultados" variant="outline-secondary">
-              📊 Ver mis resultados
+            <Button as={Link as any} to="/mis-resultados" variant="outline-secondary" className="d-inline-flex align-items-center gap-2">
+              <ChartNoAxesCombined size={16} aria-hidden="true" />
+              Ver mis resultados
             </Button>
           </div>
         </div>

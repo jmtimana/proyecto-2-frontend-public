@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ClipboardList } from 'lucide-react';
 import { OfertaApi } from '../../api/OfertaApi';
 import { useAuth } from '../../context/AuthContext';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -135,7 +136,7 @@ export default function EmpresaOfertas() {
 
       {!loading && !error && ofertas.length === 0 && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>📋</div>
+          <ClipboardList size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">Aún no has publicado ninguna oferta.</p>
           <p style={{ fontSize: 13 }}>Crea la primera con el botón de arriba.</p>
         </div>

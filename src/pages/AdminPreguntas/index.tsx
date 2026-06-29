@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
+import { CircleQuestionMark } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
@@ -101,7 +102,7 @@ export default function AdminPreguntas() {
 
       {preguntas.length === 0 ? (
         <div className="text-center py-4 mb-4" style={{ color: 'var(--app-empty)', background: 'var(--app-surface-soft)', borderRadius: 12 }}>
-          <div style={{ fontSize: 34 }}>❓</div>
+          <CircleQuestionMark size={34} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">Aún no hay preguntas. Agrega la primera abajo.</p>
         </div>
       ) : (

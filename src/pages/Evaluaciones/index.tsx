@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ChartNoAxesCombined, Check, Puzzle, Tags, Target, Timer } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { ResultadoApi } from '../../api/ResultadoApi';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -94,15 +95,15 @@ export default function Evaluaciones() {
               <p className="text-secondary mb-2" style={{ fontSize: 14 }}>{ev.description}</p>
             </div>
             {hecha ? (
-              <Badge bg="success">✓ Completado</Badge>
+              <Badge bg="success" className="d-inline-flex align-items-center gap-1"><Check size={13} /> Completado</Badge>
             ) : (
               <Badge bg={dificultadColor(ev.difficulty)}>{ev.difficulty}</Badge>
             )}
           </div>
           <div className="d-flex gap-3 text-secondary" style={{ fontSize: 13 }}>
-            {tiempo(ev.timeLimitSeconds) && <span>⏱ {tiempo(ev.timeLimitSeconds)}</span>}
-            {ev.maxScore != null && <span>🎯 {ev.maxScore} pts</span>}
-            {ev.skills.length > 0 && <span>🏷 {ev.skills.map((s) => s.name).join(', ')}</span>}
+            {tiempo(ev.timeLimitSeconds) && <span className="d-inline-flex align-items-center gap-1"><Timer size={13} /> {tiempo(ev.timeLimitSeconds)}</span>}
+            {ev.maxScore != null && <span className="d-inline-flex align-items-center gap-1"><Target size={13} /> {ev.maxScore} pts</span>}
+            {ev.skills.length > 0 && <span className="d-inline-flex align-items-center gap-1"><Tags size={13} /> {ev.skills.map((s) => s.name).join(', ')}</span>}
           </div>
           {hecha && (
             <div className="mt-2" style={{ fontSize: 12, color: '#198754' }}>
@@ -127,8 +128,9 @@ export default function Evaluaciones() {
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Evaluaciones' }]} />
       <div className="d-flex justify-content-between align-items-center mb-1">
         <h3 style={{ fontWeight: 600, margin: 0 }}>Evaluaciones</h3>
-        <Button as={Link as any} to="/mis-resultados" variant="outline-secondary" size="sm">
-          📊 Mis resultados
+        <Button as={Link as any} to="/mis-resultados" variant="outline-secondary" size="sm" className="d-inline-flex align-items-center gap-1">
+          <ChartNoAxesCombined size={15} aria-hidden="true" />
+          Mis resultados
         </Button>
       </div>
       <p className="text-secondary mb-4">Rinde evaluaciones técnicas para subir tu SkillMatch Score.</p>
@@ -152,7 +154,7 @@ export default function Evaluaciones() {
 
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: 'var(--app-empty)' }}>
-          <div style={{ fontSize: 40 }}>🧩</div>
+          <Puzzle size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">Todavía no hay evaluaciones disponibles.</p>
         </div>
       )}

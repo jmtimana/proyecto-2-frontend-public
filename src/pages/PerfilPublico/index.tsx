@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
+import { GitFork } from 'lucide-react';
 import { UserApi } from '../../api/UserApi';
 import NivelBadge from '../../common/NivelBadge';
 import { nivelDeScore } from '../../utils/nivel';
@@ -101,7 +102,10 @@ export default function PerfilPublico() {
                 className="brand-link"
                 style={{ fontSize: 14 }}
               >
-                🐙 github.com/{u.githubUsername}
+                <span className="d-inline-flex align-items-center gap-1">
+                  <GitFork size={14} aria-hidden="true" />
+                  github.com/{u.githubUsername}
+                </span>
               </a>
             </div>
           )}

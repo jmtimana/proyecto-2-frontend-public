@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
+import { GitFork, Star } from 'lucide-react';
 import { GithubApi } from '../../api/GithubApi';
 import type { GithubProfileResponse } from '../../api/types/Github';
 import { getErrorMessage } from '../../utils/errorHandler';
@@ -74,7 +75,9 @@ export default function ConectarGitHub() {
             <Card.Body className="p-3">
               <div className="d-flex justify-content-between align-items-center">
                 <span style={{ fontWeight: 500 }}>{r.name}</span>
-                <span style={{ fontSize: 13, color: '#6b6b76' }}>★ {r.stars} · ⑂ {r.forks}</span>
+                <span className="d-inline-flex align-items-center gap-1" style={{ fontSize: 13, color: '#6b6b76' }}>
+                  <Star size={13} aria-hidden="true" /> {r.stars} · <GitFork size={13} aria-hidden="true" /> {r.forks}
+                </span>
               </div>
               {r.description && <div className="text-secondary mt-1" style={{ fontSize: 13 }}>{r.description}</div>}
               {r.language && <Badge bg="light" text="dark" className="mt-2" style={{ fontWeight: 400 }}>{r.language}</Badge>}
@@ -90,7 +93,7 @@ export default function ConectarGitHub() {
       <Card style={{ border: 'none', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
         <Card.Body className="p-4">
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span style={{ fontSize: 24 }}>🐙</span>
+            <GitFork size={24} color="var(--brand)" aria-hidden="true" />
             <h5 style={{ fontWeight: 600, margin: 0 }}>Conecta tu GitHub</h5>
           </div>
           <p className="text-secondary" style={{ fontSize: 14 }}>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import { OfertaGuardadaApi } from '../../api/OfertaGuardadaApi';
 import { UserApi } from '../../api/UserApi';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -41,7 +42,10 @@ export default function OfertasGuardadas() {
   return (
     <Container className="py-5" style={{ maxWidth: 760 }}>
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ofertas guardadas' }]} />
-      <h3 style={{ fontWeight: 600 }} className="mb-1">★ Ofertas guardadas</h3>
+      <h3 style={{ fontWeight: 600 }} className="mb-1 d-flex align-items-center gap-2">
+        <Star size={24} fill="#f5b301" color="#f5b301" aria-hidden="true" />
+        Ofertas guardadas
+      </h3>
       <p className="text-secondary mb-4">Las ofertas que marcaste para revisar después.</p>
 
       {loading && <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>}
@@ -49,7 +53,7 @@ export default function OfertasGuardadas() {
 
       {!loading && !error && ofertas.length === 0 && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>☆</div>
+          <Star size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">Aún no has guardado ninguna oferta.</p>
           <p style={{ fontSize: 13 }}>Toca la estrella de una oferta para guardarla.</p>
           <Button as={Link as any} to="/ofertas" variant="primary" size="sm" className="mt-2">

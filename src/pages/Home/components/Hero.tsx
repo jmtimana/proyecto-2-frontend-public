@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Check, Code } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { UserApi } from '../../../api/UserApi';
 import { nivelDeScore } from '../../../utils/nivel';
+import NivelIcon from '../../../common/NivelIcon';
 
 export default function Hero() {
   const { isAuthenticated, user } = useAuth();
@@ -63,16 +65,21 @@ export default function Hero() {
                   {scoreMostrado.toFixed(2)}
                 </div>
                 <span style={{ background: 'var(--brand-light)', color: 'var(--brand-dark)', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>
-                  {nivel.emoji} {nivel.nombre}
+                  <span className="d-inline-flex align-items-center gap-1">
+                    <NivelIcon nivel={nivel.nombre} size={13} />
+                    {nivel.nombre}
+                  </span>
                 </span>
               </div>
 
-              <div style={{ position: 'absolute', top: 4, left: 0, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: '#1f9d57' }}>
-                ✓ Cumples el score
+              <div className="d-flex align-items-center gap-1" style={{ position: 'absolute', top: 4, left: 0, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: '#1f9d57' }}>
+                <Check size={15} aria-hidden="true" />
+                Cumples el score
               </div>
 
-              <div style={{ position: 'absolute', bottom: 4, right: 8, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>
-                🧑‍💻 Evaluación completada
+              <div className="d-flex align-items-center gap-1" style={{ position: 'absolute', bottom: 4, right: 8, background: 'var(--app-surface)', borderRadius: 12, padding: '8px 14px', boxShadow: 'var(--app-shadow)', fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>
+                <Code size={15} aria-hidden="true" />
+                Evaluación completada
               </div>
             </div>
           </Col>

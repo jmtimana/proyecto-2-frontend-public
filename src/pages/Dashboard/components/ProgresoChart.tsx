@@ -1,4 +1,5 @@
 import type { ResultadoResponse } from '../../../api/types/Resultado';
+import { LineChart } from 'lucide-react';
 
 export default function ProgresoChart({ resultados }: { resultados: ResultadoResponse[] }) {
   const datos = [...resultados]
@@ -12,7 +13,7 @@ export default function ProgresoChart({ resultados }: { resultados: ResultadoRes
   if (datos.length === 0) {
     return (
       <div className="text-center text-secondary py-4">
-        <div style={{ fontSize: 34 }}>📈</div>
+        <LineChart size={34} className="mb-2" aria-hidden="true" />
         <div style={{ fontSize: 13, marginTop: 4 }}>
           Aún no tienes evaluaciones completadas.<br />¡Rinde una para ver tu progreso aquí!
         </div>

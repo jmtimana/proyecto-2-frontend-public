@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Button, Modal, Form } from 'react-bootstrap';
+import { Check, CircleCheck } from 'lucide-react';
 import { OfertaApi } from '../../api/OfertaApi';
 import { PostulacionApi } from '../../api/PostulacionApi';
 import { UserApi } from '../../api/UserApi';
@@ -167,7 +168,11 @@ export default function OfertaDetail() {
       {esEstudiante && oferta.minRequiredScore != null && miScore != null && (
         miScore >= oferta.minRequiredScore ? (
           <Alert variant="success" className="py-2">
-            ✓ <strong>Cumples el score mínimo.</strong> Tu score es {miScore.toFixed(2)} y esta oferta pide {oferta.minRequiredScore}.
+            <span className="d-inline-flex align-items-center gap-1">
+              <Check size={16} aria-hidden="true" />
+              <strong>Cumples el score mínimo.</strong>
+            </span>{' '}
+            Tu score es {miScore.toFixed(2)} y esta oferta pide {oferta.minRequiredScore}.
           </Alert>
         ) : (
           <Alert variant="warning" className="py-2">
@@ -179,7 +184,10 @@ export default function OfertaDetail() {
       )}
 
       {postulado ? (
-        <Alert variant="success">✅ ¡Postulación enviada! Revisa su estado en tu panel.</Alert>
+        <Alert variant="success" className="d-flex align-items-center gap-2">
+          <CircleCheck size={18} aria-hidden="true" />
+          ¡Postulación enviada! Revisa su estado en tu panel.
+        </Alert>
       ) : esEstudiante ? (
         <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Postularme</Button>
       ) : esEmpresa ? (

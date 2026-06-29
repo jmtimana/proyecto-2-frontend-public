@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Briefcase, Code, GitFork, LineChart, PartyPopper } from 'lucide-react';
 import { UserApi } from '../../../api/UserApi';
 import { ResultadoApi } from '../../../api/ResultadoApi';
 import { PostulacionApi } from '../../../api/PostulacionApi';
@@ -13,6 +14,7 @@ import MetricCard from './MetricCard';
 import ProgresoChart from './ProgresoChart';
 import OfertaCard from '../../Ofertas/components/OfertaCard';
 import NivelBadge from '../../../common/NivelBadge';
+import NivelIcon from '../../../common/NivelIcon';
 import Skeleton from '../../../common/Skeleton';
 import { nivelDeScore } from '../../../utils/nivel';
 
@@ -89,7 +91,7 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
   return (
     <>
       <div className="mb-4">
-        <h3 style={{ fontWeight: 600, margin: 0 }}>Hola, {firstName} 👋</h3>
+        <h3 style={{ fontWeight: 600, margin: 0 }}>Hola, {firstName}</h3>
         <p className="text-secondary" style={{ margin: '2px 0 0' }}>Este es tu progreso en SkillMatch</p>
       </div>
 
@@ -111,7 +113,9 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
                 </div>
               </div>
               <div className="text-center">
-                <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 4 }}>{nivel.emoji}</div>
+                <div className="d-flex justify-content-center mb-1">
+                  <NivelIcon nivel={nivel.nombre} size={34} color="var(--brand-dark)" />
+                </div>
                 <NivelBadge score={score} size="md" />
               </div>
             </div>
@@ -126,12 +130,17 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
                 </div>
               </div>
             ) : (
-              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>¡Estás en el nivel máximo! 🎉</div>
+              <div className="d-flex align-items-center gap-1" style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
+                ¡Estás en el nivel máximo! <PartyPopper size={14} aria-hidden="true" />
+              </div>
             )}
           </div>
 
           <div style={{ ...cardStyle, padding: '1.25rem 1.5rem' }}>
-            <div style={{ fontWeight: 600, marginBottom: 8 }}>📈 Tu progreso</div>
+            <div className="d-flex align-items-center gap-2" style={{ fontWeight: 600, marginBottom: 8 }}>
+              <LineChart size={17} aria-hidden="true" />
+              Tu progreso
+            </div>
             <ProgresoChart resultados={resultados} />
           </div>
         </Col>
@@ -140,17 +149,26 @@ export default function StudentDashboard({ firstName }: { firstName?: string }) 
           <div style={{ ...cardStyle, padding: '1rem 1.25rem', marginBottom: '1rem' }}>
             <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Acciones rápidas</div>
             <Link to="/evaluaciones" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--brand-light)', borderRadius: 10, padding: '0.7rem 1rem', marginBottom: 8 }}>
-              <span style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>🧑‍💻 Rinde una evaluación</span>
+              <span className="d-inline-flex align-items-center gap-2" style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>
+                <Code size={17} aria-hidden="true" />
+                Rinde una evaluación
+              </span>
             </Link>
             <Link to="/ofertas" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--app-surface-soft)', borderRadius: 10, padding: '0.7rem 1rem' }}>
-              <span style={{ fontWeight: 600, color: 'var(--app-text)' }}>💼 Explora ofertas</span>
+              <span className="d-inline-flex align-items-center gap-2" style={{ fontWeight: 600, color: 'var(--app-text)' }}>
+                <Briefcase size={17} aria-hidden="true" />
+                Explora ofertas
+              </span>
             </Link>
           </div>
 
           {!githubConectado && (
             <Link to="/github" style={{ textDecoration: 'none' }}>
               <div className="lift-card d-flex justify-content-between align-items-center" style={{ ...cardStyle, padding: '0.85rem 1.25rem', marginBottom: '1rem' }}>
-                <span style={{ fontSize: 14, color: 'var(--app-text)' }}>🐙 Conecta tu GitHub</span>
+                <span className="d-inline-flex align-items-center gap-2" style={{ fontSize: 14, color: 'var(--app-text)' }}>
+                  <GitFork size={16} aria-hidden="true" />
+                  Conecta tu GitHub
+                </span>
                 <span style={{ color: 'var(--brand)', fontWeight: 500, fontSize: 13 }}>Conectar →</span>
               </div>
             </Link>

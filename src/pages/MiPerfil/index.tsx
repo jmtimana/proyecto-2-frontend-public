@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Container, Card, Form, Button, Row, Col, Alert, Spinner, Badge } from 'react-bootstrap';
+import { Building2, GraduationCap, PartyPopper } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -182,7 +183,10 @@ export default function MiPerfil() {
             <div style={{ fontWeight: 600, fontSize: 18 }}>{me.firstName} {me.lastName}</div>
             <div className="text-secondary" style={{ fontSize: 14 }}>{me.email}</div>
             <Badge bg="light" text="dark" className="mt-1" style={{ fontWeight: 400 }}>
-              {esEmpresa ? '🏢 Empresa' : '🎓 Estudiante'}
+              <span className="d-inline-flex align-items-center gap-1">
+                {esEmpresa ? <Building2 size={13} aria-hidden="true" /> : <GraduationCap size={13} aria-hidden="true" />}
+                {esEmpresa ? 'Empresa' : 'Estudiante'}
+              </span>
             </Badge>
           </div>
         </Card.Body>
@@ -218,8 +222,8 @@ export default function MiPerfil() {
                   </div>
                 </div>
               ) : (
-                <div style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
-                  ¡Estás en el nivel máximo! 🎉
+                <div className="d-flex align-items-center gap-1" style={{ marginTop: 12, fontSize: 12, color: 'var(--brand-dark)', fontWeight: 500 }}>
+                  ¡Estás en el nivel máximo! <PartyPopper size={14} aria-hidden="true" />
                 </div>
               );
             })()}

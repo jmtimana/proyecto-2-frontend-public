@@ -1,4 +1,5 @@
 import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { OfertaLaboralResponse } from '../../../api/types/Oferta';
 
@@ -68,7 +69,7 @@ export default function OfertaCard({
                 zIndex: 2,
               }}
             >
-              {guardada ? '\u2605' : '\u2606'}
+              <Star size={20} fill={guardada ? 'currentColor' : 'none'} aria-hidden="true" />
             </button>
           </OverlayTrigger>
         )}

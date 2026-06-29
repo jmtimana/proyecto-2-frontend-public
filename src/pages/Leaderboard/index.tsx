@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
+import { Award, ChartNoAxesCombined, Crown, Medal, Trophy } from 'lucide-react';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
 import Breadcrumb from '../../common/Breadcrumb';
 import NivelBadge from '../../common/NivelBadge';
 import type { UserResponse } from '../../api/types/User';
 
-function medalla(i: number): string {
-  if (i === 0) return '🥇';
-  if (i === 1) return '🥈';
-  if (i === 2) return '🥉';
+function medalla(i: number): ReactNode {
+  if (i === 0) return <Crown size={24} color="#d9a300" aria-hidden="true" />;
+  if (i === 1) return <Medal size={24} color="#8a8a96" aria-hidden="true" />;
+  if (i === 2) return <Award size={24} color="#b76e22" aria-hidden="true" />;
   return `#${i + 1}`;
 }
 
@@ -29,7 +31,10 @@ export default function Leaderboard() {
   return (
     <Container className="py-5" style={{ maxWidth: 680 }}>
       <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Ranking' }]} />
-      <h3 style={{ fontWeight: 600 }} className="mb-1">🏆 Ranking de estudiantes</h3>
+      <h3 style={{ fontWeight: 600 }} className="mb-1 d-flex align-items-center gap-2">
+        <Trophy size={26} color="var(--brand)" aria-hidden="true" />
+        Ranking de estudiantes
+      </h3>
       <p className="text-secondary mb-4">Los mejores SkillMatch Score de la plataforma.</p>
 
       {loading && <div className="text-center py-5"><Spinner style={{ color: 'var(--brand)' }} /></div>}
@@ -37,7 +42,7 @@ export default function Leaderboard() {
 
       {!loading && !error && items.length === 0 && (
         <div className="text-center py-5 text-secondary" style={{ fontSize: 14 }}>
-          <div style={{ fontSize: 40 }}>📊</div>
+          <ChartNoAxesCombined size={40} className="mb-2" aria-hidden="true" />
           Aún no hay estudiantes con score. ¡Rinde evaluaciones para aparecer aquí!
         </div>
       )}

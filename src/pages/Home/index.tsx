@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ChartNoAxesCombined, FileText, Handshake } from 'lucide-react';
 import Hero from './components/Hero';
 import OfertaCard from '../Ofertas/components/OfertaCard';
 import { OfertaApi } from '../../api/OfertaApi';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 
 const PASOS = [
-  { icon: '📝', titulo: 'Rinde evaluaciones reales', desc: 'Resuelve retos de código que se ejecutan de verdad y se califican al instante.' },
-  { icon: '📊', titulo: 'Obtén tu SkillMatch Score', desc: 'Tu desempeño técnico y tu GitHub forman un score que demuestra lo que sabes.' },
-  { icon: '🤝', titulo: 'Postula y haz match', desc: 'Las empresas te encuentran por tu score y tus habilidades, no solo por tu CV.' },
+  { icon: FileText, titulo: 'Rinde evaluaciones reales', desc: 'Resuelve retos de código que se ejecutan de verdad y se califican al instante.' },
+  { icon: ChartNoAxesCombined, titulo: 'Obtén tu SkillMatch Score', desc: 'Tu desempeño técnico y tu GitHub forman un score que demuestra lo que sabes.' },
+  { icon: Handshake, titulo: 'Postula y haz match', desc: 'Las empresas te encuentran por tu score y tus habilidades, no solo por tu CV.' },
 ];
 
 export default function Home() {
@@ -40,7 +41,7 @@ export default function Home() {
             <Col md={4} key={i}>
               <div className="lift-card text-center h-100" style={{ background: 'var(--app-surface)', border: '0.5px solid var(--app-border)', borderRadius: 16, padding: '2rem 1.5rem' }}>
                 <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--brand-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, margin: '0 auto 14px' }}>
-                  {p.icon}
+                  <p.icon size={28} color="var(--brand)" aria-hidden="true" />
                 </div>
                 <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 6 }}>{i + 1}. {p.titulo}</div>
                 <div className="text-secondary" style={{ fontSize: 14 }}>{p.desc}</div>

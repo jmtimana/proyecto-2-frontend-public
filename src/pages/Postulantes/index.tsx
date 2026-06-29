@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge, Button } from 'react-bootstrap';
+import { User } from 'lucide-react';
 import { PostulacionApi } from '../../api/PostulacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
@@ -55,7 +56,7 @@ export default function Postulantes() {
 
       {!loading && !error && postulantes.length === 0 && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>👤</div>
+          <User size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2">Aún no hay postulantes para esta oferta.</p>
         </div>
       )}

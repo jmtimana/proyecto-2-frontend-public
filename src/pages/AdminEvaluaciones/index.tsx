@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Button, Card, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Puzzle, Tags, Target } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
@@ -75,7 +76,7 @@ export default function AdminEvaluaciones() {
 
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>🧩</div>
+          <Puzzle size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">No hay evaluaciones todavía.</p>
           <p style={{ fontSize: 13 }}>Crea la primera con el botón de arriba.</p>
         </div>
@@ -95,8 +96,12 @@ export default function AdminEvaluaciones() {
                     </div>
                     <p className="text-secondary mb-0" style={{ fontSize: 14 }}>{ev.description}</p>
                     <div className="text-secondary mt-1" style={{ fontSize: 13 }}>
-                      {ev.maxScore != null && <>🎯 {ev.maxScore} pts</>}
-                      {ev.skills.length > 0 && <> · 🏷 {ev.skills.map((s) => s.name).join(', ')}</>}
+                      {ev.maxScore != null && (
+                        <span className="d-inline-flex align-items-center gap-1"><Target size={13} /> {ev.maxScore} pts</span>
+                      )}
+                      {ev.skills.length > 0 && (
+                        <span className="d-inline-flex align-items-center gap-1 ms-2"><Tags size={13} /> {ev.skills.map((s) => s.name).join(', ')}</span>
+                      )}
                     </div>
                   </div>
                 </div>

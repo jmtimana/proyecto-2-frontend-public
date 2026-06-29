@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert, Card, Badge, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ChartNoAxesCombined } from 'lucide-react';
 import { ResultadoApi } from '../../api/ResultadoApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { ResultadoResponse } from '../../api/types/Resultado';
@@ -39,7 +40,7 @@ export default function MisResultados() {
 
       {!loading && !error && items.length === 0 && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>📊</div>
+          <ChartNoAxesCombined size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-1">Todavía no has rendido ninguna evaluación.</p>
           <Link to="/evaluaciones" className="brand-link">Ver evaluaciones disponibles →</Link>
         </div>

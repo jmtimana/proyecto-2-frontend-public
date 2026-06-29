@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Container, Alert, Button, Form, Row, Col, Card } from 'react-bootstrap';
+import { Inbox, Search } from 'lucide-react';
 import { OfertaApi } from '../../api/OfertaApi';
 import { UserApi } from '../../api/UserApi';
 import { OfertaGuardadaApi } from '../../api/OfertaGuardadaApi';
@@ -333,7 +334,7 @@ export default function Ofertas() {
 
       {!loading && !error && filtradas.length === 0 && (
         <div className="text-center py-5" style={{ color: 'var(--app-empty)' }}>
-          <div style={{ fontSize: 40 }}>{hayFiltros ? '🔍' : '📭'}</div>
+          {hayFiltros ? <Search size={40} aria-hidden="true" /> : <Inbox size={40} aria-hidden="true" />}
           {hayFiltros ? (
             <>
               <p className="mt-2 mb-0">Ninguna oferta coincide con tu búsqueda.</p>

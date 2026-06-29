@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card, Badge } from 'react-bootstrap';
+import { CircleCheck, CircleX, Hourglass, TriangleAlert } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -14,10 +15,10 @@ function ultimaRespuesta(respuestas: RespuestaResponse[], preguntaId: number): R
 }
 
 function estadoBadge(status: string | undefined) {
-  if (status === 'CORRECTA') return <Badge bg="success">✅ Correcta</Badge>;
-  if (status === 'INCORRECTA') return <Badge bg="danger">❌ Incorrecta</Badge>;
-  if (status === 'ERROR') return <Badge bg="warning" text="dark">⚠️ Error</Badge>;
-  if (status === 'PENDIENTE') return <Badge bg="secondary">⏳ Pendiente</Badge>;
+  if (status === 'CORRECTA') return <Badge bg="success" className="d-inline-flex align-items-center gap-1"><CircleCheck size={13} /> Correcta</Badge>;
+  if (status === 'INCORRECTA') return <Badge bg="danger" className="d-inline-flex align-items-center gap-1"><CircleX size={13} /> Incorrecta</Badge>;
+  if (status === 'ERROR') return <Badge bg="warning" text="dark" className="d-inline-flex align-items-center gap-1"><TriangleAlert size={13} /> Error</Badge>;
+  if (status === 'PENDIENTE') return <Badge bg="secondary" className="d-inline-flex align-items-center gap-1"><Hourglass size={13} /> Pendiente</Badge>;
   return <Badge bg="light" text="dark">Sin responder</Badge>;
 }
 

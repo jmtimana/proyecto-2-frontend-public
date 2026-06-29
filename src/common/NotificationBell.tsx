@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Bell, BellOff } from 'lucide-react';
 import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { NotificationApi } from '../api/NotificationApi';
 import type { NotificationResponse } from '../api/types/Notification';
@@ -104,7 +105,7 @@ export default function NotificationBell() {
             lineHeight: 1,
           }}
         >
-          {'\u{1F514}'}
+          <Bell size={20} aria-hidden="true" />
           {count > 0 && (
             <span
               style={{
@@ -175,7 +176,7 @@ export default function NotificationBell() {
 
           {!loading && cargado && items.length === 0 && (
             <div className="text-center text-secondary py-4" style={{ fontSize: 13 }}>
-              <div style={{ fontSize: 28 }}>{'\u{1F515}'}</div>
+              <BellOff size={28} className="mb-2" aria-hidden="true" />
               No tienes notificaciones.
             </div>
           )}

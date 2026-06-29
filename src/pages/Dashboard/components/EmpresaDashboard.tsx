@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ClipboardList, Megaphone, Search } from 'lucide-react';
 import { UserApi } from '../../../api/UserApi';
 import { OfertaApi } from '../../../api/OfertaApi';
 import { PostulacionApi } from '../../../api/PostulacionApi';
@@ -86,7 +87,7 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
     <>
       <div className="mb-4 d-flex justify-content-between align-items-center">
         <div>
-          <h3 style={{ fontWeight: 600, margin: 0 }}>Hola, {firstName} 👋</h3>
+          <h3 style={{ fontWeight: 600, margin: 0 }}>Hola, {firstName}</h3>
           <p className="text-secondary" style={{ margin: '2px 0 0' }}>Gestiona tus ofertas y candidatos</p>
         </div>
         <Badge bg={plan === 'PRO' ? 'warning' : 'secondary'} text={plan === 'PRO' ? 'dark' : undefined}>
@@ -110,7 +111,7 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
 
             {ofertasTop.length === 0 ? (
               <div className="text-center py-3" style={{ color: '#999' }}>
-                <div style={{ fontSize: 34 }}>📋</div>
+                <ClipboardList size={34} className="mb-2" aria-hidden="true" />
                 <p className="mb-2" style={{ fontSize: 14 }}>Aún no has publicado ofertas.</p>
                 <Link to="/empresa/ofertas/nueva" className="brand-link">Publicar la primera →</Link>
               </div>
@@ -142,10 +143,16 @@ export default function EmpresaDashboard({ firstName, userId }: Props) {
           <div style={{ ...cardStyle, padding: '1rem 1.25rem', marginBottom: '1rem' }}>
             <div className="text-secondary mb-2" style={{ fontSize: 13 }}>Acciones rápidas</div>
             <Link to="/empresa/ofertas/nueva" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--brand-light)', borderRadius: 10, padding: '0.7rem 1rem', marginBottom: 8 }}>
-              <span style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>📢 Publicar oferta</span>
+              <span className="d-inline-flex align-items-center gap-2" style={{ fontWeight: 600, color: 'var(--brand-dark)' }}>
+                <Megaphone size={17} aria-hidden="true" />
+                Publicar oferta
+              </span>
             </Link>
             <Link to="/empresa/candidatos" className="lift-card d-block" style={{ textDecoration: 'none', background: 'var(--app-surface-soft)', borderRadius: 10, padding: '0.7rem 1rem' }}>
-              <span style={{ fontWeight: 600, color: 'var(--app-text)' }}>🔍 Buscar candidatos</span>
+              <span className="d-inline-flex align-items-center gap-2" style={{ fontWeight: 600, color: 'var(--app-text)' }}>
+                <Search size={17} aria-hidden="true" />
+                Buscar candidatos
+              </span>
             </Link>
           </div>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, Form, Button, Row, Col, Spinner, Alert, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { GitFork, Search } from 'lucide-react';
 import { UserApi } from '../../api/UserApi';
 import { useFetch } from '../../hooks/useFetch';
 import Breadcrumb from '../../common/Breadcrumb';
@@ -79,7 +80,7 @@ export default function BuscarCandidatos() {
 
       {!loading && !error && data && data.empty && (
         <div className="text-center py-5" style={{ color: '#999' }}>
-          <div style={{ fontSize: 40 }}>🔍</div>
+          <Search size={40} className="mb-2" aria-hidden="true" />
           <p className="mt-2 mb-0">No hay candidatos en ese rango de score.</p>
           <p style={{ fontSize: 13 }}>Prueba ampliando el rango (por ejemplo, de 0 a 1).</p>
         </div>
@@ -117,7 +118,10 @@ export default function BuscarCandidatos() {
                             className="brand-link"
                             style={{ fontSize: 12 }}
                           >
-                            🐙 {u.githubUsername}
+                            <span className="d-inline-flex align-items-center gap-1">
+                              <GitFork size={13} aria-hidden="true" />
+                              {u.githubUsername}
+                            </span>
                           </a>
                         )}
                       </div>

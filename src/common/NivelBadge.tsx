@@ -1,5 +1,6 @@
 import { Badge } from 'react-bootstrap';
 import { nivelDeScore } from '../utils/nivel';
+import NivelIcon from './NivelIcon';
 
 interface Props {
   score: number | null | undefined;
@@ -12,7 +13,10 @@ export default function NivelBadge({ score, size = 'sm' }: Props) {
   const padding = size === 'md' ? '6px 12px' : '4px 9px';
   return (
     <Badge bg={n.color} style={{ fontWeight: 500, fontSize, padding }}>
-      {n.emoji} {n.nombre}
+      <span className="d-inline-flex align-items-center gap-1">
+        <NivelIcon nivel={n.nombre} size={size === 'md' ? 14 : 12} />
+        {n.nombre}
+      </span>
     </Badge>
   );
 }
