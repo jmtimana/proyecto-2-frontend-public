@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
 import { ChartNoAxesCombined, CircleCheck, CircleX, Rocket, TriangleAlert } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
@@ -12,6 +13,7 @@ import Breadcrumb from '../../common/Breadcrumb';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
 import { getErrorMessage } from '../../utils/errorHandler';
+import { useTheme } from '../../context/ThemeContext';
 import type {
   EvaluacionDetailResponse,
   PreguntaResponse,
@@ -37,6 +39,7 @@ function PreguntaCard({
   numero: number;
   evaluacionId: number;
 }) {
+  const { theme: appTheme } = useTheme();
   const [code, setCode] = useState(pregunta.templateCode || '');
   const [phase, setPhase] = useState<'editing' | 'running' | 'done'>('editing');
   const [status, setStatus] = useState<string>('');
@@ -109,13 +112,14 @@ function PreguntaCard({
             <span className="text-secondary">{pregunta.score} pts</span>
           </span>
         </div>
-        <p style={{ color: '#444' }}>{pregunta.questionText}</p>
+        <p>{pregunta.questionText}</p>
 
         <div style={{ border: '1px solid #e0e0e8', borderRadius: 8, overflow: 'hidden' }}>
           <CodeMirror
             value={code}
             height="200px"
             extensions={ext}
+            theme={appTheme === 'dark' ? oneDark : undefined}
             editable={phase !== 'running' && !correcta}
             onChange={(v) => setCode(v)}
           />
