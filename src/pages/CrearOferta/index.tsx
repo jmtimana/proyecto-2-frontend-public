@@ -6,8 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { OfertaApi } from '../../api/OfertaApi';
 import { HabilidadApi } from '../../api/HabilidadApi';
+import { EvaluacionApi } from '../../api/EvaluacionApi';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { HabilidadResponse } from '../../api/types/User';
+import type { EvaluacionResponse } from '../../api/types/Evaluacion';
 import { MODALIDAD } from '../../utils/constants';
 import { getErrorMessage } from '../../utils/errorHandler';
 
@@ -19,6 +21,8 @@ const schema = z.object({
   salarioMin: z.string().optional(),
   salarioMax: z.string().optional(),
   scoreMinimoRequerido: z.string().optional(),
+  evaluacionRequeridaId: z.string().optional(),
+  notaMinimaAprobacion: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -28,12 +32,14 @@ export default function CrearOferta() {
 
   const [habilidades, setHabilidades] = useState<HabilidadResponse[]>([]);
   const [seleccionadas, setSeleccionadas] = useState<number[]>([]);
+  const [evaluaciones, setEvaluaciones] = useState<EvaluacionResponse[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     mode: 'onChange',
@@ -46,12 +52,17 @@ export default function CrearOferta() {
       salarioMin: '',
       salarioMax: '',
       scoreMinimoRequerido: '',
+      evaluacionRequeridaId: '',
+      notaMinimaAprobacion: '70',
     },
   });
 
   useEffect(() => {
     HabilidadApi.list().then(setHabilidades).catch(() => {});
+    EvaluacionApi.list(0, 100).then((p) => setEvaluaciones(p.content)).catch(() => {});
   }, []);
+
+  const watchEvaluacionId = watch('evaluacionRequeridaId');
 
   function toggleHabilidad(id: number) {
     setSeleccionadas((prev) =>
@@ -71,6 +82,10 @@ export default function CrearOferta() {
         salarioMin: data.salarioMin ? Number(data.salarioMin) : undefined,
         salarioMax: data.salarioMax ? Number(data.salarioMax) : undefined,
         scoreMinimoRequerido: data.scoreMinimoRequerido ? Number(data.scoreMinimoRequerido) : undefined,
+        evaluacionRequeridaId: data.evaluacionRequeridaId ? Number(data.evaluacionRequeridaId) : undefined,
+        notaMinimaAprobacion: data.evaluacionRequeridaId && data.notaMinimaAprobacion
+          ? Number(data.notaMinimaAprobacion)
+          : undefined,
         habilidadIds: seleccionadas,
       });
       navigate('/empresa/ofertas');
@@ -172,6 +187,28 @@ export default function CrearOferta() {
             </Form.Group>
           </Col>
         </Row>
+
+        <Form.Group className="mb-4">
+          <Form.Label>Evaluación requerida para postular (opcional)</Form.Label>
+          <Form.Select {...register('evaluacionRequeridaId')}>
+            <option value="">Ninguna — cualquiera puede postular</option>
+            {evaluaciones.map((ev) => (
+              <option key={ev.id} value={ev.id}>{ev.title}</option>
+            ))}
+          </Form.Select>
+          <Form.Text className="text-secondary">
+            Si eliges una, el postulante deberá aprobarla antes de poder postular.
+          </Form.Text>
+          {watchEvaluacionId && (
+            <div className="mt-2" style={{ maxWidth: 220 }}>
+              <Form.Label style={{ fontSize: 13 }}>Nota mínima para aprobar (%)</Form.Label>
+              <Form.Control
+                type="number" min="0" max="100"
+                {...register('notaMinimaAprobacion')}
+              />
+            </div>
+          )}
+        </Form.Group>
 
         <Form.Group className="mb-4">
           <Form.Label>Habilidades requeridas</Form.Label>

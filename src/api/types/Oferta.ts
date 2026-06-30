@@ -11,6 +11,9 @@ export interface OfertaLaboralResponse {
   minSalary: number | null;
   maxSalary: number | null;
   minRequiredScore: number | null;
+  evaluacionRequeridaId: number | null;
+  evaluacionRequeridaTitulo: string | null;
+  notaMinimaAprobacion: number | null;
   status: string;
   skills: HabilidadResponse[];
   applicationsCount: number;
@@ -29,6 +32,9 @@ export interface OfertaLaboralDetailResponse {
   minSalary: number | null;
   maxSalary: number | null;
   minRequiredScore: number | null;
+  evaluacionRequeridaId: number | null;
+  evaluacionRequeridaTitulo: string | null;
+  notaMinimaAprobacion: number | null;
   status: string;
   skills: HabilidadResponse[];
   applicationsCount: number;
@@ -44,6 +50,8 @@ export interface OfertaLaboralCreateRequest {
   salarioMin?: number;
   salarioMax?: number;
   scoreMinimoRequerido?: number;
+  evaluacionRequeridaId?: number | null;
+  notaMinimaAprobacion?: number;
   habilidadIds?: number[];
 }
 
@@ -55,6 +63,8 @@ export interface OfertaLaboralUpdateRequest {
   salarioMin?: number;
   salarioMax?: number;
   scoreMinimoRequerido?: number;
+  evaluacionRequeridaId?: number | null;
+  notaMinimaAprobacion?: number;
   estado?: string;
   habilidadIds?: number[];
 }

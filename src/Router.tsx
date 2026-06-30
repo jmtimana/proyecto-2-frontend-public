@@ -13,6 +13,8 @@ const CrearOferta = lazy(() => import('./pages/CrearOferta'));
 const EditarOferta = lazy(() => import('./pages/EditarOferta'));
 const Postulantes = lazy(() => import('./pages/Postulantes'));
 const BuscarCandidatos = lazy(() => import('./pages/BuscarCandidatos'));
+const EmpresaEvaluaciones = lazy(() => import('./pages/EmpresaEvaluaciones'));
+const EmpresaCrearEvaluacion = lazy(() => import('./pages/EmpresaCrearEvaluacion'));
 const MisPostulaciones = lazy(() => import('./pages/MisPostulaciones'));
 const OfertasGuardadas = lazy(() => import('./pages/OfertasGuardadas'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
@@ -68,6 +70,8 @@ export default function Router() {
         <Route path="/empresa/ofertas/:id/editar" element={<RoleRoute role="ROLE_EMPRESA"><EditarOferta /></RoleRoute>} />
         <Route path="/empresa/ofertas/:id/postulantes" element={<RoleRoute role="ROLE_EMPRESA"><Postulantes /></RoleRoute>} />
         <Route path="/empresa/candidatos" element={<RoleRoute role="ROLE_EMPRESA"><BuscarCandidatos /></RoleRoute>} />
+        <Route path="/empresa/evaluaciones" element={<RoleRoute role="ROLE_EMPRESA"><EmpresaEvaluaciones /></RoleRoute>} />
+        <Route path="/empresa/evaluaciones/nueva" element={<RoleRoute role="ROLE_EMPRESA"><EmpresaCrearEvaluacion /></RoleRoute>} />
 
         <Route path="/admin/evaluaciones" element={<RoleRoute role="ROLE_ADMIN"><AdminEvaluaciones /></RoleRoute>} />
         <Route path="/admin/evaluaciones/nueva" element={<RoleRoute role="ROLE_ADMIN"><AdminCrearEvaluacion /></RoleRoute>} />

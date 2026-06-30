@@ -60,6 +60,9 @@ export default function Navbar() {
             {isAuthenticated && esEmpresa && (
               <Nav.Link as={Link} to="/empresa/candidatos" onClick={closeMenu}>Buscar candidatos</Nav.Link>
             )}
+            {isAuthenticated && esEmpresa && (
+              <Nav.Link as={Link} to="/empresa/evaluaciones" onClick={closeMenu}>Mis evaluaciones</Nav.Link>
+            )}
             {isAuthenticated && esAdmin && (
               <Nav.Link
                 as={Link}

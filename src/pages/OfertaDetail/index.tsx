@@ -81,8 +81,12 @@ export default function OfertaDetail() {
       setPostulado(true);
       setShowModal(false);
     } catch (err: any) {
-
-      setModalError(getErrorMessage(err));
+      const msg: string = err?.response?.data?.message ?? '';
+      if (msg.toLowerCase().includes('evaluation')) {
+        setModalError('Debes aprobar la evaluación requerida por esta oferta antes de postular.');
+      } else {
+        setModalError(getErrorMessage(err));
+      }
     } finally {
       setEnviando(false);
     }
@@ -181,6 +185,26 @@ export default function OfertaDetail() {
             evaluaciones para mejorar tus chances.
           </Alert>
         )
+      )}
+
+      {esEstudiante && oferta.evaluacionRequeridaId != null && (
+        <Alert variant="info" className="py-2">
+          <span className="d-inline-flex align-items-center gap-1">
+            <Check size={16} aria-hidden="true" />
+            Esta oferta requiere <strong>aprobar la evaluación "{oferta.evaluacionRequeridaTitulo}"</strong>
+            {oferta.notaMinimaAprobacion != null && <> (nota mínima {oferta.notaMinimaAprobacion}%)</>} antes de postular.
+          </span>
+          <div className="mt-2">
+            <Button
+              as={Link as any}
+              to={`/evaluaciones/${oferta.evaluacionRequeridaId}`}
+              size="sm"
+              variant="outline-primary"
+            >
+              Ir a la evaluación
+            </Button>
+          </div>
+        </Alert>
       )}
 
       {postulado ? (
