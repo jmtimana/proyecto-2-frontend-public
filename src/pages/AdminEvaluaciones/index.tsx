@@ -32,7 +32,7 @@ export default function AdminEvaluaciones() {
     setError('');
     EvaluacionApi.list(page, PAGE_SIZE)
       .then(setData)
-      .catch(() => setError('No se pudieron cargar las evaluaciones.'))
+      .catch((err) => setError(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }
 

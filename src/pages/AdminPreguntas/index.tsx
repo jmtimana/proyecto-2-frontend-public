@@ -35,7 +35,7 @@ export default function AdminPreguntas() {
         setEvaluacion(ev);
         setErrorCarga('');
       })
-      .catch(() => setErrorCarga('No se pudo cargar la evaluación.'))
+      .catch((err) => setErrorCarga(getErrorMessage(err)))
       .finally(() => setCargando(false));
   }
 

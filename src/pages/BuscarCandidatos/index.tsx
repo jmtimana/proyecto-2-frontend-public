@@ -21,7 +21,6 @@ export default function BuscarCandidatos() {
   const { data, loading, error } = useFetch(
     (signal) => UserApi.search({ scoreMin, scoreMax, page, size }, signal),
     [scoreMin, scoreMax, page, size],
-    'No se pudo realizar la búsqueda de candidatos.',
   );
 
   function buscar(e: React.FormEvent) {

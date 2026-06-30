@@ -116,7 +116,6 @@ export default function Ofertas() {
   const { data, loading, error } = useFetch(
     (signal) => OfertaApi.list({ page: 0, size: 200, estado: 'ACTIVA' }, signal),
     [],
-    'No se pudieron cargar las ofertas.',
   );
   const todas = useMemo(() => data?.content ?? [], [data]);
 

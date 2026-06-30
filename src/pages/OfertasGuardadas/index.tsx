@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { OfertaGuardadaApi } from '../../api/OfertaGuardadaApi';
 import { UserApi } from '../../api/UserApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { OfertaLaboralResponse } from '../../api/types/Oferta';
 import OfertaCard from '../Ofertas/components/OfertaCard';
@@ -20,7 +21,7 @@ export default function OfertasGuardadas() {
       .then(([guardadasRes, meRes]) => {
         if (!vivo) return;
         if (guardadasRes.status === 'fulfilled') setOfertas(guardadasRes.value);
-        else setError('No se pudieron cargar tus ofertas guardadas.');
+        else if (guardadasRes.status === 'rejected') setError(getErrorMessage(guardadasRes.reason));
         if (meRes.status === 'fulfilled') setMiScore(meRes.value.skillMatchScore ?? 0);
       })
       .finally(() => vivo && setLoading(false));

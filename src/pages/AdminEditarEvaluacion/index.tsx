@@ -47,7 +47,7 @@ export default function AdminEditarEvaluacion() {
           activa: ev.active,
         });
       })
-      .catch(() => vivo && setErrorCarga('No se pudo cargar la evaluación.'))
+      .catch((err) => vivo && setErrorCarga(getErrorMessage(err)))
       .finally(() => vivo && setCargando(false));
     return () => { vivo = false; };
   }, [evalId]);

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { parseError } from '../utils/errorHandler';
 
 interface UseFetchResult<T> {
   data: T | null;
@@ -11,7 +12,6 @@ interface UseFetchResult<T> {
 export function useFetch<T>(
   fetcher: (signal: AbortSignal) => Promise<T>,
   deps: unknown[],
-  errorMsg = 'No se pudo cargar la información. Intenta de nuevo.',
 ): UseFetchResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,8 @@ export function useFetch<T>(
       .catch((err) => {
 
         if (axios.isCancel(err) || err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError') return;
-        setError(errorMsg);
+        const parsed = parseError(err);
+        setError(parsed.userMessage);
         setLoading(false);
       });
 

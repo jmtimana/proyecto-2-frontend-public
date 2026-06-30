@@ -4,6 +4,7 @@ import { Container, Spinner, Alert, Card } from 'react-bootstrap';
 import { Award, ChartNoAxesCombined, Crown, Medal, Trophy } from 'lucide-react';
 import { UserApi } from '../../api/UserApi';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import NivelBadge from '../../common/NivelBadge';
 import type { UserResponse } from '../../api/types/User';
@@ -24,7 +25,7 @@ export default function Leaderboard() {
   useEffect(() => {
     UserApi.leaderboard()
       .then(setItems)
-      .catch(() => setError('No se pudo cargar el ranking.'))
+      .catch((err) => setError(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 

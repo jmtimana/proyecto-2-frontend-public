@@ -25,7 +25,16 @@ api.interceptors.response.use(
     const original = error.config;
     const status = error.response?.status;
 
-    const isRecoverable = !error.response || status === 429 || (status! >= 500 && status! <= 599);
+    if (!error.response) {
+      original._retryCount = (original._retryCount || 0) + 1;
+      if (original._retryCount < MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, BASE_DELAY * Math.pow(2, original._retryCount - 1)));
+        return api(original);
+      }
+      return Promise.reject(error);
+    }
+
+    const isRecoverable = status === 429 || (status! >= 500 && status! <= 599);
 
     if (isRecoverable) {
       const retryCount = original._retryCount || 0;

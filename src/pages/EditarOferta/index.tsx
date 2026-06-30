@@ -75,7 +75,7 @@ export default function EditarOferta() {
           estado: oferta.status ?? 'ACTIVA',
         });
       })
-      .catch(() => vivo && setErrorCarga('No se pudo cargar la oferta.'))
+      .catch((err) => vivo && setErrorCarga(getErrorMessage(err)))
       .finally(() => vivo && setCargandoOferta(false));
 
     return () => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Badge, Card, Button } from 'react-bootstrap';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import NotFound from '../NotFound';
 import type { EvaluacionDetailResponse } from '../../api/types/Evaluacion';
@@ -41,7 +42,7 @@ export default function EvaluacionDetail() {
           setNotFound(true);
           return;
         }
-        setError('No se pudo cargar la evaluacion.');
+        setError(getErrorMessage(err));
       })
       .finally(() => vivo && setLoading(false));
     return () => {

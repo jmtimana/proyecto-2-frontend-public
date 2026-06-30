@@ -3,6 +3,7 @@ import { Container, Spinner, Alert, Card, Badge, ProgressBar } from 'react-boots
 import { Link } from 'react-router-dom';
 import { ChartNoAxesCombined } from 'lucide-react';
 import { ResultadoApi } from '../../api/ResultadoApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { ResultadoResponse } from '../../api/types/Resultado';
 
@@ -21,7 +22,7 @@ export default function MisResultados() {
     let vivo = true;
     ResultadoApi.list(0, 50)
       .then((res) => vivo && setItems(res.content))
-      .catch(() => vivo && setError('No se pudieron cargar tus resultados.'))
+      .catch((err) => vivo && setError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

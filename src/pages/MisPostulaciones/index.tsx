@@ -3,6 +3,7 @@ import { Container, Spinner, Alert, Card, Badge, Button, Form } from 'react-boot
 import { Link } from 'react-router-dom';
 import { Check, Hourglass, Inbox, X } from 'lucide-react';
 import { PostulacionApi } from '../../api/PostulacionApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { PostulacionResponse } from '../../api/types/Postulacion';
@@ -50,8 +51,8 @@ export default function MisPostulaciones() {
       .then((res) => {
         if (!cancelado) setData(res);
       })
-      .catch(() => {
-        if (!cancelado) setError('No se pudieron cargar tus postulaciones.');
+      .catch((err) => {
+        if (!cancelado) setError(getErrorMessage(err));
       })
       .finally(() => {
         if (!cancelado) setLoading(false);

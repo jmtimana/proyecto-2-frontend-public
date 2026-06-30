@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChartNoAxesCombined, Check, Puzzle, Tags, Target, Timer } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { ResultadoApi } from '../../api/ResultadoApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { Page } from '../../api/types/Page';
 import type { EvaluacionResponse } from '../../api/types/Evaluacion';
@@ -54,7 +55,7 @@ export default function Evaluaciones() {
         );
         setCompletadas(hechas);
       })
-      .catch(() => vivo && setError('No se pudieron cargar las evaluaciones.'))
+      .catch((err) => vivo && setError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

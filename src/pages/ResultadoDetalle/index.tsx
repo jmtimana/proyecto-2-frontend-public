@@ -4,6 +4,7 @@ import { Container, Spinner, Alert, Card, Badge } from 'react-bootstrap';
 import { CircleCheck, CircleX, Hourglass, TriangleAlert } from 'lucide-react';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Breadcrumb from '../../common/Breadcrumb';
 import type { EvaluacionDetailResponse, PreguntaResponse } from '../../api/types/Evaluacion';
 import type { RespuestaResponse } from '../../api/types/Respuesta';
@@ -56,7 +57,7 @@ export default function ResultadoDetalle() {
         setEvaluacion(ev);
         setRespuestas(resp);
       })
-      .catch(() => vivo && setError('No se pudo cargar el detalle.'))
+      .catch((err) => vivo && setError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

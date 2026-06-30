@@ -11,6 +11,7 @@ import { sql } from '@codemirror/lang-sql';
 import Breadcrumb from '../../common/Breadcrumb';
 import { EvaluacionApi } from '../../api/EvaluacionApi';
 import { RespuestaApi } from '../../api/RespuestaApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import type {
   EvaluacionDetailResponse,
   PreguntaResponse,
@@ -87,10 +88,7 @@ function PreguntaCard({
       }
     } catch (e: any) {
       if (!vivo.current) return;
-      setError(
-        e?.response?.data?.message ||
-          'No se pudo enviar la respuesta. ¿Iniciaste la evaluación?'
-      );
+      setError(getErrorMessage(e));
       setPhase('editing');
     }
   }
@@ -183,7 +181,7 @@ export default function RendirEvaluacion() {
     let vivo = true;
     EvaluacionApi.getById(evalId)
       .then((res) => vivo && setEv(res))
-      .catch(() => vivo && setLoadError('No se pudo cargar la evaluación.'))
+      .catch((err) => vivo && setLoadError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

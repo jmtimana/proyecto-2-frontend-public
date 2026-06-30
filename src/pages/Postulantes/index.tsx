@@ -24,7 +24,7 @@ export default function Postulantes() {
     let vivo = true;
     PostulacionApi.byOferta(Number(id))
       .then((res) => vivo && setPostulantes(res.content))
-      .catch(() => vivo && setError('No se pudieron cargar los postulantes.'))
+      .catch((err) => vivo && setError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

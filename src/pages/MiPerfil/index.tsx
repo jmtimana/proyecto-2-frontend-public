@@ -83,7 +83,7 @@ export default function MiPerfil() {
           });
         }
       })
-      .catch(() => vivo && setErrorCarga('No se pudo cargar tu perfil.'))
+      .catch((err) => vivo && setErrorCarga(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

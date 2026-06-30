@@ -59,7 +59,7 @@ export default function EmpresaOfertas() {
       .then((res) => {
         setOfertas(res.content.filter((o) => o.empresaUserId === user?.userId));
       })
-      .catch(() => setError('No se pudieron cargar tus ofertas.'))
+      .catch((err) => setError(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }
 

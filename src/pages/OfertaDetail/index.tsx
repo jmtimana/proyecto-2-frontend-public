@@ -61,7 +61,7 @@ export default function OfertaDetail() {
           setNotFound(true);
           return;
         }
-        setError('No se pudo cargar la oferta.');
+        setError(getErrorMessage(err));
       })
       .finally(() => vivo && setLoading(false));
     return () => {

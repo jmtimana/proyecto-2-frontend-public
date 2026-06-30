@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Container, Spinner, Alert, Card } from 'react-bootstrap';
 import { GitFork } from 'lucide-react';
 import { UserApi } from '../../api/UserApi';
+import { getErrorMessage } from '../../utils/errorHandler';
 import NivelBadge from '../../common/NivelBadge';
 import { nivelDeScore } from '../../utils/nivel';
 import type { UserResponse } from '../../api/types/User';
@@ -18,7 +19,7 @@ export default function PerfilPublico() {
     setLoading(true);
     UserApi.getById(Number(id))
       .then((res) => vivo && setU(res))
-      .catch(() => vivo && setError('No se pudo cargar el perfil.'))
+      .catch((err) => vivo && setError(getErrorMessage(err)))
       .finally(() => vivo && setLoading(false));
     return () => {
       vivo = false;

@@ -18,7 +18,7 @@ export default function AdminHabilidades() {
   function cargar() {
     HabilidadApi.list()
       .then((h) => { setHabilidades(h); setErrorCarga(''); })
-      .catch(() => setErrorCarga('No se pudieron cargar las habilidades.'))
+      .catch((err) => setErrorCarga(getErrorMessage(err)))
       .finally(() => setCargando(false));
   }
 
