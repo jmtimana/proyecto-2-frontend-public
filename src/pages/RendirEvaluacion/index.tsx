@@ -99,7 +99,7 @@ function PreguntaCard({
   const correcta = status === 'CORRECTA';
 
   return (
-    <Card className="mb-4" style={{ border: '0.5px solid #e6e6ef' }}>
+    <Card className="mb-4" style={{ border: '0.5px solid var(--app-border)' }}>
       <Card.Body className="p-4">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span style={{ fontWeight: 600 }}>Pregunta {numero}</span>
@@ -112,9 +112,9 @@ function PreguntaCard({
             <span className="text-secondary">{pregunta.score} pts</span>
           </span>
         </div>
-        <p>{pregunta.questionText}</p>
+        <p style={{ color: 'var(--app-text)' }}>{pregunta.questionText}</p>
 
-        <div style={{ border: '1px solid #e0e0e8', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ border: '1px solid var(--app-border)', borderRadius: 8, overflow: 'hidden' }}>
           <CodeMirror
             value={code}
             height="200px"
@@ -230,7 +230,7 @@ export default function RendirEvaluacion() {
 
       {!started ? (
 
-        <Card style={{ border: '0.5px solid #e6e6ef' }} className="mt-4">
+        <Card style={{ border: '0.5px solid var(--app-border)' }} className="mt-4">
           <Card.Body className="p-4 text-center">
             <Rocket size={40} color="var(--brand)" aria-hidden="true" />
             <h5 className="mt-2" style={{ fontWeight: 600 }}>¿Listo para comenzar?</h5>

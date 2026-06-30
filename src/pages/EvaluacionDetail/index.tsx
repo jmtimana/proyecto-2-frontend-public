@@ -104,7 +104,7 @@ export default function EvaluacionDetail() {
         .slice()
         .sort((a, b) => a.order - b.order)
         .map((q, i) => (
-          <Card key={q.id} className="mb-2" style={{ border: '0.5px solid #e6e6ef' }}>
+          <Card key={q.id} className="mb-2" style={{ border: '0.5px solid var(--app-border)' }}>
             <Card.Body className="p-3">
               <div className="d-flex justify-content-between align-items-center mb-1">
                 <span style={{ fontWeight: 500 }}>Pregunta {i + 1}</span>
@@ -114,7 +114,7 @@ export default function EvaluacionDetail() {
                   <span className="text-secondary">{q.score} pts</span>
                 </span>
               </div>
-              <div style={{ fontSize: 14, color: '#555' }}>{q.questionText}</div>
+              <div style={{ fontSize: 14, color: 'var(--app-text)' }}>{q.questionText}</div>
             </Card.Body>
           </Card>
         ))}
