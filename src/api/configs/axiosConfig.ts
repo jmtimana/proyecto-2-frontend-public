@@ -18,6 +18,21 @@ const MAX_RETRIES = 3;
 const BASE_DELAY = 1000;
 
 let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}> = [];
+
+function processQueue(error: unknown, token: string | null) {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(token!);
+    }
+  });
+  failedQueue = [];
+}
 
 api.interceptors.response.use(
   (response) => response,
@@ -55,18 +70,27 @@ api.interceptors.response.use(
             refreshToken: tokenStorage.getRefresh(),
           });
           tokenStorage.save(data.accessToken, data.refreshToken);
-          isRefreshing = false;
+          processQueue(null, data.accessToken);
 
           original.headers.Authorization = `Bearer ${data.accessToken}`;
           return api(original);
         } catch (refreshError) {
 
-          isRefreshing = false;
+          processQueue(refreshError, null);
           tokenStorage.clear();
           window.location.href = '/login';
           return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
         }
       }
+
+      return new Promise<string>((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      }).then((token) => {
+        original.headers.Authorization = `Bearer ${token}`;
+        return api(original);
+      });
     }
 
     return Promise.reject(error);

@@ -1,10 +1,14 @@
 const mensajesPorErrorCode: Record<string, string> = {
   RESOURCE_NOT_FOUND: 'El recurso solicitado no existe.',
   DUPLICATE_RESOURCE: 'Ya existe un registro con esos datos.',
+  EMAIL_ALREADY_REGISTERED: 'El correo ya está registrado.',
+  RUC_ALREADY_REGISTERED: 'El RUC ya está registrado.',
+  DATA_INTEGRITY_VIOLATION: 'Ya existe un registro con esos datos.',
   CONFLICT: 'La operación no se puede completar por un conflicto con los datos actuales.',
   INVALID_OPERATION: 'La operación solicitada no es válida en este momento.',
   VALIDATION_ERROR: 'Los datos enviados no cumplen con los requisitos.',
   BAD_REQUEST: 'Solicitud inválida. Revisa los datos e intenta de nuevo.',
+  BAD_CREDENTIALS: 'Correo electrónico o contraseña incorrectos.',
   EVALUACION_ALREADY_STARTED: 'Ya tienes una evaluación en progreso.',
   UNAUTHORIZED: 'Debes iniciar sesión para continuar.',
   FORBIDDEN: 'No tienes permiso para realizar esta acción.',
@@ -15,6 +19,7 @@ const mensajesPorErrorCode: Record<string, string> = {
   CODE_EXECUTION_ERROR: 'Error al ejecutar el código. Intenta de nuevo.',
   EMAIL_SENDING_ERROR: 'Error al enviar el correo. Intenta de nuevo.',
   PAYMENT_ERROR: 'Error al procesar el pago. Intenta de nuevo.',
+  INTERNAL_ERROR: 'Error interno del servidor. Intenta de nuevo más tarde.',
 };
 
 const mensajesPorStatus: Record<number, string> = {
@@ -63,17 +68,17 @@ export function parseError(err: unknown): ParsedApiError {
   const data = axiosErr?.response?.data;
   const status = data?.status ?? axiosErr?.response?.status ?? null;
   const errorCode: string | null = data?.errorCode ?? null;
-  const backendMessage: string | null = data?.message ?? null;
+  const backendMessage: string | null = data?.message ?? data?.error ?? null;
   const validationErrors: Record<string, string> | null = data?.validationErrors ?? null;
 
   let userMessage: string;
 
   if (errorCode && mensajesPorErrorCode[errorCode]) {
     userMessage = mensajesPorErrorCode[errorCode];
-  } else if (status && mensajesPorStatus[status]) {
-    userMessage = mensajesPorStatus[status];
   } else if (backendMessage) {
     userMessage = backendMessage;
+  } else if (status && mensajesPorStatus[status]) {
+    userMessage = mensajesPorStatus[status];
   } else if (axiosErr?.message?.includes('timeout')) {
     userMessage = 'El servidor tardó demasiado en responder. Intenta de nuevo.';
   } else {

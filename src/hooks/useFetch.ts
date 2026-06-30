@@ -21,24 +21,33 @@ export function useFetch<T>(
   const reload = useCallback(() => setNonce((n) => n + 1), []);
 
   useEffect(() => {
+    let cancelled = false;
     const controller = new AbortController();
     setLoading(true);
     setError(null);
 
     fetcher(controller.signal)
       .then((res) => {
-        setData(res);
-        setLoading(false);
+        if (!cancelled) {
+          setData(res);
+          setLoading(false);
+        }
       })
       .catch((err) => {
-
-        if (axios.isCancel(err) || err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError') return;
+        if (cancelled) return;
+        if (axios.isCancel(err) || err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError') {
+          setLoading(false);
+          return;
+        }
         const parsed = parseError(err);
         setError(parsed.userMessage);
         setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
 
   }, [...deps, nonce]);
 
