@@ -62,14 +62,12 @@ function PreguntaCard({
     setOutput(null);
     setPhase('running');
     try {
-
       const creada = await RespuestaApi.submit({
         preguntaId: pregunta.id,
         evaluacionId,
         codigo: code,
         lenguaje: pregunta.lenguaje || 'python',
       });
-
       let intentos = 0;
       const MAX = 20;
       while (vivo.current && intentos < MAX) {

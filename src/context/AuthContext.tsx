@@ -49,7 +49,6 @@ function toSessionUser(res: AuthResponse): SessionUser {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const access = tokenStorage.getAccess();
     const saved = localStorage.getItem('sm_user');
@@ -58,23 +57,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setLoading(false);
   }, []);
-
   function persistSession(res: AuthResponse) {
-    tokenStorage.save(res.accessToken, res.refreshToken);
-    const sessionUser = toSessionUser(res);
-    localStorage.setItem('sm_user', JSON.stringify(sessionUser));
-    setUser(sessionUser);
+    tokenStorage.save(res.accessToken, res.refreshToken); const sessionUser = toSessionUser(res);
+    localStorage.setItem('sm_user', JSON.stringify(sessionUser)); setUser(sessionUser);
   }
-
   async function login(payload: LoginRequest) {
-    const res = await AuthApi.login(payload);
-    persistSession(res);
+    const res = await AuthApi.login(payload); persistSession(res);
   }
-
   async function register(payload: RegisterRequest) {
-    const res = await AuthApi.register(payload);
-    persistSession(res);
-  }
+    const res = await AuthApi.register(payload); persistSession(res);}
 
   async function logout() {
     try {
